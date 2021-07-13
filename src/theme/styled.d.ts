@@ -46,6 +46,12 @@ export interface Colors {
   yellow2: Color
   blue1: Color
 
+  pastelRed: Color
+  pastelBlue: Color
+  pastelGreen: Color
+  pastelPurple: Color
+  pastelYellow: Color
+
   //gradient
   gradient1: Color
   gradient2: Color

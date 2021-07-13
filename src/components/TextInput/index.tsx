@@ -8,11 +8,12 @@ import useTheme from 'hooks/useTheme'
 const CustomInput = styled(StyledInput)<{ disabled?: boolean; error?: boolean }>`
   width: 100%;
   font-size: 16px;
-  color: ${({ theme, disabled }) => (disabled ? theme.bg5 : theme.white)};
+  font-weight: 400;
+  color: ${({ theme, disabled }) => (disabled ? theme.bg5 : theme.bg1)};
   align-items: center;
   padding: 0 0.5rem 0 1rem;
   width: 100%;
-  background-color: ${({ theme, disabled }) => (disabled ? 'rgba(255, 255, 255, 0.08)' : theme.bg2)};
+  background-color: ${({ theme, disabled }) => (disabled ? theme.text2 : theme.text1)};
   border-radius: 14px;
   height: 3rem;
   border: 1px solid ${({ theme, error }) => (error ? theme.red1 : 'transpanret')};
@@ -39,7 +40,10 @@ export const CustomTextArea = styled.textarea<{ error?: boolean; fontSize?: stri
   resize: none;
 `
 
-const Container = styled.div``
+const Container = styled.div<{ width: string; maxWidth?: string }>`
+  width: ${({ width }) => width};
+  max-width: ${({ maxWidth }) => maxWidth ?? 'unset'};
+`
 
 const LabelRow = styled.div`
   align-items: center;
@@ -61,6 +65,8 @@ export const TextInput = React.memo(function InnerInput({
   disabled,
   name,
   error,
+  width = '100%',
+  maxWidth,
   ...rest
 }: {
   error?: boolean
@@ -68,20 +74,24 @@ export const TextInput = React.memo(function InnerInput({
   fontSize?: string
   align?: 'right' | 'left'
   textarea?: boolean
+  maxWidth?: string
+  width?: string
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
   const theme = useTheme()
 
   return (
-    <Container>
-      <LabelRow>
-        <AutoRow justify="space-between">
-          {label && (
-            <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
-              {label}
-            </TYPE.body>
-          )}
-        </AutoRow>
-      </LabelRow>
+    <Container width={width} maxWidth={maxWidth}>
+      {label && (
+        <LabelRow>
+          <AutoRow justify="space-between">
+            {label && (
+              <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
+                {label}
+              </TYPE.body>
+            )}
+          </AutoRow>
+        </LabelRow>
+      )}
       {textarea ? (
         <CustomTextArea
           placeholder={placeholder || 'text input'}

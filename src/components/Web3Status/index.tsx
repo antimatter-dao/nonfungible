@@ -25,7 +25,6 @@ import Loader from '../Loader'
 
 import { RowBetween } from '../Row'
 import WalletModal from '../WalletModal'
-import { TYPE } from 'theme'
 import useTheme from 'hooks/useTheme'
 
 const IconWrapper = styled.div<{ size?: number }>`
@@ -65,26 +64,27 @@ const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
   padding: 8px 25px;
   border: 1px solid ${({ theme }) => theme.text1};
   border-color: ${({ theme }) => theme.text1};
-  color: ${({ theme }) => theme.text1};
-  font-weight: 500;
+  background-color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.bg1};
+  font-weight: 400;
   border-radius: 49px;
   :hover,
   :focus {
     border: 1px solid ${({ theme }) => darken(0.05, theme.text1)};
-    color: ${({ theme }) => theme.primaryText1};
+    color: ${({ theme }) => theme.bg1};
   }
 
   ${({ faded }) =>
     faded &&
     css`
-      background-color: ${({ theme }) => theme.bg1};
+      background-color: ${({ theme }) => theme.text1};
       border: 1px solid ${({ theme }) => theme.text1};
-      color: ${({ theme }) => theme.text1};
+      color: ${({ theme }) => theme.bg1};
 
       :hover,
       :focus {
         border: 1px solid ${({ theme }) => darken(0.05, theme.text1)};
-        color: ${({ theme }) => darken(0.05, theme.text1)};
+        color: ${({ theme }) => darken(0.05, theme.bg1)};
       }
     `}
 `
@@ -93,16 +93,15 @@ const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
   color: ${({ pending, theme }) => (pending ? theme.white : theme.text3)};
   padding: 0;
   border: none
-  font-weight: 500;
   :hover,
   :focus {
-    color:${({ pending, theme }) => (pending ? darken(0.1, theme.primary1) : theme.text1)};
+    color: ${({ pending, theme }) => (pending ? darken(0.1, theme.primary1) : theme.text1)};
     border: none;
-    box-shadow: none
+    box-shadow: none;
   }
-  & p{
+  & p {
     margin: 0;
-    margin-left:.5rem
+    margin-left: 0.5rem;
   }
 `
 
@@ -230,7 +229,7 @@ function Web3StatusInner() {
   } else {
     return (
       <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
-        <TYPE.black fontSize={16}>{t('Connect Wallet')}</TYPE.black>
+        {t('Connect Wallet')}
       </Web3StatusConnect>
     )
   }
