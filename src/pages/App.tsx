@@ -39,6 +39,7 @@ import OptionTrade from './OptionTrade'
 import OptionCreation from './OptionCreation'
 import OptionExercise from './OptionExercise'
 import Governance from './Governance'
+import CardDetail from './CardDetail'
 import GovernancePageDetail from './Governance/GovernancePageDetail'
 // import WarningModal from 'components/Modal/WarningModal'
 
@@ -120,6 +121,7 @@ export default function App() {
               <Switch>
                 {/* <Route exact strict path="/option_trading" component={Swap} /> */}
                 <Route exact strict path="/" component={Governance} />
+                <Route exact strict path="/card_detail" component={CardDetail} />
                 <Route exact strict path="/option_creation" component={OptionCreation} />
                 <Route exact strict path="/option_trading" component={OptionTrade} />
                 <Route exact strict path="/option_trading/:addressA/:addressB" component={OptionTrade} />
