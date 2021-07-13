@@ -19,6 +19,9 @@ import { ReactComponent as HECOInvert } from '../../assets/svg/huobi_inverted.sv
 import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
 import useTheme from 'hooks/useTheme'
 import ToggleMenu from './ToggleMenu'
+import { ButtonOutlined } from 'components/Button'
+import { useToggleCreationModal } from 'state/application/hooks'
+import CreationNFTModal from 'components/Creation'
 
 interface TabContent {
   title: string
@@ -371,6 +374,7 @@ const MobileHeader = styled.header`
 
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
+  const toggleCreationModal = useToggleCreationModal()
 
   const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
@@ -386,6 +390,20 @@ export default function Header() {
         </Link>
         <div style={{ paddingLeft: 8, display: 'flex', alignItems: 'center', marginLeft: 'auto', marginRight: '2rem' }}>
           <HeaderControls>
+            {chainId && (
+              <>
+                <ButtonOutlined
+                  width="120px"
+                  padding="12px 0"
+                  onClick={() => {
+                    toggleCreationModal()
+                  }}
+                >
+                  Create
+                </ButtonOutlined>
+                <CreationNFTModal />
+              </>
+            )}
             <HeaderElement show={!!account}>
               {/* <HideSmall> */}
               {chainId && NetworkInfo[chainId] && (
