@@ -1,27 +1,21 @@
-import { ChainId, TokenAmount } from '@uniswap/sdk'
+import { TokenAmount } from '@uniswap/sdk'
 import React from 'react'
-import { Check, ChevronDown } from 'react-feather'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 // import { useTranslation } from 'react-i18next'
-import { darken } from 'polished'
 import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
 import { useAggregateUniBalance } from '../../state/wallet/hooks'
-import { ExternalLink, TYPE } from '../../theme'
-import { RowFixed, RowBetween } from '../Row'
+import { TYPE } from '../../theme'
+import Row, { RowFixed, RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
 import usePrevious from '../../hooks/usePrevious'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
-import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
-import { ReactComponent as HECOInvert } from '../../assets/svg/huobi_inverted.svg'
-import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
-import useTheme from 'hooks/useTheme'
 import ToggleMenu from './ToggleMenu'
-import { ButtonOutlined } from 'components/Button'
-import { useToggleCreationModal } from 'state/application/hooks'
-import CreationNFTModal from 'components/Creation'
+import { ButtonOutlinedPrimary } from 'components/Button'
+
+const activeClassName = 'ACTIVE'
 
 interface TabContent {
   title: string
@@ -35,62 +29,11 @@ interface Tab extends TabContent {
 }
 
 export const tabs: Tab[] = [
-  { title: 'Option Trading', route: 'option_trading' },
-  { title: 'Option Exercise', route: 'option_exercise' },
-  { title: 'Option Creation', route: 'option_creation' },
-  { title: 'Farm', route: 'farm' },
-  { title: 'Governance', route: 'governance' },
-  {
-    title: 'About',
-    subTab: [
-      { title: 'Docs', link: 'https://docs.antimatter.finance/' },
-      { title: 'Github', link: 'https://github.com/antimatter-finance' },
-      {
-        title: 'Auditing Report',
-        link: 'https://github.com/antimatter-finance/antimatter-finance.github.io/blob/main/audit_en.pdf'
-      },
-      {
-        title: 'faq',
-        titleContent: <FAQButton />,
-        route: 'faq'
-      }
-    ]
-  }
+  { title: 'Spot Index', route: 'spot_index' },
+  { title: 'Future Index', route: 'future_index' },
+  { title: 'Locker', route: 'locker' },
+  { title: 'Governance', route: 'governance' }
 ]
-
-const NetworkInfo: {
-  [key: number]: { title: string; color: string; icon: JSX.Element; link?: string; linkIcon?: JSX.Element }
-} = {
-  1: {
-    color: '#FFFFFF',
-    icon: <ETH />,
-    link: 'https://app.antimatter.finance',
-    title: 'ETH'
-  },
-  [ChainId.ROPSTEN]: {
-    color: '#FFFFFF',
-    icon: <ETH />,
-    title: 'Ropsten'
-  },
-  [ChainId.RINKEBY]: {
-    color: '#FFFFFF',
-    icon: <ETH />,
-    title: 'Rinkeby'
-  },
-  128: {
-    color: '#059BDC',
-    icon: <HECOInvert />,
-    linkIcon: <HECO />,
-    link: 'https://heco.antimatter.finance',
-    title: 'HECO'
-  }
-  // 56: {
-  //   color: '#F0B90B',
-  //   icon: <BSCInvert />,
-  //   linkIcon: <BSC />,
-  //  title:'BSC'
-  // }
-}
 
 export const headerHeightDisplacement = '32px'
 
@@ -141,29 +84,6 @@ const HeaderControls = styled.div`
   `};
 `
 
-const HeaderElement = styled.div<{
-  show?: boolean
-}>`
-  display: flex;
-
-  /* addresses safari's lack of support for "gap" */
-  & > *:not(:first-child) {
-    margin-left: 8px;
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    align-items: center;
-  `};
-  & > div {
-    border: 1px solid ${({ theme, show }) => (show ? theme.text1 : 'transparent')};
-    border-radius: 4px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    font-size: 13px;
-  }
-`
-
 const HeaderRow = styled(RowFixed)`
   width: 100%;
   min-width: 1100px;
@@ -207,96 +127,6 @@ const UNIWrapper = styled.span`
   position: relative;
 `
 
-// const HideSmall = styled.span`
-//   ${({ theme }) => theme.mediaWidth.upToSmall`
-//     display: none;
-//   `};
-// `
-
-const NetworkCard = styled.div<{ color?: string }>`
-  color: #000000;
-  cursor: pointer;
-  display: flex;
-  padding: 0 4px;
-  height: 32px;
-  margin-right: 12px;
-  margin-left: 19px;
-  justify-content: center;
-  border-radius: 4px;
-  align-items: center;
-  background-color: ${({ color }) => color ?? 'rgba(255, 255, 255, 0.12)'}
-  font-size: 13px;
-  font-weight: 500;
-  position: relative;
-  & > svg:first-child {
-    height: 20px;
-    width: 20px;
-  }
-  .dropdown_wrapper {
-    &>div{
-      a {
-        padding: 12px 12px 12px 44px ;
-      }
-    }
-  }
-
-  :hover {
-    cursor: pointer;
-    .dropdown_wrapper {
-      top: 100%;
-      left: -20px;
-      height: 10px;
-      position: absolute;
-      width: 172px;
-      &>div{
-        height: auto;
-        margin-top: 10px;
-        border: 1px solid ${({ theme }) => theme.text5};
-        a{
-        position: relative;
-          & >svg{
-            height: 20px;
-            width: 20px;
-            margin-right: 15px;
-          }
-        }
-      }
-    }
-  }
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin: 0
-`};
-
-`
-
-const Dropdown = styled.div`
-  z-index: 3;
-  height: 0;
-  position: absolute;
-  border-radius: 14px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  width: 172px;
-  a {
-    color: #ffffff;
-    background-color: ${({ theme }) => theme.bg2};
-    text-decoration: none;
-    padding: 14px 17px;
-    border-bottom: 1px solid ${({ theme }) => theme.text5}
-    transition: 0.5s;
-    display: flex;
-    align-items: center;
-    :last-child{
-      border: none;
-    }
-    :hover {
-      background-color: ${({ theme }) => theme.bg4};
-      color: ${({ theme }) => darken(0.1, theme.primary1)};
-    }
-  }
-`
-
 export const StyledMenuButton = styled.button`
   position: relative;
   width: 100%;
@@ -330,29 +160,6 @@ const StyledLogo = styled(Logo)`
   margin-right: 60px;
 `
 
-function FAQButton() {
-  const theme = useTheme()
-  return (
-    <RowFixed>
-      <RowFixed
-        justify="center"
-        style={{
-          borderRadius: '50%',
-          border: `1px solid ${theme.primary1}`,
-          width: '18px',
-          height: '18px',
-          marginRight: '12px'
-        }}
-      >
-        <TYPE.body fontSize={14} color={theme.primary1}>
-          ?
-        </TYPE.body>
-      </RowFixed>
-      FAQ
-    </RowFixed>
-  )
-}
-
 const MobileHeader = styled.header`
   width:100%;
   display:flex;
@@ -372,9 +179,44 @@ const MobileHeader = styled.header`
 `};
 `
 
+const HeaderLinks = styled(Row)`
+  justify-content: center;
+  width: auto;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    padding: 1rem 0 1rem 1rem;
+    justify-content: flex-end;
+    display: none
+`};
+`
+
+const StyledNavLink = styled(NavLink).attrs({
+  activeClassName
+})`
+  ${({ theme }) => theme.flexRowNoWrap}
+  align-items: left;
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: ${({ theme }) => theme.text2};
+  width: fit-content;
+  margin: 0 20px;
+  font-weight: 400;
+  padding: 10px 0 27px;
+  white-space: nowrap;
+  transition: 0.5s;
+  border-bottom: 1px solid transparent;
+  &.${activeClassName} {
+    color: ${({ theme }) => theme.text1};
+    border-bottom: 1px solid ${({ theme }) => theme.text1};
+  }
+  :hover,
+  :focus {
+    color: ${({ theme }) => theme.text1};
+  }
+`
+
 export default function Header() {
-  const { account, chainId } = useActiveWeb3React()
-  const toggleCreationModal = useToggleCreationModal()
+  const { account } = useActiveWeb3React()
 
   const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
@@ -388,59 +230,16 @@ export default function Header() {
         <Link to={'/'}>
           <StyledLogo />
         </Link>
+        <HeaderLinks>
+          {tabs.map(({ title, route }) => (
+            <StyledNavLink to={'/' + route} key={route}>
+              {title}
+            </StyledNavLink>
+          ))}
+        </HeaderLinks>
         <div style={{ paddingLeft: 8, display: 'flex', alignItems: 'center', marginLeft: 'auto', marginRight: '2rem' }}>
           <HeaderControls>
-            {chainId && (
-              <>
-                <ButtonOutlined
-                  width="120px"
-                  padding="12px 0"
-                  onClick={() => {
-                    toggleCreationModal()
-                  }}
-                >
-                  Create
-                </ButtonOutlined>
-                <CreationNFTModal />
-              </>
-            )}
-            <HeaderElement show={!!account}>
-              {/* <HideSmall> */}
-              {chainId && NetworkInfo[chainId] && (
-                <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
-                  {NetworkInfo[chainId as number]?.icon} {NetworkInfo[chainId].title}
-                  <ChevronDown size={18} style={{ marginLeft: '5px' }} />
-                  <div className="dropdown_wrapper">
-                    <Dropdown>
-                      {Object.keys(NetworkInfo).map(key => {
-                        const info = NetworkInfo[parseInt(key) as keyof typeof NetworkInfo]
-                        if (!info) {
-                          return null
-                        }
-                        return info.link ? (
-                          <ExternalLink href={info.link} key={info.link}>
-                            {parseInt(key) === chainId && (
-                              <span style={{ position: 'absolute', left: '15px' }}>
-                                <Check size={18} />
-                              </span>
-                            )}
-                            {info.linkIcon ?? info.icon}
-                            {info.title}
-                          </ExternalLink>
-                        ) : null
-                      })}
-                    </Dropdown>
-                  </div>
-                </NetworkCard>
-              )}
-              {/* </HideSmall> */}
-            </HeaderElement>
-            {/* <HeaderElementWrap>
-          <StyledMenuButton onClick={() => toggleDarkMode()}>
-            {darkMode ? <Moon size={20} /> : <Sun size={20} />}
-          </StyledMenuButton>
-          <Menu />
-        </HeaderElementWrap> */}
+            {account && <ButtonOutlinedPrimary>Create</ButtonOutlinedPrimary>}
 
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
               {!!account && aggregateBalance && (
@@ -466,14 +265,8 @@ export default function Header() {
                     )}
                     MATTER
                   </UNIAmount>
-                  {/* <CardNoise /> */}
                 </UNIWrapper>
               )}
-              {/* {account && userEthBalance ? (
-                <BalanceText style={{ flexShrink: 0 }} fontWeight={500}>
-                  {userEthBalance?.toSignificant(4)} ETH
-                </BalanceText>
-              ) : null} */}
               <Web3Status />
             </AccountElement>
           </HeaderControls>

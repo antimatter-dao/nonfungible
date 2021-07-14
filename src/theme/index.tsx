@@ -82,6 +82,12 @@ export function colors(darkMode: boolean): Colors {
     yellow2: '#F3841E',
     blue1: '#2172E5',
 
+    pastelRed: '#F1A985',
+    pastelBlue: '#66D6FA',
+    pastelGreen: 'rgba(178, 243, 85, 0.8)',
+    pastelPurple: 'rgba(184, 160, 247, 1)',
+    pastelYellow: 'rgba(240, 185, 11, 0.8)',
+
     // dont wanna forget these blue yet
     // blue4: darkMode ? '#153d6f70' : '#C4D9F8',
     // blue5: darkMode ? '#153d6f70' : '#EBF4FF',

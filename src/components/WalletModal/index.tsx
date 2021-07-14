@@ -48,7 +48,8 @@ const Wrapper = styled.div`
 const HeaderRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
   font-weight: 500;
-  color: ${props => (props.color === 'blue' ? ({ theme }) => theme.primary1 : 'inherit')};
+  font-size: 40px;
+  color: ${({ theme }) => theme.bg1};
   ${({ theme }) => theme.mediaWidth.upToMedium`
     padding: 1rem;
   `};
@@ -67,7 +68,18 @@ const ContentWrapper = styled.div`
 const UpperSection = styled.div`
   position: relative;
   padding-top: 52px
-  background: ${({ theme }) => theme.gradient1};
+  background: ${({ theme }) => theme.text1};
+  :after {
+    content:'';
+    position: absolute;
+    width: 800px;
+    height: 180px;
+    left: -50px;
+    top: 430px;
+    background: rgba(178, 243, 85, 0.7);
+    filter: blur(160px);
+    border-radius: 120px;
+  }
 
   h5 {
     margin: 0;
@@ -329,7 +341,7 @@ export default function WalletModal({
         </CloseIcon>
         {walletView === WALLET_VIEWS.ACCOUNT && (
           <HeaderRow>
-            <HoverText>Connect to a wallet</HoverText>
+            <HoverText>Connect your wallet</HoverText>
           </HeaderRow>
         )}
         <ContentWrapper>
@@ -364,7 +376,14 @@ export default function WalletModal({
   }
 
   return (
-    <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal} minHeight={false} maxHeight={90} max-width={560}>
+    <Modal
+      isOpen={walletModalOpen}
+      onDismiss={toggleWalletModal}
+      minHeight={false}
+      maxHeight={90}
+      maxWidth={700}
+      width="700px"
+    >
       <Wrapper>{getModalContent()}</Wrapper>
     </Modal>
   )

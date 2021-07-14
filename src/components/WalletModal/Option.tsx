@@ -54,7 +54,7 @@ const GreenCircle = styled.div`
 `
 
 const CircleWrapper = styled.div`
-  color: ${({ theme }) => theme.green1};
+  color: ${({ theme }) => theme.text3};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -62,7 +62,7 @@ const CircleWrapper = styled.div`
 
 const HeaderText = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
-  color: ${props => (props.color === 'blue' ? ({ theme }) => theme.primary1 : ({ theme }) => theme.text1)};
+  color: ${({ theme }) => theme.bg1};
   font-size: 1rem;
   font-weight: 500;
 `
