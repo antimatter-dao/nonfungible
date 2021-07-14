@@ -1,7 +1,7 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
-import { ButtonOutlinedPrimary } from 'components/Button'
+import { ButtonOutlinedBlack } from 'components/Button'
 import React, { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import ReactGA from 'react-ga'
@@ -25,6 +25,7 @@ const CloseIcon = styled.div`
   position: absolute;
   right: 2rem;
   top: 2rem;
+  color: ${({ theme }) => theme.bg1};
   &:hover {
     cursor: pointer;
     opacity: 0.6;
@@ -33,7 +34,7 @@ const CloseIcon = styled.div`
 
 const CloseColor = styled(Close)`
   path {
-    stroke: ${({ theme }) => theme.text4};
+    stroke: ${({ theme }) => theme.bg1};
   }
 `
 
@@ -42,7 +43,22 @@ const Wrapper = styled.div`
   margin: 0;
   padding: 0;
   width: 100%;
-  background: ${({ theme }) => theme.gradient1};
+  background: ${({ theme }) => theme.text1};
+  overflow: hidden;
+  position: relative;
+  :after {
+    z-index: 0;
+    content: '';
+    position: absolute;
+    width: 800px;
+    height: 180px;
+    left: 50%;
+    bottom: 0;
+    transform: translateY(60%) translateX(-50%);
+    background: rgba(178, 243, 85, 0.7);
+    filter: blur(160px);
+    border-radius: 120px;
+  }
 `
 
 const HeaderRow = styled.div`
@@ -58,24 +74,27 @@ const HeaderRow = styled.div`
 `
 
 const ContentWrapper = styled.div`
-  padding: 2rem 6rem 52px;
+  padding: 2rem 3rem 52px;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
 
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem`};
+  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem 1rem 3rem`};
 `
 
 const UpperSection = styled.div`
   position: relative;
   padding-top: 52px
   background: ${({ theme }) => theme.text1};
+  overflow: hidden;
   :after {
     content:'';
     position: absolute;
     width: 800px;
     height: 180px;
-    left: -50px;
-    top: 430px;
+    left: 50%;
+    bottom:0;
+    z-index:0;
+    transform: translateY(60%) translateX(-50%);
     background: rgba(178, 243, 85, 0.7);
     filter: blur(160px);
     border-radius: 120px;
@@ -113,9 +132,12 @@ const UpperSection = styled.div`
 const OptionGrid = styled.div`
   display: grid;
   grid-gap: 10px;
+  width: 360px;
+  margin: 0 3rem;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;
     grid-gap: 10px;
+    width:auto;
   `};
 `
 
@@ -352,14 +374,14 @@ export default function WalletModal({
               setPendingError={setPendingError}
               tryActivation={tryActivation}
             >
-              <ButtonOutlinedPrimary
+              <ButtonOutlinedBlack
                 onClick={() => {
                   setPendingError(false)
                   setWalletView(WALLET_VIEWS.ACCOUNT)
                 }}
               >
-                Change Wallet
-              </ButtonOutlinedPrimary>
+                <span style={{ whiteSpace: 'nowrap' }}>Change Wallet</span>
+              </ButtonOutlinedBlack>
             </PendingView>
           ) : (
             <OptionGrid>{getOptions()}</OptionGrid>
@@ -382,7 +404,7 @@ export default function WalletModal({
       minHeight={false}
       maxHeight={90}
       maxWidth={700}
-      width="700px"
+      width="fit-content"
     >
       <Wrapper>{getModalContent()}</Wrapper>
     </Modal>

@@ -6,7 +6,7 @@ import { ColumnCenter } from '../components/Column'
 export const BodyWrapper = styled.div<{ maxWidth?: string; gradient1?: boolean; isCard?: boolean }>`
   max-width: ${({ maxWidth }) => maxWidth ?? '480px'};
   width: 100%;
-  background: ${({ theme, gradient1 }) => (gradient1 ? theme.gradient1 : theme.gradient2)};
+  background: ${({ theme }) => theme.text1};
   border: 1px solid ${({ theme }) => theme.text5};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);

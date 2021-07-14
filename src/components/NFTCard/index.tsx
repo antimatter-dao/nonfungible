@@ -25,7 +25,7 @@ const CardWrapper = styled.div<{ color: CardColor }>`
     position: absolute;
     width: 316px;
     height: 184px;
-    left: 2px;
+    left: 40%;
     top: -100px;
     background: ${({ theme, color }) => theme[color]};
     filter: blur(100px);
@@ -38,7 +38,7 @@ const CardWrapper = styled.div<{ color: CardColor }>`
     position: absolute;
     width: 316px;
     height: 184px;
-    left: 2px;
+    left: 40%px;
     top: -100px;
     background: ${({ theme, color }) => theme[color]};
     filter: blur(100px);
@@ -119,42 +119,75 @@ const Capsule = styled.div<{ color: CardColor }>`
   }
 `
 
-export default function NFTCard({
-  color,
-  address,
-  icons,
-  indexId,
-  creator,
-  name
-}: {
-  color: CardColor
-  address: string
-  icons: React.ReactNode[]
-  indexId: string
-  creator: string
-  name: string
-}) {
+function NFTCardBase({ children, color, address }: { children: React.ReactNode; color: CardColor; address: string }) {
   return (
     <CardWrapper color={color}>
       <CurverText text={address} />
       <CurverText text={address} inverted />
-      <CurrencyLogos icons={icons} />
-      <OutlineCard>
-        <TYPE.black fontWeight={700} fontSize={28} color="#000000">
-          {name}
-        </TYPE.black>
-        <AutoColumn gap="4px">
-          <Capsule color={color}>
-            <TYPE.smallGray>Index ID:&nbsp;</TYPE.smallGray>
-            <TYPE.small color="#000000"> {indexId}</TYPE.small>
-          </Capsule>
-          <Capsule color={color}>
-            <TYPE.smallGray>Creator:&nbsp;</TYPE.smallGray>
-            <TYPE.small color="#000000"> {creator}</TYPE.small>
-          </Capsule>
-        </AutoColumn>
-      </OutlineCard>
+      <OutlineCard>{children}</OutlineCard>
     </CardWrapper>
+  )
+}
+
+export default function NFTCard({
+  icons,
+  indexId,
+  creator,
+  name,
+  color,
+  address
+}: {
+  icons: React.ReactNode[]
+  indexId: string
+  creator: string
+  name: string
+  color: CardColor
+  address: string
+}) {
+  return (
+    <NFTCardBase color={color} address={address}>
+      <CurrencyLogos icons={icons} />
+      <TYPE.black fontWeight={700} fontSize={28} color="#000000">
+        {name}
+      </TYPE.black>
+      <AutoColumn gap="4px">
+        <Capsule color={color}>
+          <TYPE.smallGray>Index ID:&nbsp;</TYPE.smallGray>
+          <TYPE.small color="#000000"> {indexId}</TYPE.small>
+        </Capsule>
+        <Capsule color={color}>
+          <TYPE.smallGray>Creator:&nbsp;</TYPE.smallGray>
+          <TYPE.small color="#000000"> {creator}</TYPE.small>
+        </Capsule>
+      </AutoColumn>
+    </NFTCardBase>
+  )
+}
+
+export function NFTGovernanceCard({
+  time,
+  title,
+  color,
+  address
+}: {
+  time: string
+  title: string
+  color: CardColor
+  address: string
+}) {
+  const theme = useTheme()
+  return (
+    <NFTCardBase color={color} address={address}>
+      <AutoColumn gap="4px">
+        <TYPE.black fontWeight={700} fontSize={24} color="#000000">
+          {title}
+        </TYPE.black>
+
+        <Capsule color={color}>
+          <TYPE.small color={theme[color]}> {time}</TYPE.small>
+        </Capsule>
+      </AutoColumn>
+    </NFTCardBase>
   )
 }
 

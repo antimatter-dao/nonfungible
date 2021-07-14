@@ -2,27 +2,20 @@ import React, { Suspense } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsReporter'
-// import AddressClaimModal from '../components/claim/AddressClaimModal'
 import Header from '../components/Header'
 import Polling from '../components/Header/Polling'
 // import URLWarning from '../components/Header/URLWarning'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
-// import { ApplicationModal } from '../state/application/actions'
-// import { useModalOpen, useToggleModal } from '../state/application/hooks'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 
 import { RedirectPathToSwapOnly } from './Swap/redirects'
-import Generate from './Generate'
-import Redeem from './Redeem'
 import Info from './Info'
 import FAQ from './FAQ'
-import OptionTrade from './OptionTrade'
-import OptionCreation from './OptionCreation'
-import OptionExercise from './OptionExercise'
-import Governance from './Governance'
+import Governance from './NFTGovernance'
 import SpotIndex from './SpotIndex'
 import GovernancePageDetail from './Governance/GovernancePageDetail'
+import Locker from './Locker'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -88,7 +81,6 @@ export default function App() {
       <Route component={DarkModeQueryParamReader} />
       <AppWrapper id="app">
         {/* <URLWarning /> */}
-        {/* <Sidebar /> */}
         <ContentWrapper>
           <HeaderWrapper id="header">
             <Header />
@@ -102,12 +94,7 @@ export default function App() {
               <Switch>
                 <Route exact strict path="/" component={SpotIndex} />
                 <Route exact strict path="/spot_index" component={SpotIndex} />
-                <Route exact strict path="/option_creation" component={OptionCreation} />
-                <Route exact strict path="/option_trading" component={OptionTrade} />
-                <Route exact strict path="/option_trading/:addressA/:addressB" component={OptionTrade} />
-                <Route exact strict path="/option_exercise" component={OptionExercise} />
-                <Route exact strict path="/generate/:optionTypeIndex" component={Generate} />
-                <Route exact strict path="/redeem/:optionTypeIndex" component={Redeem} />
+                <Route exact strict path="/locker" component={Locker} />
                 <Route exact strict path="/governance" component={Governance} />
                 <Route exact strict path="/governance/detail/:governanceIndex" component={GovernancePageDetail} />
                 <Route exact strict path="/info" component={Info} />

@@ -9,32 +9,21 @@ import Copy from './Copy'
 import Transaction from './Transaction'
 
 import { SUPPORTED_WALLETS } from '../../constants'
-// import { getEtherscanLink } from '../../utils'
 import { injected, walletconnect, walletlink, fortmatic, portis } from '../../connectors'
 import CoinbaseWalletIcon from '../../assets/images/coinbaseWalletIcon.svg'
 import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg'
 import FortmaticIcon from '../../assets/images/fortmaticIcon.png'
 import PortisIcon from '../../assets/images/portisIcon.png'
 // import Identicon from '../Identicon'
-import { ButtonSecondary, ButtonOutlinedPrimary, ButtonPrimary } from '../Button'
+import { ButtonSecondary, ButtonOutlinedBlack, ButtonBlack } from '../Button'
 
-// import { ExternalLink as LinkIcon } from 'react-feather'
-import { /*ExternalLink*/ LinkStyledButton, TYPE } from '../../theme'
+import { LinkStyledButton, TYPE } from '../../theme'
 import { AutoColumn } from 'components/Column'
 import { RowBetween } from 'components/Row'
 
-// const HeaderRow = styled.div`
-//   ${({ theme }) => theme.flexRowNoWrap};
-//   padding: 1rem 1rem;
-//   font-weight: 500;
-//   color: ${props => (props.color === 'blue' ? ({ theme }) => theme.primary1 : 'inherit')};
-//   ${({ theme }) => theme.mediaWidth.upToMedium`
-//     padding: 1rem;
-//   `};
-// `
-
 const UpperSection = styled.div`
   position: relative;
+  padding: 0 3rem;
 
   h5 {
     margin: 0;
@@ -69,7 +58,7 @@ const AccountGroupingRow = styled.div`
   justify-content: space-between;
   align-items: center;
   font-weight: 400;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.bg1};
 
   div {
     ${({ theme }) => theme.flexRowNoWrap}
@@ -101,6 +90,8 @@ const LowerSection = styled.div`
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
   display: flex;
+  width: 500px;
+  ${({ theme }) => theme.mediaWidth.upToMedium`width: 100%;`}
 `
 
 const AccountControl = styled.div`
@@ -110,6 +101,7 @@ const AccountControl = styled.div`
   width: 100%;
   font-weight: 500;
   font-size: 1.25rem;
+  color: ${({ theme }) => theme.bg1}
 
   a:hover {
     text-decoration: underline;
@@ -128,29 +120,11 @@ const AccountControl = styled.div`
   }
 `
 
-// const AddressLink = styled(ExternalLink)<{ hasENS: boolean; isENS: boolean }>`
-//   font-size: 0.825rem;
-//   color: ${({ theme }) => theme.text3};
-//   margin-left: 1rem;
-//   font-size: 0.825rem;
-//   display: flex;
-//   :hover {
-//     color: ${({ theme }) => theme.text2};
-//   }
-// `
-
-// const CloseIcon = styled.div`
-//   &:hover {
-//     cursor: pointer;
-//     opacity: 0.6;
-//   }
-// `
-
 const WalletName = styled.div`
   width: initial;
   font-size: 0.825rem;
   font-weight: 500;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.bg3};
 `
 
 const IconWrapper = styled.div<{ size?: number }>`
@@ -170,8 +144,7 @@ const IconWrapper = styled.div<{ size?: number }>`
 const Dot = styled.span`
   width: 12px;
   height: 12px;
-  background: linear-gradient(135deg, #ffffff 4.17%, rgba(255, 255, 255, 0) 75%);
-  border: 0.6px solid #ffffff;
+  background: linear-gradient(135deg, #000000 4.17%, rgba(255, 255, 255, 0.2) 100%);
   box-sizing: border-box;
   border-radius: 50%;
 `
@@ -191,17 +164,6 @@ const WalletAction = styled(ButtonSecondary)`
     text-decoration: underline;
   }
 `
-// const ActionButton = styled(ButtonOutlined)`
-//   border-radius: 49px;
-//   border: 1px solid ${({ theme }) => theme.primary1};
-//   color: ${({ theme }) => theme.primary1};
-
-//   &.colored {
-//     background-color: ${({ theme }) => theme.primary1};
-
-//     color: ${({ theme }) => theme.bg1};
-//   }
-// `
 
 const MainWalletAction = styled(WalletAction)`
   color: ${({ theme }) => theme.primary1};
@@ -390,15 +352,15 @@ export default function AccountDetails({
         </AccountSection>
       </UpperSection>
       <LowerSection>
-        <ButtonOutlinedPrimary onClick={toggleWalletModal}>Close</ButtonOutlinedPrimary>
-        <ButtonPrimary
+        <ButtonOutlinedBlack onClick={toggleWalletModal}>Close</ButtonOutlinedBlack>
+        <ButtonBlack
           onClick={() => {
             openOptions()
           }}
           style={{ marginLeft: '20px' }}
         >
           Change
-        </ButtonPrimary>
+        </ButtonBlack>
       </LowerSection>
       {!!pendingTransactions.length || !!confirmedTransactions.length ? (
         <LowerSection>
@@ -415,7 +377,7 @@ export default function AccountDetails({
         </LowerSection>
       ) : (
         <LowerSection>
-          <TYPE.body color={theme.text1}>Your transactions will appear here...</TYPE.body>
+          <TYPE.body color={theme.bg1}>Your transactions will appear here...</TYPE.body>
         </LowerSection>
       )}
     </>

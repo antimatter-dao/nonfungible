@@ -6,14 +6,14 @@ import styled from 'styled-components'
 import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
 import { useAggregateUniBalance } from '../../state/wallet/hooks'
-import { TYPE } from '../../theme'
+import { ButtonText, TYPE } from '../../theme'
 import Row, { RowFixed, RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
-import ClaimModal from '../claim/ClaimModal'
 import usePrevious from '../../hooks/usePrevious'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import ToggleMenu from './ToggleMenu'
 import { ButtonOutlinedPrimary } from 'components/Button'
+import { ReactComponent as AntimatterIcon } from 'assets/svg/antimatter_icon.svg'
 
 const activeClassName = 'ACTIVE'
 
@@ -46,7 +46,7 @@ const HeaderFrame = styled.div`
   height: ${({ theme }) => theme.headerHeight}
   position: relative;
   border-bottom: 1px solid ${({ theme }) => theme.text5};
-  padding: 27px 0 0;
+  padding: 21px 0 0;
   z-index: 5;
   background-color:${({ theme }) => theme.bg1}
   ${({ theme }) => theme.mediaWidth.upToLarge`
@@ -99,16 +99,17 @@ const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: transparent;
-  border-radius: 4px;
+  background-color: #ffffff;
+  border-radius: 32px;
   white-space: nowrap;
   cursor: pointer;
-  padding: ${({ active }) => (active ? '7px 12px' : 'unset')};
-  border: 1px solid ${({ theme, active }) => (active ? theme.text1 : 'transparent')};
+  padding: ${({ active }) => (active ? '14px 16px' : 'unset')};
+  padding-right: 0;
+  height: 44px;
 `
 
 const UNIAmount = styled.div`
-  color: white;
+  color: ${({ theme }) => theme.bg1};
   font-size: 13px;
   display: flex;
   flex-direction: row;
@@ -116,9 +117,9 @@ const UNIAmount = styled.div`
   background-color: transparent;
   &:after {
     content: '';
-    border-right: 1px solid ${({ theme }) => theme.text1};
-    margin: 0 16px;
-    height: 16px;
+    border-right: 2px solid ${({ theme }) => theme.text2};
+    margin-left: 16px;
+    height: 20px;
   }
 `
 
@@ -201,7 +202,7 @@ const StyledNavLink = styled(NavLink).attrs({
   width: fit-content;
   margin: 0 20px;
   font-weight: 400;
-  padding: 10px 0 27px;
+  padding: 10px 0 31px;
   white-space: nowrap;
   transition: 0.5s;
   border-bottom: 1px solid transparent;
@@ -215,6 +216,25 @@ const StyledNavLink = styled(NavLink).attrs({
   }
 `
 
+const UserButton = styled(ButtonText)`
+  height: 44px;
+  width: 44px;
+  border-radius: 50%;
+  background: linear-gradient(360deg, #66d7fa 0%, rgba(207, 209, 86, 0) 50%),
+    linear-gradient(259.57deg, #66d7fa 1.58%, #66d7fa 92.54%);
+  border: none;
+  flex-shrink: 0;
+  ${({ theme }) => theme.flexRowNoWrap};
+  justify-content: center;
+  align-items: center;
+  transition: 0.4s;
+  :hover,
+  :focus {
+    background: linear-gradient(360deg, #fffa8b 0%, rgba(207, 209, 86, 0) 50%),
+      linear-gradient(259.57deg, #b2f355 1.58%, #66d7fa 92.54%);
+  }
+`
+
 export default function Header() {
   const { account } = useActiveWeb3React()
 
@@ -225,7 +245,6 @@ export default function Header() {
 
   return (
     <HeaderFrame>
-      <ClaimModal />
       <HeaderRow>
         <Link to={'/'}>
           <StyledLogo />
@@ -239,15 +258,18 @@ export default function Header() {
         </HeaderLinks>
         <div style={{ paddingLeft: 8, display: 'flex', alignItems: 'center', marginLeft: 'auto', marginRight: '2rem' }}>
           <HeaderControls>
-            {account && <ButtonOutlinedPrimary>Create</ButtonOutlinedPrimary>}
+            {account && (
+              <ButtonOutlinedPrimary width="120px" marginRight="16px">
+                Create
+              </ButtonOutlinedPrimary>
+            )}
 
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
               {!!account && aggregateBalance && (
                 <UNIWrapper>
                   <UNIAmount style={{ pointerEvents: 'none' }}>
                     {account && (
-                      // <HideSmall>
-                      <TYPE.white
+                      <TYPE.gray
                         style={{
                           paddingRight: '.4rem'
                         }}
@@ -260,14 +282,16 @@ export default function Header() {
                           thousandsSeparator={','}
                           duration={1}
                         />
-                      </TYPE.white>
-                      // </HideSmall>
+                      </TYPE.gray>
                     )}
                     MATTER
                   </UNIAmount>
                 </UNIWrapper>
               )}
               <Web3Status />
+              <UserButton>
+                <AntimatterIcon />
+              </UserButton>
             </AccountElement>
           </HeaderControls>
         </div>

@@ -1,15 +1,9 @@
-import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { darken } from 'polished'
 import React, { useMemo } from 'react'
 import { Activity } from 'react-feather'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import CoinbaseWalletIcon from '../../assets/images/coinbaseWalletIcon.svg'
-import FortmaticIcon from '../../assets/images/fortmaticIcon.png'
-import PortisIcon from '../../assets/images/portisIcon.png'
-import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg'
-import { fortmatic, injected, portis, walletconnect, walletlink } from '../../connectors'
 import { NetworkContextName } from '../../constants'
 import useENSName from '../../hooks/useENSName'
 import { useHasSocks } from '../../hooks/useSocksBalance'
@@ -18,24 +12,10 @@ import { isTransactionRecent, useAllTransactions } from '../../state/transaction
 import { TransactionDetails } from '../../state/transactions/reducer'
 import { shortenAddress } from '../../utils'
 import { ButtonOutlined } from '../Button'
-import Copy from '../AccountDetails/Copy'
-
-// import Identicon from '../Identicon'
 import Loader from '../Loader'
-
 import { RowBetween } from '../Row'
 import WalletModal from '../WalletModal'
 import useTheme from 'hooks/useTheme'
-
-const IconWrapper = styled.div<{ size?: number }>`
-  ${({ theme }) => theme.flexColumnNoWrap};
-  align-items: center;
-  justify-content: center;
-  & > * {
-    height: ${({ size }) => (size ? size + 'px' : '32px')};
-    width: ${({ size }) => (size ? size + 'px' : '32px')};
-  }
-`
 
 const Web3StatusGeneric = styled(ButtonOutlined)`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -90,18 +70,18 @@ const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
 `
 
 const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
-  color: ${({ pending, theme }) => (pending ? theme.white : theme.text3)};
+  color: ${({ pending, theme }) => (pending ? theme.text3 : theme.text4)};
   padding: 0;
   border: none
   :hover,
   :focus {
-    color: ${({ pending, theme }) => (pending ? darken(0.1, theme.primary1) : theme.text1)};
+    color: ${({ pending, theme }) => (pending ? darken(0.1, theme.primary1) : theme.bg5)};
     border: none;
     box-shadow: none;
   }
   & p {
     margin: 0;
-    margin-left: 0.5rem;
+    margin: 0 16px;
   }
 `
 
@@ -123,21 +103,6 @@ const NetworkIcon = styled(Activity)`
   height: 16px;
 `
 
-const Dot = styled.span`
-  width: 12px;
-  height: 12px;
-  background: linear-gradient(135deg, #ffffff 4.17%, rgba(255, 255, 255, 0) 75%);
-  border: 0.6px solid #ffffff;
-  box-sizing: border-box;
-  border-radius: 50%;
-`
-
-const HideSmall = styled.span`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
-`
-
 // we want the latest one to come first, so return negative if a is after b
 function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
   return b.addedTime - a.addedTime
@@ -149,41 +114,9 @@ const SOCK = (
   </span>
 )
 
-// eslint-disable-next-line react/prop-types
-function StatusIcon({ connector }: { connector: AbstractConnector }) {
-  if (connector === injected) {
-    return <Dot />
-  } else if (connector === walletconnect) {
-    return (
-      <IconWrapper size={16}>
-        <img src={WalletConnectIcon} alt={''} />
-      </IconWrapper>
-    )
-  } else if (connector === walletlink) {
-    return (
-      <IconWrapper size={16}>
-        <img src={CoinbaseWalletIcon} alt={''} />
-      </IconWrapper>
-    )
-  } else if (connector === fortmatic) {
-    return (
-      <IconWrapper size={16}>
-        <img src={FortmaticIcon} alt={''} />
-      </IconWrapper>
-    )
-  } else if (connector === portis) {
-    return (
-      <IconWrapper size={16}>
-        <img src={PortisIcon} alt={''} />
-      </IconWrapper>
-    )
-  }
-  return null
-}
-
 function Web3StatusInner() {
   const { t } = useTranslation()
-  const { account, connector, error } = useWeb3React()
+  const { account, error } = useWeb3React()
 
   const { ENSName } = useENSName(account ?? undefined)
 
@@ -204,19 +137,21 @@ function Web3StatusInner() {
     return (
       <>
         <Web3StatusConnected id="web3-status-connected" onClick={toggleWalletModal} pending={hasPendingTransactions}>
-          {!hasPendingTransactions && connector && <StatusIcon connector={connector} />}
+          {/* {!hasPendingTransactions && connector && <StatusIcon connector={connector} />} */}
           {hasPendingTransactions ? (
             <RowBetween>
-              <Loader stroke={theme.text1} /> <Text style={{ marginLeft: '12px' }}>{pending?.length} Pending</Text>
+              <Loader stroke={theme.bg3} />{' '}
+              <Text style={{ marginLeft: '12px' }} color={theme.bg3}>
+                {pending?.length} Pending
+              </Text>
             </RowBetween>
           ) : (
             <>
               {hasSocks ? SOCK : null}
-              <Text>{ENSName || shortenAddress(account)}</Text>
+              <Text>{ENSName || shortenAddress(account, 5)}</Text>
             </>
           )}
         </Web3StatusConnected>
-        <HideSmall> {account && <Copy toCopy={account}></Copy>}</HideSmall>
       </>
     )
   } else if (error) {

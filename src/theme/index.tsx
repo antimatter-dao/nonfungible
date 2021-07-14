@@ -157,7 +157,7 @@ export const TYPE = {
     return <TextWrapper fontWeight={500} color={'primary1'} {...props} />
   },
   black(props: TextProps) {
-    return <TextWrapper fontWeight={500} color={'text1'} {...props} />
+    return <TextWrapper fontWeight={500} color={'bg1'} {...props} />
   },
   white(props: TextProps) {
     return <TextWrapper fontWeight={500} color={'white'} {...props} />
@@ -245,7 +245,7 @@ html {
 
 export const ThemedGlobalStyle = createGlobalStyle`
 html {
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.bg1};
   background-color: ${({ theme }) => theme.bg2};
 }
 
