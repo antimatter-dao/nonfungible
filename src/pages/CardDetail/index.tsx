@@ -27,7 +27,7 @@ const TabButton = styled(ButtonWhite)<{ current?: string | boolean }>`
   width: 152px;
   color: ${({ theme, current }) => (current ? theme.black : theme.white)};
   background-color: ${({ theme, current }) => (current ? theme.white : 'transparent')};
-  border-color: ${({ theme }) => `1px solid ${theme.white}`};
+  border-color: ${({ theme }) => theme.white};
 `
 const InfoPanel = styled.div`
   background: #ffffff;

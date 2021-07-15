@@ -14,7 +14,7 @@ export const UserContext = React.createContext({
 })
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isOpen, setIsOpen] = useState<boolean>(true)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const hideUserPanel = () => {
     setIsOpen(false)
