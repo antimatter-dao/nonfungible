@@ -1,12 +1,30 @@
 import React from 'react'
 import { useTransition } from 'react-spring'
+import styled from 'styled-components'
 import useTheme from 'hooks/useTheme'
-import { StyledDialogOverlay } from '.'
+import { StyledDialogOverlay, AnimatedDialogContent } from '.'
 
-export default function StaticOverlay({ children, isOpen }: { children: React.ReactNode; isOpen: boolean }) {
+const StyledDialogContent = styled(AnimatedDialogContent)`
+  &[data-reach-dialog-content] {
+    background: transparent;
+    width: max-content;
+    margin: 0 auto;
+    padding: 0;
+  }
+`
+
+export default function ModalOverlay({
+  children,
+  isOpen,
+  onDismiss
+}: {
+  children: React.ReactNode
+  isOpen: boolean
+  onDismiss?: () => void
+}) {
   const theme = useTheme()
   const fadeTransition = useTransition(isOpen, null, {
-    config: { duration: 200 },
+    config: { duration: 150 },
     from: { opacity: 0 },
     enter: { opacity: 1 },
     leave: { opacity: 0 }
@@ -23,8 +41,9 @@ export default function StaticOverlay({ children, isOpen }: { children: React.Re
               unstable_lockFocusAcrossFrames={false}
               overflow="auto"
               alignitems="flex-start"
+              onDismiss={onDismiss}
             >
-              {children}
+              <StyledDialogContent aria-label="dialog content">{children}</StyledDialogContent>
             </StyledDialogOverlay>
           )
       )}

@@ -291,21 +291,40 @@ export const ButtonEmpty = styled(Base)<{ color?: string }>`
     cursor: auto;
   }
 `
-
 export const ButtonWhite = styled(Base)`
-  border: 1px solid #edeef2;
-  background-color: ${({ theme }) => theme.bg1};
+  border: 1px solid transparent;
+  background-color: ${({ theme }) => theme.text1};
   color: black;
 
   &:focus {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    box-shadow: 0 0 0 1pt ${darken(0.05, '#edeef2')};
+    opacity: 0.9;
   }
   &:hover {
-    box-shadow: 0 0 0 1pt ${darken(0.1, '#edeef2')};
+    opacity: 0.9;
   }
   &:active {
-    box-shadow: 0 0 0 1pt ${darken(0.1, '#edeef2')};
+    opacity: 0.9;
+  }
+  &:disabled {
+    opacity: 50%;
+    cursor: auto;
+  }
+`
+
+export const ButtonOutlinedWhite = styled(Base)`
+  border: 1px solid #ffffff;
+  background-color: ${({ theme }) => theme.bg1};
+  color: #ffffff;
+
+  &:focus {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    box-shadow: 0 0 0 1pt ${darken(0.6, '#ffffff')};
+  }
+  &:hover {
+    box-shadow: 0 0 0 1pt ${darken(0.6, '#ffffff')};
+  }
+  &:active {
+    box-shadow: 0 0 0 1pt ${darken(0.6, '#ffffff')};
   }
   &:disabled {
     opacity: 50%;

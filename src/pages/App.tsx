@@ -13,9 +13,10 @@ import { RedirectPathToSwapOnly } from './Swap/redirects'
 import Info from './Info'
 import FAQ from './FAQ'
 import Governance from './NFTGovernance'
-import SpotIndex from './SpotIndex'
+import SportIndex from './SportIndex'
 import GovernancePageDetail from './Governance/GovernancePageDetail'
 import Locker from './Locker'
+import { UserProvider } from 'context/UserContext'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -79,33 +80,36 @@ export default function App() {
     <Suspense fallback={null}>
       <Route component={GoogleAnalyticsReporter} />
       <Route component={DarkModeQueryParamReader} />
-      <AppWrapper id="app">
-        {/* <URLWarning /> */}
-        <ContentWrapper>
-          <HeaderWrapper id="header">
-            <Header />
-          </HeaderWrapper>
-          <BodyWrapper id="body">
-            <Popups />
-            <Polling />
-            {/* <WarningModal /> */}
-            {/* <TopLevelModals /> */}
-            <Web3ReactManager>
-              <Switch>
-                <Route exact strict path="/" component={SpotIndex} />
-                <Route exact strict path="/spot_index" component={SpotIndex} />
-                <Route exact strict path="/locker" component={Locker} />
-                <Route exact strict path="/governance" component={Governance} />
-                <Route exact strict path="/governance/detail/:governanceIndex" component={GovernancePageDetail} />
-                <Route exact strict path="/info" component={Info} />
-                <Route exact strict path="/faq" component={FAQ} />
-                <Route component={RedirectPathToSwapOnly} />
-              </Switch>
-            </Web3ReactManager>
-            {/* <Marginer /> */}
-          </BodyWrapper>
-        </ContentWrapper>
-      </AppWrapper>
+      <UserProvider>
+        <AppWrapper id="app">
+          {/* <URLWarning /> */}
+
+          <ContentWrapper>
+            <HeaderWrapper id="header">
+              <Header />
+            </HeaderWrapper>
+            <BodyWrapper id="body">
+              <Popups />
+              <Polling />
+              {/* <WarningModal /> */}
+              {/* <TopLevelModals /> */}
+              <Web3ReactManager>
+                <Switch>
+                  <Route exact strict path="/" component={SportIndex} />
+                  <Route exact strict path="/sport_index" component={SportIndex} />
+                  <Route exact strict path="/locker" component={Locker} />
+                  <Route exact strict path="/governance" component={Governance} />
+                  <Route exact strict path="/governance/detail/:governanceIndex" component={GovernancePageDetail} />
+                  <Route exact strict path="/info" component={Info} />
+                  <Route exact strict path="/faq" component={FAQ} />
+                  <Route component={RedirectPathToSwapOnly} />
+                </Switch>
+              </Web3ReactManager>
+              {/* <Marginer /> */}
+            </BodyWrapper>
+          </ContentWrapper>
+        </AppWrapper>
+      </UserProvider>
     </Suspense>
   )
 }

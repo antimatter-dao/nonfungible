@@ -1,8 +1,13 @@
-import React, { useCallback } from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
+import { saturate, darken, opacify, adjustHue } from 'polished'
 import useTheme from 'hooks/useTheme'
 import { TYPE } from 'theme'
-import { AutoColumn } from 'components/Column'
+import Column, { AutoColumn } from 'components/Column'
+import ProgressBar from './ProgressBar'
+import CurrencyLogosOverlay from './CurrencyLogosOverlay'
+import CurvedText from './CurvedText'
+import { RowBetween } from 'components/Row'
 
 export enum CardColor {
   RED = 'pastelRed',
@@ -10,6 +15,32 @@ export enum CardColor {
   YELLOW = 'pastelYellow',
   GREEN = 'pastelGreen',
   BLUE = 'pastelBlue'
+}
+
+export interface NFTCardProps {
+  icons: React.ReactNode[]
+  indexId: string
+  creator: string
+  name: string
+  color: CardColor
+  address: string
+}
+
+export interface NFTGovernanceCardProps {
+  time: string
+  title: string
+  color: CardColor
+  address: string
+  synopsis: string
+  voteFor: number
+  voteAgainst: number
+}
+
+const formatSynposis = (synopsis: string) => {
+  if (synopsis.length > 155) {
+    return synopsis.slice(0, 150) + '...'
+  }
+  return synopsis
 }
 
 const CardWrapper = styled.div<{ color: CardColor }>`
@@ -20,6 +51,7 @@ const CardWrapper = styled.div<{ color: CardColor }>`
   position: relative;
   overflow: hidden;
   padding: 20px;
+  cursor: pointer;
   :before {
     content: '';
     position: absolute;
@@ -40,6 +72,7 @@ const CardWrapper = styled.div<{ color: CardColor }>`
     height: 184px;
     left: 40%px;
     top: -100px;
+    opacity: 0.5;
     background: ${({ theme, color }) => theme[color]};
     filter: blur(100px);
     border-radius: 120px;
@@ -58,32 +91,6 @@ const CardWrapper = styled.div<{ color: CardColor }>`
   }
 `
 
-const LogosContainer = styled.div`
-  height: 380px;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-`
-const LogoWrapper = styled.div<{ size: number; top: number; left: number }>`
-  position: absolute;
-  z-index: 2;
-  width: ${({ size }) => size}px;
-  height: ${({ size }) => size}px;
-  top: ${({ top }) => top}px;
-  left: ${({ left }) => left}px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(169.06deg, #ffffff 8.1%, #f5f5f5 64.51%, #000000 176.95%),
-    linear-gradient(135.43deg, #000000 -7.49%, #000000 60.86%, #02ff49 180.85%);
-  svg {
-    height: ${({ size }) => size / 2}px;
-    width: ${({ size }) => size / 2}px;
-  }
-`
-
 const OutlineCard = styled.div`
   border: 1px solid ${({ theme }) => theme.text2};
   height: 100%;
@@ -94,7 +101,7 @@ const OutlineCard = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 20px;
+  padding: 24px 20px;
   & * {
     z-index: 2;
   }
@@ -122,31 +129,17 @@ const Capsule = styled.div<{ color: CardColor }>`
 function NFTCardBase({ children, color, address }: { children: React.ReactNode; color: CardColor; address: string }) {
   return (
     <CardWrapper color={color}>
-      <CurverText text={address} />
-      <CurverText text={address} inverted />
+      <CurvedText text={address} />
+      <CurvedText text={address} inverted />
       <OutlineCard>{children}</OutlineCard>
     </CardWrapper>
   )
 }
 
-export default function NFTCard({
-  icons,
-  indexId,
-  creator,
-  name,
-  color,
-  address
-}: {
-  icons: React.ReactNode[]
-  indexId: string
-  creator: string
-  name: string
-  color: CardColor
-  address: string
-}) {
+export default function NFTCard({ icons, indexId, creator, name, color, address }: NFTCardProps) {
   return (
     <NFTCardBase color={color} address={address}>
-      <CurrencyLogos icons={icons} />
+      <CurrencyLogosOverlay icons={icons} />
       <TYPE.black fontWeight={700} fontSize={28} color="#000000">
         {name}
       </TYPE.black>
@@ -168,205 +161,42 @@ export function NFTGovernanceCard({
   time,
   title,
   color,
-  address
-}: {
-  time: string
-  title: string
-  color: CardColor
-  address: string
-}) {
+  address,
+  synopsis,
+  voteFor,
+  voteAgainst
+}: NFTGovernanceCardProps) {
   const theme = useTheme()
+  const saturatedColor = useMemo(() => adjustHue(10, opacify(1, saturate(0.9, darken(0.3, theme[color])))), [
+    color,
+    theme
+  ])
   return (
     <NFTCardBase color={color} address={address}>
-      <AutoColumn gap="4px">
-        <TYPE.black fontWeight={700} fontSize={24} color="#000000">
-          {title}
-        </TYPE.black>
-
-        <Capsule color={color}>
-          <TYPE.small color={theme[color]}> {time}</TYPE.small>
-        </Capsule>
-      </AutoColumn>
+      <Column style={{ justifyContent: 'space-between', height: '100%' }}>
+        <AutoColumn gap="12px">
+          <TYPE.black fontWeight={700} fontSize={24} color="#000000">
+            {title}
+          </TYPE.black>
+          <TYPE.smallGray style={{ height: 84, overflow: 'hidden' }} fontSize={14}>
+            {formatSynposis(synopsis)}
+          </TYPE.smallGray>
+          <Capsule color={color}>
+            <TYPE.small color={saturatedColor}> {time}</TYPE.small>
+          </Capsule>
+        </AutoColumn>
+        <AutoColumn gap="10px">
+          <RowBetween>
+            <TYPE.smallGray>Votes For:</TYPE.smallGray>
+            <TYPE.smallGray>Votes Against:</TYPE.smallGray>
+          </RowBetween>
+          <ProgressBar voteFor={voteFor} voteAgainst={voteAgainst} color={theme[color]} />
+          <RowBetween>
+            <TYPE.small fontSize={12}>{voteFor.toLocaleString('en-US')}&nbsp;Matter</TYPE.small>
+            <TYPE.small fontSize={12}>{voteAgainst.toLocaleString('en-US')}&nbsp;Matter</TYPE.small>
+          </RowBetween>
+        </AutoColumn>
+      </Column>
     </NFTCardBase>
   )
-}
-
-function CurverText({ text, inverted }: { text: string; inverted?: boolean }) {
-  const theme = useTheme()
-  return (
-    <svg
-      width="151"
-      height="70"
-      viewBox="0 0 151 70"
-      style={
-        inverted
-          ? { position: 'absolute', left: 0, bottom: 4, transform: 'rotate(180deg)', zIndex: 2 }
-          : { position: 'absolute', right: 0, top: 4, zIndex: 2 }
-      }
-    >
-      <path id="curve" opacity="1" d="M0 9 h123 c0 0 12.5 5 16 16v40" stroke="none" fill="transparent" />
-      <text width="151">
-        <textPath xlinkHref="#curve" fontSize={12} alignmentBaseline="middle" fill={theme.text3}>
-          {text}
-        </textPath>
-      </text>
-    </svg>
-  )
-}
-
-function CurrencyLogos({ icons }: { icons: React.ReactNode[] }) {
-  const constructIcons = useCallback((icons: React.ReactNode[]) => {
-    switch (icons.length) {
-      case 0:
-        return null
-      case 1:
-        return (
-          <LogoWrapper size={64} top={148} left={108}>
-            {icons[0]}
-          </LogoWrapper>
-        )
-      case 2:
-        return (
-          <>
-            <LogoWrapper size={50} top={121} left={60}>
-              {icons[0]}
-            </LogoWrapper>
-            <LogoWrapper size={62} top={170} left={157}>
-              {icons[1]}
-            </LogoWrapper>
-          </>
-        )
-      case 3:
-        return (
-          <>
-            <LogoWrapper size={47} top={100} left={187}>
-              {icons[0]}
-            </LogoWrapper>
-            <LogoWrapper size={43} top={126} left={49}>
-              {icons[1]}
-            </LogoWrapper>
-            <LogoWrapper size={56} top={183} left={124}>
-              {icons[2]}
-            </LogoWrapper>
-          </>
-        )
-      case 4:
-        return (
-          <>
-            <LogoWrapper size={48} top={111} left={49}>
-              {icons[0]}
-            </LogoWrapper>
-            <LogoWrapper size={36} top={106} left={168}>
-              {icons[1]}
-            </LogoWrapper>
-            <LogoWrapper size={40} top={188} left={98}>
-              {icons[2]}
-            </LogoWrapper>
-            <LogoWrapper size={60} top={226} left={175}>
-              {icons[3]}
-            </LogoWrapper>
-          </>
-        )
-      case 5:
-        return (
-          <>
-            <LogoWrapper size={48} top={104} left={40}>
-              {icons[0]}
-            </LogoWrapper>
-            <LogoWrapper size={40} top={97} left={200}>
-              {icons[1]}
-            </LogoWrapper>
-            <LogoWrapper size={36} top={144} left={121}>
-              {icons[2]}
-            </LogoWrapper>
-            <LogoWrapper size={32} top={211} left={83}>
-              {icons[3]}
-            </LogoWrapper>
-            <LogoWrapper size={56} top={234} left={168}>
-              {icons[4]}
-            </LogoWrapper>
-          </>
-        )
-      case 6:
-        return (
-          <>
-            <LogoWrapper size={40} top={104} left={40}>
-              {icons[0]}
-            </LogoWrapper>
-            <LogoWrapper size={40} top={97} left={200}>
-              {icons[1]}
-            </LogoWrapper>
-            <LogoWrapper size={36} top={134} left={119}>
-              {icons[2]}
-            </LogoWrapper>
-            <LogoWrapper size={32} top={190} left={58}>
-              {icons[3]}
-            </LogoWrapper>
-            <LogoWrapper size={44} top={199} left={158}>
-              {icons[4]}
-            </LogoWrapper>
-            <LogoWrapper size={40} top={270} left={195}>
-              {icons[5]}
-            </LogoWrapper>
-          </>
-        )
-      case 7:
-        return (
-          <>
-            <LogoWrapper size={40} top={104} left={40}>
-              {icons[0]}
-            </LogoWrapper>
-            <LogoWrapper size={40} top={97} left={200}>
-              {icons[1]}
-            </LogoWrapper>
-            <LogoWrapper size={36} top={134} left={119}>
-              {icons[2]}
-            </LogoWrapper>
-            <LogoWrapper size={32} top={190} left={58}>
-              {icons[3]}
-            </LogoWrapper>
-            <LogoWrapper size={44} top={199} left={158}>
-              {icons[4]}
-            </LogoWrapper>
-            <LogoWrapper size={28} top={232} left={115}>
-              {icons[5]}
-            </LogoWrapper>
-            <LogoWrapper size={40} top={270} left={195}>
-              {icons[6]}
-            </LogoWrapper>
-          </>
-        )
-      default:
-        return (
-          <>
-            <LogoWrapper size={40} top={104} left={40}>
-              {icons[0]}
-            </LogoWrapper>
-            <LogoWrapper size={40} top={97} left={200}>
-              {icons[1]}
-            </LogoWrapper>
-            <LogoWrapper size={36} top={134} left={119}>
-              {icons[2]}
-            </LogoWrapper>
-            <LogoWrapper size={32} top={190} left={58}>
-              {icons[3]}
-            </LogoWrapper>
-            <LogoWrapper size={28} top={267} left={212}>
-              {icons[4]}
-            </LogoWrapper>
-            <LogoWrapper size={44} top={194} left={147}>
-              {icons[5]}
-            </LogoWrapper>
-            <LogoWrapper size={28} top={220} left={93}>
-              {icons[6]}
-            </LogoWrapper>
-            <LogoWrapper size={40} top={270} left={195}>
-              {icons[7]}
-            </LogoWrapper>
-          </>
-        )
-    }
-  }, [])
-
-  return <LogosContainer>{constructIcons(icons)}</LogosContainer>
 }

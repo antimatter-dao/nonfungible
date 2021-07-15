@@ -5,7 +5,7 @@ import { CardColor } from 'components/NFTCard'
 import { TYPE } from 'theme'
 import { RowBetween } from 'components/Row'
 import { ButtonOutlinedBlack, ButtonPrimary } from 'components/Button'
-import Table from 'components/Table'
+import Table, { OwnerCell } from 'components/Table'
 import { ReactComponent as Created } from 'assets/svg/created.svg'
 import { ReactComponent as Transfer } from 'assets/svg/transfer.svg'
 import { ReactComponent as Unlock } from 'assets/svg/unlock.svg'
@@ -50,18 +50,6 @@ const StyledCard = styled.div<{ color: CardColor }>`
 const OpenButton = styled(ButtonOutlinedBlack)`
   width: 100px;
   padding: 12px;
-`
-const Profile = styled.div`
-  display: flex;
-  align-items: center;
-`
-const ProfileImg = styled.div<{ url?: string }>`
-  height: 24px;
-  width: 24px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 8px;
-  background: #000000 ${({ url }) => (url ? `url(${url})` : '')};
 `
 
 export default function Locker() {
@@ -148,14 +136,5 @@ function Card({ color, value, title }: { color: CardColor; value: JSX.Element; t
         </TYPE.darkGray>
       </AutoColumn>
     </StyledCard>
-  )
-}
-
-function OwnerCell({ url, name }: { url?: string; name: string }) {
-  return (
-    <Profile>
-      <ProfileImg url={url} />
-      {name}
-    </Profile>
   )
 }

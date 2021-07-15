@@ -3,24 +3,26 @@ import styled from 'styled-components'
 import { StyledInput } from 'components/NumericalInput'
 import { AutoRow } from 'components/Row'
 import { TYPE } from 'theme'
-import useTheme from 'hooks/useTheme'
 
-const CustomInput = styled(StyledInput)<{ disabled?: boolean; error?: boolean }>`
+const CustomInput = styled(StyledInput)<{ disabled?: boolean; error?: boolean; padding: string; height?: string }>`
   width: 100%;
   font-size: 16px;
   font-weight: 400;
-  color: ${({ theme, disabled }) => (disabled ? theme.bg5 : theme.bg1)};
+  color: ${({ theme, disabled }) => (disabled ? theme.text3 : theme.bg1)};
   align-items: center;
-  padding: 0 0.5rem 0 1rem;
+  padding: ${({ padding }) => padding + ' 20px'};
   width: 100%;
-  background-color: ${({ theme, disabled }) => (disabled ? theme.text2 : theme.text1)};
+  background-color: ${({ disabled }) => (disabled ? 'rgba(0, 0, 0, 0.1)' : '#ffffff')};
   border-radius: 14px;
-  height: 3rem;
-  border: 1px solid ${({ theme, error }) => (error ? theme.red1 : 'transpanret')};
+  height:${({ height }) => height ?? 'auto'}
+  border: 1px solid ${({ theme, error }) => (error ? theme.red1 : theme.text3)};
+  ::placeholder {
+    color: ${({ theme }) => theme.bg3};
+  } 
 `
 
 export const CustomTextArea = styled.textarea<{ error?: boolean; fontSize?: string; align?: string }>`
-  color: ${({ error, theme }) => (error ? theme.red1 : theme.text1)};
+  color: ${({ theme, disabled }) => (disabled ? theme.text3 : theme.bg1)};
   width: 100%
   position: relative;
   font-size: 16px;
@@ -28,15 +30,15 @@ export const CustomTextArea = styled.textarea<{ error?: boolean; fontSize?: stri
   border: none;
   padding: .5rem 1rem;
   border-radius: 14px;
-  border: 1px solid ${({ theme, error }) => (error ? theme.red1 : 'transpanret')};
-  background-color: ${({ theme, disabled }) => (disabled ? 'rgba(255, 255, 255, 0.08)' : theme.bg2)};
+  border: 1px solid ${({ theme, error }) => (error ? theme.red1 : theme.text3)};
+  background-color: ${({ disabled }) => (disabled ? 'rgba(0, 0, 0, 0.1)' : '#ffffff')};
   text-align: ${({ align }) => align && align};
   ::-webkit-search-decoration {
     -webkit-appearance: none;
   }
   ::placeholder {
-    color: ${({ theme }) => theme.text4};
-  }
+    color: ${({ theme }) => theme.bg3};
+  } 
   resize: none;
 `
 
@@ -54,7 +56,7 @@ const LabelRow = styled.div`
     cursor: pointer;
     color: ${({ theme }) => theme.text3};
   }
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   ${({ theme }) => theme.flexRowNoWrap}
 `
 
@@ -67,6 +69,9 @@ export const TextInput = React.memo(function InnerInput({
   error,
   width = '100%',
   maxWidth,
+  hint,
+  height,
+  padding = '20px',
   ...rest
 }: {
   error?: boolean
@@ -76,18 +81,19 @@ export const TextInput = React.memo(function InnerInput({
   textarea?: boolean
   maxWidth?: string
   width?: string
+  hint?: string
+  padding?: string
+  height?: string
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
-  const theme = useTheme()
-
   return (
     <Container width={width} maxWidth={maxWidth}>
       {label && (
         <LabelRow>
           <AutoRow justify="space-between">
             {label && (
-              <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
+              <TYPE.black fontWeight={500} fontSize={14}>
                 {label}
-              </TYPE.body>
+              </TYPE.black>
             )}
           </AutoRow>
         </LabelRow>
@@ -106,6 +112,8 @@ export const TextInput = React.memo(function InnerInput({
       ) : (
         <CustomInput
           {...rest}
+          height={height}
+          padding={padding}
           name={name}
           type="text"
           placeholder={placeholder || 'text input'}
@@ -113,6 +121,11 @@ export const TextInput = React.memo(function InnerInput({
           disabled={disabled}
           error={error}
         />
+      )}
+      {hint && (
+        <TYPE.darkGray fontSize={14} style={{ marginTop: 8 }}>
+          {hint}
+        </TYPE.darkGray>
       )}
     </Container>
   )

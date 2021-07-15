@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
-import NFTCard, { CardColor } from 'components/NFTCard'
+import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
 import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 import { RowFixed } from 'components/Row'
 import NFTButtonSelect from 'components/Button/NFTButtonSelect'
@@ -8,7 +8,7 @@ import { ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
 import { ReactComponent as SearchIcon } from '../../assets/svg/search.svg'
 import TextInput from 'components/TextInput'
 
-const data = [
+export const dummyData: NFTCardProps[] = [
   {
     name: 'Index Name',
     indexId: '1',
@@ -116,7 +116,7 @@ const Wrapper = styled.div`
   margin-bottom: auto;
 `
 
-export const ContentWrapper = styled.div`
+const ContentWrapper = styled.div`
   position: relative;
   max-width: 1280px;
   margin: auto;
@@ -166,7 +166,7 @@ const ButtonWrapper = styled(RowFixed)`
 `};
 `
 
-export default function SponIndex() {
+export default function SportIndex() {
   const handleSearch = useCallback((searchParam: string, searchBy: string) => {
     console.log(searchParam, searchBy)
   }, [])
@@ -174,7 +174,7 @@ export default function SponIndex() {
     <Wrapper>
       <Search onSearch={handleSearch} />
       <ContentWrapper>
-        {data.map(({ color, address, icons, indexId, creator, name }) => (
+        {dummyData.map(({ color, address, icons, indexId, creator, name }) => (
           <NFTCard
             color={color}
             address={address}
@@ -217,7 +217,7 @@ export function Search({ onSearch }: { onSearch: (searchParam: string, searchBy:
             selectedId={searchParam}
             placeholder="Select search parameter"
           />
-          <TextInput placeholder="Search by" maxWidth="552px" />
+          <TextInput placeholder="Search by" maxWidth="552px" height="3rem" />
           <ButtonWrapper>
             <ButtonPrimary width="186px" onClick={handleSearch}>
               <SearchIcon style={{ marginRight: 10 }} />

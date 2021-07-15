@@ -56,7 +56,7 @@ export const Button = styled.button.attrs<{ warning: boolean }, { backgroundColo
 export const CloseIcon = styled(X)<{ onClick: () => void }>`
   cursor: pointer;
   > * {
-    stroke: ${({ theme }) => theme.text3};
+    stroke: ${({ theme }) => theme.bg1};
   }
 `
 

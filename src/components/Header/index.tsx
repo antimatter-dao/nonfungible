@@ -14,6 +14,7 @@ import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import ToggleMenu from './ToggleMenu'
 import { ButtonOutlinedPrimary } from 'components/Button'
 import { ReactComponent as AntimatterIcon } from 'assets/svg/antimatter_icon.svg'
+import useUserPanel from 'hooks/useUserPanel'
 
 const activeClassName = 'ACTIVE'
 
@@ -29,7 +30,7 @@ interface Tab extends TabContent {
 }
 
 export const tabs: Tab[] = [
-  { title: 'Spot Index', route: 'spot_index' },
+  { title: 'Sport Index', route: 'sport_index' },
   { title: 'Future Index', route: 'future_index' },
   { title: 'Locker', route: 'locker' },
   { title: 'Governance', route: 'governance' }
@@ -216,12 +217,16 @@ const StyledNavLink = styled(NavLink).attrs({
   }
 `
 
-const UserButton = styled(ButtonText)`
+const UserButton = styled(ButtonText)<{ isOpen: boolean }>`
   height: 44px;
   width: 44px;
   border-radius: 50%;
-  background: linear-gradient(360deg, #66d7fa 0%, rgba(207, 209, 86, 0) 50%),
-    linear-gradient(259.57deg, #66d7fa 1.58%, #66d7fa 92.54%);
+  background: ${({ isOpen }) =>
+    isOpen
+      ? `linear-gradient(360deg, #fffa8b 0%, rgba(207, 209, 86, 0) 50%),
+  linear-gradient(259.57deg, #b2f355 1.58%, #66d7fa 92.54%);`
+      : `linear-gradient(360deg, #66d7fa 0%, rgba(207, 209, 86, 0) 50%),
+    linear-gradient(259.57deg, #66d7fa 1.58%, #66d7fa 92.54%);`};
   border: none;
   flex-shrink: 0;
   ${({ theme }) => theme.flexRowNoWrap};
@@ -237,6 +242,7 @@ const UserButton = styled(ButtonText)`
 
 export default function Header() {
   const { account } = useActiveWeb3React()
+  const { showUserPanel, isUserPanelOpen } = useUserPanel()
 
   const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
@@ -289,7 +295,7 @@ export default function Header() {
                 </UNIWrapper>
               )}
               <Web3Status />
-              <UserButton>
+              <UserButton onClick={showUserPanel} isOpen={isUserPanelOpen}>
                 <AntimatterIcon />
               </UserButton>
             </AccountElement>
