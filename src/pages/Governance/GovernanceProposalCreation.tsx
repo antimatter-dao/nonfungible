@@ -20,7 +20,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { useApproveCallback, ApprovalState } from 'hooks/useApproveCallback'
 import { tryParseAmount } from 'state/swap/hooks'
 import { useGovernanceCreation } from 'hooks/useGovernanceDetail'
-import StaticOverlay from 'components/Modal/StaticOverlay'
+import StaticOverlay from 'components/Modal/ModalOverlay'
 import { FACTORY_CHAIN_ID, GOVERNANCE_ADDRESS, MATTER_ADDRESS } from '../../constants'
 import { Dots } from 'components/swap/styleds'
 

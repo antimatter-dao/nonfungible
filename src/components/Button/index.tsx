@@ -19,7 +19,7 @@ export const Base = styled(RebassButton)<{
 }>`
   padding: ${({ padding }) => (padding ? padding : '14px')};
   width: ${({ width }) => (width ? width : '100%')};
-  font-weight: 500;
+  font-weight: 400;
   text-align: center;
   border-radius: 49px;
   border-radius: ${({ borderRadius }) => borderRadius && borderRadius};
@@ -67,40 +67,33 @@ export const ButtonPrimary = styled(Base)`
   }
 `
 
+export const ButtonBlack = styled(Base)`
+  background-color: ${({ theme }) => theme.bg1};
+  color: ${({ theme }) => theme.text1};
+  border: 1px solid transparent;
+  &:focus {
+    box-shadow: 0 0 0 1pt ${({ theme }) => theme.bg4};
+  }
+  &:hover {
+    background-color: ${({ theme }) => theme.bg2};
+  }
+  &:active {
+    box-shadow: 0 0 0 1pt ${({ theme }) => theme.bg4};
+  }
+  &:disabled {
+    cursor: auto;
+    box-shadow: none;
+    background: ${({ theme }) => theme.bg4};
+    outline: none;
+    opacity: ${({ altDisabledStyle }) => (altDisabledStyle ? '0.5' : '1')};
+  }
+`
+
 export const ButtonLight = styled(Base)`
   background-color: ${({ theme }) => theme.primary5};
   color: ${({ theme }) => theme.primaryText1};
   font-size: 16px;
   font-weight: 500;
-  &:focus {
-    box-shadow: 0 0 0 1pt ${({ theme, disabled }) => !disabled && darken(0.03, theme.bg4)};
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.03, theme.primary5)};
-  }
-  &:hover {
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.03, theme.primary5)};
-  }
-  &:active {
-    box-shadow: 0 0 0 1pt ${({ theme, disabled }) => !disabled && darken(0.05, theme.bg4)};
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.05, theme.primary5)};
-  }
-  :disabled {
-    opacity: 0.4;
-    :hover {
-      cursor: auto;
-      background-color: ${({ theme }) => theme.primary5};
-      box-shadow: none;
-      border: 1px solid transparent;
-      outline: none;
-    }
-  }
-`
-
-export const ButtonBlack = styled(Base)`
-  background-color: ${({ theme }) => theme.black};
-  color: ${({ theme }) => theme.text1};
-  font-size: 16px;
-  font-weight: 500;
-  height: 60px;
   &:focus {
     box-shadow: 0 0 0 1pt ${({ theme, disabled }) => !disabled && darken(0.03, theme.bg4)};
     background-color: ${({ theme, disabled }) => !disabled && darken(0.03, theme.primary5)};
@@ -258,6 +251,25 @@ export const ButtonOutlinedPrimary = styled(Base)`
   }
 `
 
+export const ButtonOutlinedBlack = styled(Base)`
+  border: 1px solid ${({ theme }) => theme.bg1};
+  background-color: transparent;
+  color: ${({ theme }) => theme.bg1};
+
+  :hover,
+  :focus {
+    opacity: 0.7;
+  }
+  :active {
+    box-shadow: 0 0 0 1px ${({ theme }) => theme.text2};
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: auto;
+  }
+`
+
 export const ButtonEmpty = styled(Base)<{ color?: string }>`
   background-color: transparent;
   color: ${({ theme, color }) => color ?? theme.primary1};
@@ -279,21 +291,40 @@ export const ButtonEmpty = styled(Base)<{ color?: string }>`
     cursor: auto;
   }
 `
-
 export const ButtonWhite = styled(Base)`
-  border: 1px solid #edeef2;
-  background-color: ${({ theme }) => theme.bg1};
+  border: 1px solid transparent;
+  background-color: ${({ theme }) => theme.text1};
   color: black;
 
   &:focus {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    box-shadow: 0 0 0 1pt ${darken(0.05, '#edeef2')};
+    opacity: 0.9;
   }
   &:hover {
-    box-shadow: 0 0 0 1pt ${darken(0.1, '#edeef2')};
+    opacity: 0.9;
   }
   &:active {
-    box-shadow: 0 0 0 1pt ${darken(0.1, '#edeef2')};
+    opacity: 0.9;
+  }
+  &:disabled {
+    opacity: 50%;
+    cursor: auto;
+  }
+`
+
+export const ButtonOutlinedWhite = styled(Base)`
+  border: 1px solid #ffffff;
+  background-color: ${({ theme }) => theme.bg1};
+  color: #ffffff;
+
+  &:focus {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    box-shadow: 0 0 0 1pt ${darken(0.6, '#ffffff')};
+  }
+  &:hover {
+    box-shadow: 0 0 0 1pt ${darken(0.6, '#ffffff')};
+  }
+  &:active {
+    box-shadow: 0 0 0 1pt ${darken(0.6, '#ffffff')};
   }
   &:disabled {
     opacity: 50%;
