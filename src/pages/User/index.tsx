@@ -214,8 +214,9 @@ export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss
               <SwitchTab onTabClick={handleTabClick} currentTab={currentTab} />
               {(currentTab === Tabs.POSITION || currentTab === Tabs.LOCKER) && (
                 <ContentWrapper>
-                  {dummyData.map(({ color, address, icons, indexId, creator, name }) => (
+                  {dummyData.map(({ color, address, icons, indexId, creator, name, id }) => (
                     <NFTCard
+                      id={id}
                       color={color}
                       address={address}
                       icons={icons}
@@ -223,6 +224,7 @@ export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss
                       key={indexId}
                       creator={creator}
                       name={name}
+                      onClick={() => {}}
                     />
                   ))}
                 </ContentWrapper>

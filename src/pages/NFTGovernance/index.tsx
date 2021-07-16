@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { NFTGovernanceCard, CardColor, NFTGovernanceCardProps } from 'components/NFTCard'
 import { ButtonText, TYPE } from 'theme'
 import { ButtonOutlinedWhite, ButtonWhite } from 'components/Button'
+import { useHistory } from 'react-router-dom'
 
 const dummyData: NFTGovernanceCardProps[] = [
   {
+    id: '1',
     title: 'Transaction fees',
     color: CardColor.GREEN,
     time: '0d : 32h : 12m : 10s',
@@ -13,11 +15,12 @@ const dummyData: NFTGovernanceCardProps[] = [
     synopsis:
       'The proposal is to use Dutch Auction format instead of the current Sealed Bid Auctions for all future Governance Vault sales. This will improve public...',
     voteFor: 213002,
-    voteAgainst: 113402
+    voteAgainst: 113402,
+    voteForPercentage: '10%'
   }
 ]
 
-const Wrapper = styled.div`
+const NFTGovernanceWrapper = styled.div`
   width: 100%;
   margin-bottom: auto;
 `
@@ -58,8 +61,16 @@ const ButtonGroup = styled.div`
 `
 
 export default function NFTGovernance() {
+  const history = useHistory()
+
+  const handleCardClick = useCallback(
+    (id: string | number) => () => {
+      history.push(`/governance/${id}`)
+    },
+    [history]
+  )
   return (
-    <Wrapper>
+    <NFTGovernanceWrapper id="NFTGovernance">
       <ActionBar>
         <div style={{ width: 127 }} />
         <ButtonGroup>
@@ -71,19 +82,24 @@ export default function NFTGovernance() {
         </ButtonText>
       </ActionBar>
       <ContentWrapper>
-        {dummyData.map(({ color, title, address, time, synopsis, voteFor, voteAgainst }, idx) => (
-          <NFTGovernanceCard
-            color={color}
-            title={title}
-            time={time}
-            address={address}
-            synopsis={synopsis}
-            key={address + idx}
-            voteFor={voteFor}
-            voteAgainst={voteAgainst}
-          />
-        ))}
+        {dummyData.map(
+          ({ color, title, address, time, synopsis, voteFor, voteAgainst, id, voteForPercentage }, idx) => (
+            <NFTGovernanceCard
+              id={id}
+              color={color}
+              title={title}
+              time={time}
+              address={address}
+              synopsis={synopsis}
+              key={address + idx}
+              onClick={handleCardClick(id)}
+              voteForPercentage={voteForPercentage}
+              voteFor={voteFor}
+              voteAgainst={voteAgainst}
+            />
+          )
+        )}
       </ContentWrapper>
-    </Wrapper>
+    </NFTGovernanceWrapper>
   )
 }

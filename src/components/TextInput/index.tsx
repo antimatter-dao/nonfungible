@@ -17,7 +17,7 @@ const CustomInput = styled(StyledInput)<{ disabled?: boolean; error?: boolean; p
   height:${({ height }) => height ?? 'auto'}
   border: 1px solid ${({ theme, error }) => (error ? theme.red1 : theme.text3)};
   ::placeholder {
-    color: ${({ theme }) => theme.bg3};
+    color: ${({ theme, height }) => (height ? theme.text3 : theme.bg3)};
   } 
 `
 

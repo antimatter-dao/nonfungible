@@ -14,7 +14,7 @@ import Info from './Info'
 import FAQ from './FAQ'
 import Governance from './NFTGovernance'
 import SportIndex from './SportIndex'
-import GovernancePageDetail from './Governance/GovernancePageDetail'
+import GovernanceDetail from './NFTGovernance/NFTGovernanceDetail'
 import Locker from './Locker'
 import { UserProvider } from 'context/UserContext'
 
@@ -99,7 +99,7 @@ export default function App() {
                   <Route exact strict path="/sport_index" component={SportIndex} />
                   <Route exact strict path="/locker" component={Locker} />
                   <Route exact strict path="/governance" component={Governance} />
-                  <Route exact strict path="/governance/detail/:governanceIndex" component={GovernancePageDetail} />
+                  <Route exact strict path="/governance/:governanceIndex" component={GovernanceDetail} />
                   <Route exact strict path="/info" component={Info} />
                   <Route exact strict path="/faq" component={FAQ} />
                   <Route component={RedirectPathToSwapOnly} />

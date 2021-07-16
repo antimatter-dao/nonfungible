@@ -30,6 +30,7 @@ export const Timer = ({ timer, onZero }: { timer: number; onZero: () => void }) 
       onZero()
     }
   }, [time, onZero])
+  console.log(toDeltaTimer(time))
 
   return <>{toDeltaTimer(time)}</>
 }
