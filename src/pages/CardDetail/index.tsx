@@ -36,6 +36,10 @@ const InfoPanel = styled.div`
   padding: 26px 52px;
   min-height: 490px;
 `
+const StyledNFTCard = styled.div`
+  transform-origin: 0 0;
+  transform: scale(1.29);
+`
 
 const StyledAvatar = styled.div<{ wh?: string }>`
   width: ${({ wh }) => (wh ? wh : '36px')};
@@ -86,9 +90,10 @@ const TokenWrapper = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `
 const AssetsWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 40px;
+  grid-template-rows: repeat(4, 1fr);
   height: 388px;
 `
 const TradeWrapper = styled(AutoColumn)`
@@ -254,7 +259,9 @@ export default function CardDetail() {
       </RowBetween>
       <Wrapper>
         <RowBetween style={{ marginTop: 70 }} align="flex-start">
-          <NFTCard {...cardData} />
+          <StyledNFTCard>
+            <NFTCard {...cardData} />
+          </StyledNFTCard>
           {currentTab === TabType.Information ? (
             <InfoPanel>
               <StyledTabs>

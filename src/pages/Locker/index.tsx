@@ -20,7 +20,7 @@ const CardWrapper = styled.div`
   display: grid;
   grid-gap: 26px;
   grid-template-columns: auto auto auto;
-  grid-template-row: 1;
+  grid-template-rows: 1fr;
 `
 
 const StyledCard = styled.div<{ color: CardColor }>`
