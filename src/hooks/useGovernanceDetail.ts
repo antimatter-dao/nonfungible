@@ -4,15 +4,28 @@ import { useMemo, useRef } from 'react'
 import { useGovernanceContract } from './useContract'
 import { useSingleCallResult, useSingleContractMultipleData } from '../state/multicall/hooks'
 import { calculateGasMargin } from 'utils'
+import { VoteOption } from 'pages/NFTGovernance/NFTGovernanceDetail'
+import { JSBI } from '@uniswap/sdk'
 
-interface GovernanceContent {
+function calcVoteForPercentage(type: VoteOption, voteFor?: string | number, voteAgainst?: string | number): string {
+  if (!voteFor || !voteAgainst) return '0'
+  const count = JSBI.add(JSBI.BigInt(voteFor), JSBI.BigInt(voteAgainst))
+  if (!JSBI.toNumber(count)) return '0'
+  let percentage = JSBI.toNumber(
+    JSBI.divide(JSBI.multiply(JSBI.BigInt(10000), JSBI.BigInt(type === VoteOption.FOR ? voteFor : voteAgainst)), count)
+  ).toString()
+  percentage = (parseFloat(percentage) / 100).toFixed(2)
+  return percentage
+}
+
+export interface GovernanceContent {
   summary: string
   details: string
   agreeFor: string
   againstFor: string
 }
 
-interface Users {
+export interface Users {
   totalNo: string
   totalStake: string
   totalYes: string
@@ -35,6 +48,8 @@ export interface GovernanceData {
   voteAgainst: string
   totalVotes: string
   status?: StatusOption
+  voteForPercentage: string
+  voteAgainstPercentage: string
 }
 
 export function useGovernanceDetails(index: string) {
@@ -42,27 +57,35 @@ export function useGovernanceDetails(index: string) {
   const proposesRes = useSingleCallResult(contact, 'proposes', [index])
   const resultRes = useSingleCallResult(contact, 'getResult', [index])
 
-  const result = proposesRes.result
-
-  const ret: GovernanceData = {
-    id: index,
-    title: result ? result.subject : '',
-    creator: result ? result.creator : '',
-    timeLeft: result ? result.endTime.toString() : '',
-    voteFor: result ? result.yes.toString() : '',
-    voteAgainst: result ? result.no.toString() : '',
-    totalVotes: result ? result.totalStake.toString() : '',
-    contents: result ? JSON.parse(result.content) : undefined,
-    status: resultRes.result
-      ? resultRes.result.toString() === '1'
-        ? StatusOption.Success
-        : resultRes.result.toString() === '2'
-        ? StatusOption.Failed
+  const ret: GovernanceData = useMemo(() => {
+    const result = proposesRes.result
+    const data = {
+      id: index,
+      title: result ? result.subject : '',
+      creator: result ? result.creator : '',
+      timeLeft: result ? result.endTime.toString() : '',
+      voteFor: result ? result.yes.toString() : '',
+      voteAgainst: result ? result.no.toString() : '',
+      totalVotes: result ? result.totalStake.toString() : '',
+      contents: result ? JSON.parse(result.content) : undefined,
+      status: resultRes.result
+        ? resultRes.result.toString() === '1'
+          ? StatusOption.Success
+          : resultRes.result.toString() === '2'
+          ? StatusOption.Failed
+          : StatusOption.Live
         : StatusOption.Live
-      : StatusOption.Live
-  }
+    }
+    return {
+      ...data,
+      voteForPercentage: `${calcVoteForPercentage(VoteOption.FOR, data.voteFor, data.voteAgainst)}%`,
+      voteAgainstPercentage: `${calcVoteForPercentage(VoteOption.AGAINST, data.voteFor, data.voteAgainst)}%`
+    }
+  }, [index, resultRes.result, proposesRes])
 
-  return { data: ret, loading: proposesRes.loading }
+  const returnVal = useMemo(() => ({ data: ret, loading: proposesRes.loading }), [ret, proposesRes.loading])
+
+  return returnVal
 }
 
 export function useGovernanceCount(): number | undefined {
@@ -119,6 +142,8 @@ export function useGovernanceList(): { list: GovernanceData[] | undefined; loadi
             voteFor,
             voteAgainst,
             totalVotes,
+            voteForPercentage: `${calcVoteForPercentage(VoteOption.FOR, voteFor, voteAgainst)}%`,
+            voteAgainstPercentage: `${calcVoteForPercentage(VoteOption.AGAINST, voteFor, voteAgainst)}%`,
             contents: {
               summary,
               details,

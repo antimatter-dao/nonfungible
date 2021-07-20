@@ -1,6 +1,5 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import { saturate, darken, opacify, adjustHue } from 'polished'
 import useTheme from 'hooks/useTheme'
 import { TYPE } from 'theme'
 import Column, { AutoColumn } from 'components/Column'
@@ -8,6 +7,7 @@ import ProgressBar from './ProgressBar'
 import CurrencyLogosOverlay from './CurrencyLogosOverlay'
 import CurvedText from './CurvedText'
 import { RowBetween } from 'components/Row'
+import { Capsule, TimerCapsule } from './Capsule'
 
 export enum CardColor {
   RED = 'pastelRed',
@@ -24,6 +24,7 @@ export interface NFTCardProps {
   name: string
   color: CardColor
   address: string
+  id: string | number
 }
 
 export interface NFTGovernanceCardProps {
@@ -34,6 +35,8 @@ export interface NFTGovernanceCardProps {
   synopsis: string
   voteFor: number
   voteAgainst: number
+  id: string | number
+  voteForPercentage: string
 }
 
 const formatSynposis = (synopsis: string) => {
@@ -107,28 +110,19 @@ const OutlineCard = styled.div`
   }
 `
 
-const Capsule = styled.div<{ color: CardColor }>`
-  padding: 6px 10px;
-  border-radius: 20px;
-  overflow: hidden;
-  position: relative;
-  width: max-content;
-  display: flex;
-  :before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    opacity: 0.2;
-    background-color: ${({ theme, color }) => theme[color]};
-  }
-`
-
-function NFTCardBase({ children, color, address }: { children: React.ReactNode; color: CardColor; address: string }) {
+function NFTCardBase({
+  children,
+  color,
+  address,
+  onClick
+}: {
+  children: React.ReactNode
+  color: CardColor
+  address: string
+  onClick?: () => void
+}) {
   return (
-    <CardWrapper color={color}>
+    <CardWrapper color={color} onClick={onClick}>
       <CurvedText text={address} />
       <CurvedText text={address} inverted />
       <OutlineCard>{children}</OutlineCard>
@@ -136,9 +130,17 @@ function NFTCardBase({ children, color, address }: { children: React.ReactNode; 
   )
 }
 
-export default function NFTCard({ icons, indexId, creator, name, color, address }: NFTCardProps) {
+export default function NFTCard({
+  icons,
+  indexId,
+  creator,
+  name,
+  color,
+  address,
+  onClick
+}: NFTCardProps & { onClick?: () => void }) {
   return (
-    <NFTCardBase color={color} address={address}>
+    <NFTCardBase color={color} address={address} onClick={onClick}>
       <CurrencyLogosOverlay icons={icons} />
       <TYPE.black fontWeight={700} fontSize={28} color="#000000">
         {name}
@@ -164,15 +166,13 @@ export function NFTGovernanceCard({
   address,
   synopsis,
   voteFor,
-  voteAgainst
-}: NFTGovernanceCardProps) {
+  voteAgainst,
+  voteForPercentage,
+  onClick
+}: NFTGovernanceCardProps & { onClick: () => void }) {
   const theme = useTheme()
-  const saturatedColor = useMemo(() => adjustHue(10, opacify(1, saturate(0.9, darken(0.3, theme[color])))), [
-    color,
-    theme
-  ])
   return (
-    <NFTCardBase color={color} address={address}>
+    <NFTCardBase color={color} address={address} onClick={onClick}>
       <Column style={{ justifyContent: 'space-between', height: '100%' }}>
         <AutoColumn gap="12px">
           <TYPE.black fontWeight={700} fontSize={24} color="#000000">
@@ -181,16 +181,14 @@ export function NFTGovernanceCard({
           <TYPE.smallGray style={{ height: 84, overflow: 'hidden' }} fontSize={14}>
             {formatSynposis(synopsis)}
           </TYPE.smallGray>
-          <Capsule color={color}>
-            <TYPE.small color={saturatedColor}> {time}</TYPE.small>
-          </Capsule>
+          <TimerCapsule color={color} timeLeft={+time} />
         </AutoColumn>
         <AutoColumn gap="10px">
           <RowBetween>
             <TYPE.smallGray>Votes For:</TYPE.smallGray>
             <TYPE.smallGray>Votes Against:</TYPE.smallGray>
           </RowBetween>
-          <ProgressBar voteFor={voteFor} voteAgainst={voteAgainst} color={theme[color]} />
+          <ProgressBar leftPercentage={voteForPercentage} color={theme[color]} />
           <RowBetween>
             <TYPE.small fontSize={12}>{voteFor.toLocaleString('en-US')}&nbsp;Matter</TYPE.small>
             <TYPE.small fontSize={12}>{voteAgainst.toLocaleString('en-US')}&nbsp;Matter</TYPE.small>

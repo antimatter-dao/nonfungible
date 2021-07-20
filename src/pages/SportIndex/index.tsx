@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react'
+import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
 import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
@@ -10,6 +11,7 @@ import TextInput from 'components/TextInput'
 
 export const dummyData: NFTCardProps[] = [
   {
+    id: 1,
     name: 'Index Name',
     indexId: '1',
     color: CardColor.RED,
@@ -18,6 +20,7 @@ export const dummyData: NFTCardProps[] = [
     creator: 'Jack'
   },
   {
+    id: 2,
     name: 'Index Name',
     indexId: '2',
     color: CardColor.RED,
@@ -26,6 +29,7 @@ export const dummyData: NFTCardProps[] = [
     creator: 'Jack'
   },
   {
+    id: 3,
     name: 'Index Name',
     indexId: '3',
     color: CardColor.BLUE,
@@ -34,6 +38,7 @@ export const dummyData: NFTCardProps[] = [
     creator: 'Jack'
   },
   {
+    id: 4,
     name: 'Index Name',
     indexId: '4',
     color: CardColor.YELLOW,
@@ -42,6 +47,7 @@ export const dummyData: NFTCardProps[] = [
     creator: 'Jack'
   },
   {
+    id: 5,
     name: 'Index Name',
     indexId: '5',
     color: CardColor.GREEN,
@@ -50,6 +56,7 @@ export const dummyData: NFTCardProps[] = [
     creator: 'Jack'
   },
   {
+    id: 6,
     name: 'Index Name',
     indexId: '6',
     color: CardColor.PURPLE,
@@ -58,6 +65,7 @@ export const dummyData: NFTCardProps[] = [
     creator: 'Jack'
   },
   {
+    id: 7,
     name: 'Index Name',
     indexId: '7',
     color: CardColor.PURPLE,
@@ -74,6 +82,7 @@ export const dummyData: NFTCardProps[] = [
     creator: 'Jack'
   },
   {
+    id: 8,
     name: 'Index Name',
     indexId: '8',
     color: CardColor.PURPLE,
@@ -167,6 +176,7 @@ const ButtonWrapper = styled(RowFixed)`
 `
 
 export default function SportIndex() {
+  const history = useHistory()
   const handleSearch = useCallback((searchParam: string, searchBy: string) => {
     console.log(searchParam, searchBy)
   }, [])
@@ -174,8 +184,9 @@ export default function SportIndex() {
     <Wrapper>
       <Search onSearch={handleSearch} />
       <ContentWrapper>
-        {dummyData.map(({ color, address, icons, indexId, creator, name }) => (
+        {dummyData.map(({ color, address, icons, indexId, creator, name, id }) => (
           <NFTCard
+            id={id}
             color={color}
             address={address}
             icons={icons}
@@ -183,6 +194,7 @@ export default function SportIndex() {
             key={indexId}
             creator={creator}
             name={name}
+            onClick={() => history.push('/locker')}
           />
         ))}
       </ContentWrapper>

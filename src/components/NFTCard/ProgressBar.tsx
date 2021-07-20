@@ -1,9 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
+import { CardColor } from '.'
 
 export const StyledProgressBar = styled.div<{ leftPercentage: string; isLarge?: boolean; color: string }>`
   width: 100%;
-  height: ${({ isLarge }) => (isLarge ? '12px' : '8px')};
+  height: ${({ isLarge }) => (isLarge ? '14px' : '12px')};
   border-radius: 14px;
   background-color: rgba(0, 0, 0, 0.1); 
   position: relative;
@@ -21,13 +22,11 @@ export const StyledProgressBar = styled.div<{ leftPercentage: string; isLarge?: 
 `
 
 export default function ProgressBar({
-  voteFor,
-  voteAgainst,
-  color
+  leftPercentage,
+  color = CardColor.GREEN
 }: {
-  voteFor: number
-  voteAgainst: number
-  color: string
+  leftPercentage: string
+  color?: string
 }) {
-  return <StyledProgressBar leftPercentage={`${(voteFor * 100) / (voteFor + voteAgainst)}%`} color={color} />
+  return <StyledProgressBar leftPercentage={leftPercentage} color={color} />
 }
