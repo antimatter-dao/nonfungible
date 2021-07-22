@@ -15,6 +15,8 @@ import ToggleMenu from './ToggleMenu'
 import { ButtonOutlinedPrimary } from 'components/Button'
 import { ReactComponent as AntimatterIcon } from 'assets/svg/antimatter_icon.svg'
 import useUserPanel from 'hooks/useUserPanel'
+import { useToggleCreationModal } from 'state/application/hooks'
+import CreationNFTModal from 'components/Creation'
 
 const activeClassName = 'ACTIVE'
 
@@ -243,7 +245,7 @@ const UserButton = styled(ButtonText)<{ isOpen: boolean }>`
 export default function Header() {
   const { account } = useActiveWeb3React()
   const { showUserPanel, isUserPanelOpen } = useUserPanel()
-
+  const toggleCreationModal = useToggleCreationModal()
   const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
   const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
@@ -265,7 +267,14 @@ export default function Header() {
         <div style={{ paddingLeft: 8, display: 'flex', alignItems: 'center', marginLeft: 'auto', marginRight: '2rem' }}>
           <HeaderControls>
             {account && (
-              <ButtonOutlinedPrimary width="120px" marginRight="16px">
+              <ButtonOutlinedPrimary
+                width="120px"
+                marginRight="16px"
+                height={44}
+                onClick={() => {
+                  toggleCreationModal()
+                }}
+              >
                 Create
               </ButtonOutlinedPrimary>
             )}
@@ -310,6 +319,8 @@ export default function Header() {
           <ToggleMenu />
         </RowBetween>
       </MobileHeader>
+
+      <CreationNFTModal />
     </HeaderFrame>
   )
 }

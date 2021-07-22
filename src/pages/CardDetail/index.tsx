@@ -16,6 +16,7 @@ import { getDexTradeList, DexTradeData } from 'utils/option/httpRequests'
 // import { currencyId } from 'utils/currencyId'
 import { useNetwork } from 'hooks/useNetwork'
 import NumericalInput from 'components/NumericalInput'
+import { useHistory } from 'react-router-dom'
 
 const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
@@ -132,6 +133,7 @@ let tokenList = [
 tokenList = [...tokenList, ...tokenList, ...tokenList, ...tokenList, ...tokenList, ...tokenList, ...tokenList]
 
 const cardData = {
+  id: '',
   name: 'Index Name',
   indexId: '2',
   color: CardColor.RED,
@@ -142,6 +144,7 @@ const cardData = {
 
 export default function CardDetail() {
   const theme = useTheme()
+  const history = useHistory()
   const [currentSubTab, setCurrentSubTab] = useState<SubTabType>(SubTabType.Creater)
   const [currentTab, setCurrentTab] = useState<TabType>(TabType.Information)
   const [currentTradeTab, setCurrentTradeTab] = useState<TradeTabType>(TradeTabType.Buy)
@@ -244,8 +247,10 @@ export default function CardDetail() {
     <>
       <RowBetween style={{ padding: '27px 20px' }}>
         <ButtonEmpty width="auto" color={theme.text1}>
-          <ChevronLeft />
-          Go Back
+          <RowFixed onClick={() => history.goBack()}>
+            <ChevronLeft />
+            Go Back
+          </RowFixed>
         </ButtonEmpty>
         <RowBetween style={{ width: 320 }}>
           <TabButton current={currentTab === TabType.Information} onClick={() => setCurrentTab(TabType.Information)}>

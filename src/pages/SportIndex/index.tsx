@@ -144,7 +144,7 @@ const WrapperSearch = styled.div`
 
 const StyledSearch = styled.div`
   margin: auto;
-  padding: 23px;
+  padding: 23px 42px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -194,7 +194,7 @@ export default function SportIndex() {
             key={indexId}
             creator={creator}
             name={name}
-            onClick={() => history.push('/locker')}
+            onClick={() => history.push('/card_detail')}
           />
         ))}
       </ContentWrapper>
@@ -228,15 +228,16 @@ export function Search({ onSearch }: { onSearch: (searchParam: string, searchBy:
             options={SearchParams}
             selectedId={searchParam}
             placeholder="Select search parameter"
+            marginRight="10px"
           />
           <TextInput placeholder="Search by" maxWidth="552px" height="3rem" />
           <ButtonWrapper>
-            <ButtonPrimary width="186px" onClick={handleSearch}>
+            <ButtonPrimary width="152px" onClick={handleSearch}>
               <SearchIcon style={{ marginRight: 10 }} />
               Search
             </ButtonPrimary>
             <div style={{ width: 10 }} />
-            <ButtonOutlinedPrimary width="186px" onClick={handleClear}>
+            <ButtonOutlinedPrimary width="152px" onClick={handleClear}>
               Show All
             </ButtonOutlinedPrimary>
           </ButtonWrapper>
