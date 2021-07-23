@@ -100,7 +100,7 @@ export interface CreateSpotData {
   indexName: string
   description: string
   assetsParameters: AssetsParameter[]
-  coverBackground: CardColor
+  color: CardColor
   creator: string
   creatorWalletAddress: string
   creatorId: string
@@ -120,7 +120,7 @@ export default function CreationNFTModal() {
         amount: ''
       }
     ],
-    coverBackground: CardColor.BLUE,
+    color: CardColor.BLUE,
     creator: '',
     creatorWalletAddress: '',
     creatorId: ''
@@ -144,7 +144,7 @@ export default function CreationNFTModal() {
 
   const toCreateNext = useCallback(() => {
     setCurrentStep(currentCreation)
-    setCurrentStepIndexNumber(2)
+    setCurrentStepIndexNumber(1)
   }, [setCurrentStep, currentCreation, setCurrentStepIndexNumber])
 
   const handleBack = useCallback(() => {

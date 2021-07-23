@@ -4,6 +4,7 @@ import { AutoColumn } from '../../components/Column'
 import styled from 'styled-components'
 import { RowBetween, RowFixed } from 'components/Row'
 import { ButtonBlack } from 'components/Button'
+import { CreateSpotData } from './index'
 import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 
 const Wrapper = styled(AutoColumn)`
@@ -20,7 +21,14 @@ const RightText = styled(TYPE.small)`
   align-self: flex-start;
 `
 
-export function SpotConfirmation() {
+export function SpotConfirmation({
+  children,
+  dataInfo
+}: {
+  children?: string | JSX.Element
+  dataInfo: CreateSpotData
+}) {
+  const { creator, creatorWalletAddress, creatorId, description } = dataInfo
   return (
     <AutoColumn gap="40px">
       <div>
@@ -35,19 +43,19 @@ export function SpotConfirmation() {
           <TYPE.smallHeader color="text6">Creator Info</TYPE.smallHeader>
           <RowBetween>
             <TYPE.smallGray>Creator</TYPE.smallGray>
-            <RightText>Jack</RightText>
+            <RightText>{creator}</RightText>
           </RowBetween>
           <RowBetween>
             <TYPE.smallGray>Creator wallet address</TYPE.smallGray>
-            <RightText>J0xCc39y...0E6f</RightText>
+            <RightText>{creatorWalletAddress}</RightText>
           </RowBetween>
           <RowBetween>
             <TYPE.smallGray>Creator ID</TYPE.smallGray>
-            <RightText>#1234</RightText>
+            <RightText>{creatorId}</RightText>
           </RowBetween>
           <RowBetween align="flex-start">
             <TYPE.smallGray>Description</TYPE.smallGray>
-            <RightText>Alice is a KOL focusing on defi system.</RightText>
+            <RightText>{description}</RightText>
           </RowBetween>
         </AutoColumn>
 
@@ -56,28 +64,6 @@ export function SpotConfirmation() {
           <RowBetween>
             <TYPE.smallGray>Creator token address</TYPE.smallGray>
             <RightText>J0xCc39y...0E6f</RightText>
-          </RowBetween>
-          <RowBetween>
-            <TYPE.smallGray>Current issuance</TYPE.smallGray>
-            <RightText>123</RightText>
-          </RowBetween>
-        </AutoColumn>
-
-        <AutoColumn gap="12px">
-          <TYPE.smallHeader color="text6">Index info</TYPE.smallHeader>
-          <RowBetween>
-            <RowFixed>
-              <ETH style={{ marginRight: 10 }} />
-              <TYPE.smallGray>YFI</TYPE.smallGray>
-            </RowFixed>
-            <RightText>0.1</RightText>
-          </RowBetween>
-          <RowBetween>
-            <RowFixed>
-              <ETH style={{ marginRight: 10 }} />
-              <TYPE.smallGray>YFI</TYPE.smallGray>
-            </RowFixed>
-            <RightText>0.1</RightText>
           </RowBetween>
         </AutoColumn>
 
@@ -101,7 +87,7 @@ export function SpotConfirmation() {
 
         <div style={{ height: 8 }} />
       </Wrapper>
-      <ButtonBlack height="60px">Confirm</ButtonBlack>
+      {children}
     </AutoColumn>
   )
 }

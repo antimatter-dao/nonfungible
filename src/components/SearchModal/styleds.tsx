@@ -57,11 +57,11 @@ export const Checkbox = styled.input`
 `
 
 export const PaddedColumn = styled(AutoColumn)`
-  padding: 20px;
+  padding: 52px 36px 30px;
 `
 
 export const MenuItem = styled(RowBetween)`
-  padding: 4px 20px;
+  padding: 4px 52px;
   height: 56px;
   display: grid;
   grid-template-columns: auto minmax(auto, 1fr) auto minmax(0, 72px);
@@ -69,7 +69,7 @@ export const MenuItem = styled(RowBetween)`
   cursor: ${({ disabled }) => !disabled && 'pointer'};
   pointer-events: ${({ disabled }) => disabled && 'none'};
   :hover {
-    background-color: ${({ theme, disabled }) => !disabled && theme.bg2};
+    background-color: ${({ theme, disabled }) => !disabled && theme.advancedBG};
   }
   opacity: ${({ disabled, selected }) => (disabled || selected ? 0.5 : 1)};
 `
@@ -86,7 +86,6 @@ export const SearchInput = styled.input`
   border: none;
   outline: none;
   border-radius: 14px;
-  color: ${({ theme }) => theme.text1};
   border: 1px solid none;
   -webkit-appearance: none;
   font-size: 16px;
@@ -100,6 +99,35 @@ export const SearchInput = styled.input`
     outline: none;
   }
 `
+
+export const SearchNFTInput = styled.input`
+  position: relative;
+  display: flex;
+  padding: 14px;
+  align-items: center;
+  width: 100%;
+  white-space: nowrap;
+  background: ${({ theme }) => theme.translucent};
+  height: 48px;
+  border: none;
+  outline: none;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: ${({ theme }) => theme.black};
+  border: 1px solid none;
+  -webkit-appearance: none;
+  font-size: 16px;
+
+  ::placeholder {
+    color: ${({ theme }) => theme.text3};
+  }
+  transition: border 100ms;
+  :focus {
+    border: 1px solid ${({ theme }) => theme.primary1};
+    outline: none;
+  }
+`
+
 export const Separator = styled.div`
   width: 100%;
   height: 1px;

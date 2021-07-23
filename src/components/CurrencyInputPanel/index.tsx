@@ -28,6 +28,13 @@ const InputRow = styled.div<{ selected: boolean; halfWidth?: boolean; hideSelect
 `};
 `
 
+const InputNFTRow = styled(InputRow)`
+  background-color: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  width: ${({ halfWidth, hideSelect }) => (hideSelect ? '100%' : halfWidth ? '48%' : '56%')}};
+  height: 60px;
+`
+
 const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean }>`
   align-items: center;
   width: ${({ halfWidth }) => (halfWidth ? '48%' : '40%')}};
@@ -43,12 +50,55 @@ const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean }>
   border: none;
   padding: 0 10px;
   border: 1px solid transparent;
+  color: ${({ theme }) => theme.black};
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: #fff !important;
+  font-weight: ${({ selected }) => (selected ? 500 : 400)};
   :focus,
   :active {
     border: 1px solid ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.primary1))};
   }
   :hover {
     border: 1px solid ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.bg5))};
+  }
+  ${({ theme, selected }) => theme.mediaWidth.upToSmall`
+  position: absolute;
+  right: 0;
+  width: 50%;
+  z-index: 2;
+  color:${selected ? theme.text1 : theme.primary1}
+  border: 1px solid ${selected ? theme.text4 : theme.primary1}
+  :hover,:focus,:active {
+    border: 1px solid ${selected ? theme.text4 : theme.primary1}
+  }
+  `}
+`
+
+const CurrencyNFTSelect = styled.button<{ selected: boolean; halfWidth?: boolean }>`
+  align-items: center;
+  width: ${({ halfWidth }) => (halfWidth ? '48%' : '42%')}};
+  height: 60px;
+  font-weight: 500;
+  background-color: ${({ theme }) => theme.bg2};
+  color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text3)};
+  border-radius: 14px;
+  box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
+  outline: none;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  color: ${({ theme }) => theme.black};
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: #fff !important;
+  font-weight: ${({ selected }) => (selected ? 500 : 400)};
+  /* :focus,
+  :active {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  } */
+  :hover {
+    border: 1px solid ${({ selected }) => (selected ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.1)')};
   }
   ${({ theme, selected }) => theme.mediaWidth.upToSmall`
   position: absolute;
@@ -91,6 +141,20 @@ const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
   width: 13px;
   path {
     stroke: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
+    stroke-width: 1.5px;
+  }
+  ${({ theme, selected }) =>
+    selected
+      ? ''
+      : theme.mediaWidth.upToExtraSmall`
+  display: none
+`};
+`
+
+const StyledNFTDropDown = styled(StyledDropDown)<{ selected: boolean }>`
+  width: 13px;
+  path {
+    stroke: ${({ selected, theme }) => (selected ? theme.black : theme.text3)};
     stroke-width: 1.5px;
   }
   ${({ theme, selected }) =>
@@ -275,6 +339,139 @@ export default function CurrencyInputPanel({
               </>
             )}
           </InputRow>
+        </Aligner>
+      </Container>
+      {!disableCurrencySelect && onCurrencySelect && (
+        <CurrencySearchModal
+          isOpen={modalOpen}
+          onDismiss={handleDismissSearch}
+          onCurrencySelect={onCurrencySelect}
+          selectedCurrency={currency}
+          otherSelectedCurrency={otherCurrency}
+          showCommonBases={showCommonBases}
+        />
+      )}
+    </InputPanel>
+  )
+}
+
+export function CurrencyNFTInputPanel({
+  value,
+  onUserInput,
+  onMax,
+  showMaxButton,
+  label = 'Input',
+  hiddenLabel = false,
+  onCurrencySelect,
+  currency,
+  disableCurrencySelect = false,
+  hideBalance = false,
+  pair = null, // used for double token logo
+  hideInput = false,
+  hideSelect = false,
+  otherCurrency,
+  id,
+  showCommonBases,
+  customBalanceText,
+  halfWidth,
+  negativeMarginTop
+}: CurrencyInputPanelProps & { hiddenLabel?: boolean }) {
+  const [modalOpen, setModalOpen] = useState(false)
+  const { account } = useActiveWeb3React()
+  const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
+  const theme = useTheme()
+
+  const handleDismissSearch = useCallback(() => {
+    setModalOpen(false)
+  }, [setModalOpen])
+
+  return (
+    <InputPanel id={id} negativeMarginTop={negativeMarginTop}>
+      <Container hideInput={hideInput}>
+        {!hideInput && (
+          <LabelRow>
+            {!hiddenLabel && (
+              <AutoRow justify="space-between">
+                <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
+                  {label}
+                </TYPE.body>
+                {account && (
+                  <TYPE.body
+                    onClick={onMax}
+                    color={theme.text3}
+                    fontWeight={500}
+                    fontSize={14}
+                    style={{ display: 'inline', cursor: 'pointer' }}
+                  >
+                    {!hideBalance && !!currency && selectedCurrencyBalance
+                      ? (customBalanceText ?? 'Your balance: ') + selectedCurrencyBalance?.toSignificant(6)
+                      : ' -'}
+                  </TYPE.body>
+                )}
+              </AutoRow>
+            )}
+          </LabelRow>
+        )}
+        <Aligner>
+          <InputNFTRow
+            style={hideInput ? { padding: '0', borderRadius: '8px' } : {}}
+            halfWidth={halfWidth}
+            selected={disableCurrencySelect}
+            hideSelect={hideSelect}
+          >
+            {!hideInput && (
+              <>
+                <CustomNumericalInput
+                  className="token-amount-input"
+                  style={{ color: '#000' }}
+                  value={value}
+                  onUserInput={val => {
+                    onUserInput(val)
+                  }}
+                />
+                {account && currency && showMaxButton && label !== 'To' && (
+                  <StyledBalanceMax onClick={onMax}>Max</StyledBalanceMax>
+                )}
+              </>
+            )}
+          </InputNFTRow>
+
+          {!hideSelect && (
+            <CurrencyNFTSelect
+              selected={!!currency}
+              className="open-currency-select-button"
+              onClick={() => {
+                if (!disableCurrencySelect) {
+                  setModalOpen(true)
+                }
+              }}
+              halfWidth={halfWidth}
+            >
+              <Aligner>
+                <Aligner>
+                  {pair ? (
+                    <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={24} margin={true} />
+                  ) : currency ? (
+                    <CurrencyLogo currency={currency} size={'24px'} />
+                  ) : null}
+                  {pair ? (
+                    <StyledTokenName className="pair-name-container">
+                      {pair?.token0.symbol}:{pair?.token1.symbol}
+                    </StyledTokenName>
+                  ) : (
+                    <StyledTokenName className="token-symbol-container" active={Boolean(currency && currency.symbol)}>
+                      {(currency && currency.symbol && currency.symbol.length > 20
+                        ? currency.symbol.slice(0, 4) +
+                          '...' +
+                          currency.symbol.slice(currency.symbol.length - 5, currency.symbol.length)
+                        : currency?.symbol) || 'Select currency'}
+                    </StyledTokenName>
+                  )}
+                </Aligner>
+                {!disableCurrencySelect && <StyledNFTDropDown selected={!currency} />}
+              </Aligner>
+            </CurrencyNFTSelect>
+          )}
         </Aligner>
       </Container>
       {!disableCurrencySelect && onCurrencySelect && (

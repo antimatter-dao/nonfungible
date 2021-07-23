@@ -1,5 +1,5 @@
 import { AutoRow, RowBetween, RowFixed } from 'components/Row'
-import React, { Dispatch, SetStateAction, useCallback, useState } from 'react'
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react'
 import { TYPE } from 'theme'
 import styled from 'styled-components'
 import { AutoColumn } from 'components/Column'
@@ -10,6 +10,8 @@ import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
 import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 import { SpotConfirmation } from './Confirmation'
 import { AssetsParameter, CreateSpotData } from './index'
+import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
+import { Currency } from '@uniswap/sdk'
 
 export const IndexIcon = styled.div<{ current?: boolean }>`
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -90,6 +92,11 @@ const BackgroundItem = styled.div<{ selected?: boolean; color: CardColor }>`
   height: 76px;
   background: ${({ theme, color }) => theme[color]};
 `
+interface TempAssetsParameter {
+  currency: string
+  amount: string
+  currencyToken?: any
+}
 
 const cardData = {
   id: '',
@@ -112,11 +119,11 @@ export default function SpotIndex({
   data: CreateSpotData
   setData: (key: string, value: AssetsParameter[] | CardColor | string) => void
 }) {
-  const [assetParams, setAssetParams] = useState<AssetsParameter[]>(data.assetsParameters)
+  const [assetParams, setAssetParams] = useState<TempAssetsParameter[]>(data.assetsParameters)
 
   const handleParameterInput = useCallback(
-    (index: number, key: string, value: string) => {
-      if (!['currency', 'amount'].includes(key)) return
+    (index: number, key: string, value: string | Currency) => {
+      if (!['currency', 'amount', 'currencyToken'].includes(key)) return
       if (!assetParams[index]) return
       const retParam = assetParams.map((item, idx) => {
         if (idx === index) {
@@ -124,6 +131,7 @@ export default function SpotIndex({
         }
         return item
       })
+
       setAssetParams(retParam)
     },
     [setAssetParams, assetParams]
@@ -134,7 +142,35 @@ export default function SpotIndex({
     setAssetParams([...assetParams, { amount: '', currency: '' }])
   }, [assetParams, setAssetParams])
 
+  const toNextStep = useCallback(() => {
+    const _assetParams = assetParams.map(v => {
+      return {
+        currency: v.currency,
+        amount: v.amount
+      }
+    })
+    setData('assetsParameters', _assetParams)
+    setCurrent(++current)
+  }, [current, setCurrent, assetParams, setData])
+
   const [currentCard, setCurrentCard] = useState<NFTCardProps>(cardData)
+  useEffect(() => {
+    const _card: NFTCardProps = {
+      id: '',
+      name: data.indexName,
+      indexId: '',
+      color: data.color,
+      address: '',
+      icons: [<ETH key="1" />, <ETH key="2" />],
+      creator: 'Jack'
+    }
+    setCurrentCard(_card)
+  }, [data, setCurrentCard])
+
+  const handleGenerate = useCallback(() => {
+    setData('color', currentCard.color)
+    setCurrent(++current)
+  }, [current, setCurrent, setData, currentCard])
 
   return (
     <>
@@ -179,10 +215,10 @@ export default function SpotIndex({
           <CreationHeader current={current}>Index Parameter</CreationHeader>
 
           <AutoColumn gap="10px">
-            {assetParams.map((item: AssetsParameter, index: number) => {
+            {assetParams.map((item: TempAssetsParameter, index: number) => {
               return (
                 <>
-                  <AutoRow justify="space-between" key={index}>
+                  {/* <AutoRow justify="space-between" key={index}>
                     <InputRow>
                       <CustomNumericalInput
                         className="token-amount-input"
@@ -194,7 +230,27 @@ export default function SpotIndex({
                       <StyledBalanceMax>Max</StyledBalanceMax>
                     </InputRow>
                     <TokenButtonDropdown>Select currency</TokenButtonDropdown>
-                  </AutoRow>
+                  </AutoRow> */}
+
+                  <CurrencyNFTInputPanel
+                    hiddenLabel={true}
+                    value={item.amount}
+                    onUserInput={val => {
+                      handleParameterInput(index, 'amount', val)
+                    }}
+                    // onMax={handleMax}
+                    currency={item.currencyToken}
+                    // pair={dummyPair}
+                    showMaxButton={true}
+                    onCurrencySelect={currency => {
+                      // can not get currency address
+                      handleParameterInput(index, 'currencyToken', currency)
+                    }}
+                    label="Amount"
+                    disableCurrencySelect={false}
+                    id="stake-liquidity-token"
+                    hideSelect={false}
+                  />
                 </>
               )
             })}
@@ -204,7 +260,7 @@ export default function SpotIndex({
             <ButtonOutlined height={60} onClick={addAsset} disabled={assetParams.length === 8}>
               + Add asset
             </ButtonOutlined>
-            <ButtonBlack height={60} onClick={() => setCurrent(++current)}>
+            <ButtonBlack height={60} onClick={toNextStep}>
               Next Step
             </ButtonBlack>
           </AutoColumn>
@@ -215,13 +271,23 @@ export default function SpotIndex({
         <AutoColumn gap="40px">
           <CreationHeader current={current}>NFT Cover Background</CreationHeader>
           <NFTCardPanel cardData={currentCard} setCardData={setCurrentCard} />
-          <ButtonBlack height={60} onClick={() => setCurrent(++current)}>
+          <ButtonBlack height={60} onClick={handleGenerate}>
             Generate
           </ButtonBlack>
         </AutoColumn>
       )}
 
-      {current === 4 && <SpotConfirmation />}
+      {current === 4 && (
+        <SpotConfirmation dataInfo={data}>
+          <ButtonBlack
+            onClick={() => {
+              alert('commit')
+            }}
+          >
+            Confirm
+          </ButtonBlack>
+        </SpotConfirmation>
+      )}
     </>
   )
 }
