@@ -3,12 +3,13 @@ import React, { Dispatch, SetStateAction, useCallback, useState } from 'react'
 import { TYPE } from 'theme'
 import styled from 'styled-components'
 import { AutoColumn } from 'components/Column'
-import TextInput from 'components/TextInput'
+import { TextValueInput } from 'components/TextInput'
 import { ButtonBlack, ButtonDropdown, ButtonOutlined } from 'components/Button'
 import NumericalInput from 'components/NumericalInput'
 import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
 import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 import { SpotConfirmation } from './Confirmation'
+import { AssetsParameter, CreateSpotData } from './index'
 
 export const IndexIcon = styled.div<{ current?: boolean }>`
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -102,13 +103,36 @@ const cardData = {
 
 export default function SpotIndex({
   current,
-  setCurrent
+  setCurrent,
+  data,
+  setData
 }: {
   current: number
   setCurrent: Dispatch<SetStateAction<number>>
+  data: CreateSpotData
+  setData: (key: string, value: AssetsParameter[] | CardColor | string) => void
 }) {
-  // TOTD
-  const [amountValue, setAmountValue] = useState('')
+  const [assetParams, setAssetParams] = useState<AssetsParameter[]>(data.assetsParameters)
+
+  const handleParameterInput = useCallback(
+    (index: number, key: string, value: string) => {
+      if (!['currency', 'amount'].includes(key)) return
+      if (!assetParams[index]) return
+      const retParam = assetParams.map((item, idx) => {
+        if (idx === index) {
+          return { ...item, [key]: value }
+        }
+        return item
+      })
+      setAssetParams(retParam)
+    },
+    [setAssetParams, assetParams]
+  )
+
+  const addAsset = useCallback(() => {
+    if (assetParams.length >= 8) return
+    setAssetParams([...assetParams, { amount: '', currency: '' }])
+  }, [assetParams, setAssetParams])
 
   const [currentCard, setCurrentCard] = useState<NFTCardProps>(cardData)
 
@@ -118,19 +142,33 @@ export default function SpotIndex({
         <AutoColumn gap="40px">
           <CreationHeader current={current}>Index Content</CreationHeader>
 
-          <TextInput
+          <TextValueInput
+            value={data.indexName}
+            onUserInput={val => {
+              setData('indexName', val.trim())
+            }}
+            maxLength={20}
             label="Index Name"
             placeholder="Please enter the name of your index"
             hint="Maximum 20 characters"
           />
 
-          <TextInput
+          <TextValueInput
+            value={data.description}
+            onUserInput={val => {
+              setData('description', val.trim())
+            }}
+            maxLength={100}
             label="Description"
             placeholder="Please explain why this index is meaningful"
             hint="Maximum 100 characters"
           />
 
-          <ButtonBlack height={60} onClick={() => setCurrent(++current)}>
+          <ButtonBlack
+            height={60}
+            onClick={() => setCurrent(++current)}
+            disabled={!data.description.trim() || !data.indexName.trim()}
+          >
             Next Step
           </ButtonBlack>
         </AutoColumn>
@@ -141,36 +179,31 @@ export default function SpotIndex({
           <CreationHeader current={current}>Index Parameter</CreationHeader>
 
           <AutoColumn gap="10px">
-            <AutoRow justify="space-between">
-              <InputRow>
-                <CustomNumericalInput
-                  className="token-amount-input"
-                  value={amountValue}
-                  onUserInput={val => {
-                    setAmountValue(val)
-                  }}
-                />
-                <StyledBalanceMax>Max</StyledBalanceMax>
-              </InputRow>
-              <TokenButtonDropdown>Select currency</TokenButtonDropdown>
-            </AutoRow>
-            <AutoRow justify="space-between">
-              <InputRow>
-                <CustomNumericalInput
-                  className="token-amount-input"
-                  value={amountValue}
-                  onUserInput={val => {
-                    setAmountValue(val)
-                  }}
-                />
-                <StyledBalanceMax>Max</StyledBalanceMax>
-              </InputRow>
-              <TokenButtonDropdown>Select currency</TokenButtonDropdown>
-            </AutoRow>
+            {assetParams.map((item: AssetsParameter, index: number) => {
+              return (
+                <>
+                  <AutoRow justify="space-between" key={index}>
+                    <InputRow>
+                      <CustomNumericalInput
+                        className="token-amount-input"
+                        value={item.amount}
+                        onUserInput={val => {
+                          handleParameterInput(index, 'amount', val)
+                        }}
+                      />
+                      <StyledBalanceMax>Max</StyledBalanceMax>
+                    </InputRow>
+                    <TokenButtonDropdown>Select currency</TokenButtonDropdown>
+                  </AutoRow>
+                </>
+              )
+            })}
           </AutoColumn>
 
           <AutoColumn gap="12px">
-            <ButtonOutlined height={60}>+ Add asset</ButtonOutlined>
+            <ButtonOutlined height={60} onClick={addAsset} disabled={assetParams.length === 8}>
+              + Add asset
+            </ButtonOutlined>
             <ButtonBlack height={60} onClick={() => setCurrent(++current)}>
               Next Step
             </ButtonBlack>

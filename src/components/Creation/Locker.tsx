@@ -9,7 +9,7 @@ import {
   StyledBalanceMax,
   TokenButtonDropdown
 } from './SpotIndex'
-import { StyledRadio, StyledRadioGroup } from './index'
+import { StyledRadio, StyledRadioGroup, LockerType } from './index'
 import TextInput from 'components/TextInput'
 import { ButtonBlack, ButtonOutlined } from 'components/Button'
 import { AutoRow, RowBetween } from 'components/Row'
@@ -37,10 +37,6 @@ const StyledTimeBox = styled(StyledDateBox)`
   width: 224px;
 `
 
-enum LockerType {
-  ERC721 = 'ERC-721',
-  ERC1155 = 'ERC-1155'
-}
 enum TimeScheduleType {
   Flexible = 'Flexible (no lockup)',
   OneTIme = 'One Time Future Unlock',
