@@ -132,6 +132,7 @@ let tokenList = [
 tokenList = [...tokenList, ...tokenList, ...tokenList, ...tokenList, ...tokenList, ...tokenList, ...tokenList]
 
 const cardData = {
+  id: '',
   name: 'Index Name',
   indexId: '2',
   color: CardColor.RED,

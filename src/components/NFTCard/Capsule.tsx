@@ -47,7 +47,7 @@ export function TimerCapsule({ color = CardColor.GREEN, timeLeft }: { color?: Ca
   return (
     <StyledCapsule color={isClosed ? transparentize(0.3, theme.red1) : theme[color]} padding="7px 14px">
       <TYPE.small color={isClosed ? theme.red1 : saturatedColor} width="90px" textAlign="center">
-        {isClosed ? 'Closed' : <Timer timer={timeLeft} onZero={handleOnZero}></Timer>}
+        {isClosed ? 'Closed' : <Timer timer={timeLeft} onZero={handleOnZero} />}
       </TYPE.small>
     </StyledCapsule>
   )
