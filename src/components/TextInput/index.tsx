@@ -131,4 +131,90 @@ export const TextInput = React.memo(function InnerInput({
   )
 })
 
+export const TextValueInput = React.memo(function InnerInput({
+  placeholder,
+  label,
+  textarea,
+  disabled,
+  name,
+  error,
+  width = '100%',
+  maxWidth,
+  hint,
+  height,
+  maxLength,
+  padding = '20px',
+  value,
+  onUserInput,
+  ...rest
+}: {
+  error?: boolean
+  label?: string
+  fontSize?: string
+  align?: 'right' | 'left'
+  textarea?: boolean
+  maxWidth?: string
+  width?: string
+  hint?: string
+  padding?: string
+  height?: string
+  maxLength?: number
+  value: string | number
+  onUserInput: (input: string) => void
+} & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
+  return (
+    <Container width={width} maxWidth={maxWidth}>
+      {label && (
+        <LabelRow>
+          <AutoRow justify="space-between">
+            {label && (
+              <TYPE.black fontWeight={500} fontSize={14}>
+                {label}
+              </TYPE.black>
+            )}
+          </AutoRow>
+        </LabelRow>
+      )}
+      {textarea ? (
+        <CustomTextArea
+          value={value}
+          onChange={event => {
+            onUserInput(event.target.value)
+          }}
+          placeholder={placeholder || 'text input'}
+          spellCheck="true"
+          maxLength={maxLength}
+          rows={4}
+          cols={50}
+          disabled={disabled}
+          name={name}
+          error={error}
+        />
+      ) : (
+        <CustomInput
+          {...rest}
+          value={value}
+          onChange={event => {
+            onUserInput(event.target.value)
+          }}
+          height={height}
+          padding={padding}
+          name={name}
+          type="text"
+          placeholder={placeholder || 'text input'}
+          spellCheck="true"
+          maxLength={maxLength}
+          disabled={disabled}
+          error={error}
+        />
+      )}
+      {hint && (
+        <TYPE.darkGray fontSize={14} style={{ marginTop: 8 }}>
+          {hint}
+        </TYPE.darkGray>
+      )}
+    </Container>
+  )
+})
+
 export default TextInput

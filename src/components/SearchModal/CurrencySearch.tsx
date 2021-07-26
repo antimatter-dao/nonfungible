@@ -14,7 +14,7 @@ import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
 import { filterTokens, useSortedTokensByQuery } from './filtering'
 import { useTokenComparator } from './sorting'
-import { PaddedColumn, SearchInput, Separator } from './styleds'
+import { PaddedColumn, SearchNFTInput } from './styleds'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import styled from 'styled-components'
 import useToggle from 'hooks/useToggle'
@@ -27,6 +27,7 @@ const ContentWrapper = styled(Column)`
   width: 100%;
   flex: 1 1;
   position: relative;
+  color: ${({ theme }) => theme.black};
 `
 
 const Footer = styled.div`
@@ -169,7 +170,7 @@ export function CurrencySearch({
           <CloseIcon onClick={onDismiss} />
         </RowBetween>
         <Row>
-          <SearchInput
+          <SearchNFTInput
             type="text"
             id="token-search-input"
             placeholder={t('tokenSearchPlaceholder')}
@@ -184,7 +185,7 @@ export function CurrencySearch({
           <CommonBases chainId={chainId} onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency} />
         )}
       </PaddedColumn>
-      <Separator />
+      {/* <Separator /> */}
       {searchToken && !searchTokenIsAdded ? (
         <Column style={{ padding: '20px 0', height: '100%' }}>
           <ImportRow token={searchToken} showImportView={showImportView} setImportToken={setImportToken} />

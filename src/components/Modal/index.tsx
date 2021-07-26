@@ -74,6 +74,7 @@ export const StyledDialogContent = styled(
       `}
     overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
     overflow-x: hidden;
+    background-color: ${({ theme }) => theme.white};
 
     align-self: center;
 
