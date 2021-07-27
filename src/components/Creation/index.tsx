@@ -16,6 +16,7 @@ import clsx from 'clsx'
 import SpotIndex from './SpotIndex'
 import LockerIndex from './Locker'
 import { CardColor } from 'components/NFTCard'
+import { Currency } from '@uniswap/sdk'
 
 const useStyles = makeStyles({
   root: {
@@ -95,6 +96,7 @@ export enum LockerType {
 export interface AssetsParameter {
   currency: string
   amount: string
+  currencyToken?: Currency
 }
 export interface CreateSpotData {
   indexName: string
@@ -159,7 +161,7 @@ export default function CreationNFTModal() {
       isOpen={creationModalOpen}
       onDismiss={toggleCreationModal}
       minHeight={30}
-      maxHeight={68}
+      maxHeight={70}
       width="600px"
       maxWidth={600}
     >

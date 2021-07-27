@@ -1,5 +1,5 @@
 import { AutoRow, RowBetween, RowFixed } from 'components/Row'
-import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react'
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { TYPE } from 'theme'
 import styled from 'styled-components'
 import { AutoColumn } from 'components/Column'
@@ -11,7 +11,8 @@ import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 import { SpotConfirmation } from './Confirmation'
 import { AssetsParameter, CreateSpotData } from './index'
 import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
-import { Currency } from '@uniswap/sdk'
+// import { Currency } from '@uniswap/sdk'
+import { WrappedTokenInfo } from 'state/lists/hooks'
 
 export const IndexIcon = styled.div<{ current?: boolean }>`
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -92,20 +93,15 @@ const BackgroundItem = styled.div<{ selected?: boolean; color: CardColor }>`
   height: 76px;
   background: ${({ theme, color }) => theme[color]};
 `
-interface TempAssetsParameter {
-  currency: string
-  amount: string
-  currencyToken?: any
-}
 
 const cardData = {
   id: '',
-  name: 'Index Name',
-  indexId: '2',
-  color: CardColor.RED,
-  address: '0xKos369cd6vwd94wq1gt4hr87ujv',
-  icons: [<ETH key="1" />, <ETH key="2" />],
-  creator: 'Jack'
+  name: '',
+  indexId: '',
+  color: CardColor.YELLOW,
+  address: '',
+  icons: [],
+  creator: ''
 }
 
 export default function SpotIndex({
@@ -119,15 +115,14 @@ export default function SpotIndex({
   data: CreateSpotData
   setData: (key: string, value: AssetsParameter[] | CardColor | string) => void
 }) {
-  const [assetParams, setAssetParams] = useState<TempAssetsParameter[]>(data.assetsParameters)
+  const [assetParams, setAssetParams] = useState<AssetsParameter[]>(data.assetsParameters)
 
   const handleParameterInput = useCallback(
-    (index: number, key: string, value: string | Currency) => {
-      if (!['currency', 'amount', 'currencyToken'].includes(key)) return
+    (index: number, value: AssetsParameter) => {
       if (!assetParams[index]) return
       const retParam = assetParams.map((item, idx) => {
         if (idx === index) {
-          return { ...item, [key]: value }
+          return value
         }
         return item
       })
@@ -142,26 +137,44 @@ export default function SpotIndex({
     setAssetParams([...assetParams, { amount: '', currency: '' }])
   }, [assetParams, setAssetParams])
 
-  const toNextStep = useCallback(() => {
-    const _assetParams = assetParams.map(v => {
-      return {
-        currency: v.currency,
-        amount: v.amount
-      }
-    })
+  const assetsBtnDIsabled = useMemo(() => {
+    return (
+      assetParams.filter(val => {
+        return val.amount.trim() && val.currency.trim()
+      }).length < 2
+    )
+  }, [assetParams])
+
+  const toColorStep = useCallback(() => {
+    const _assetParams = assetParams
+      .filter(val => {
+        return val.amount.trim() && val.amount.trim()
+      })
+      .map(v => {
+        return {
+          currency: v.currency,
+          currencyToken: v.currencyToken,
+          amount: v.amount
+        }
+      })
+    if (_assetParams.length < 2) return
     setData('assetsParameters', _assetParams)
     setCurrent(++current)
   }, [current, setCurrent, assetParams, setData])
 
   const [currentCard, setCurrentCard] = useState<NFTCardProps>(cardData)
   useEffect(() => {
+    const _icons = data.assetsParameters.map((val, idx) => {
+      console.log('🚀 ~ file: SpotIndex.tsx ~ line 168 ~ useEffect ~ val', val)
+      return <ETH key={idx} />
+    })
     const _card: NFTCardProps = {
       id: '',
       name: data.indexName,
       indexId: '',
       color: data.color,
       address: '',
-      icons: [<ETH key="1" />, <ETH key="2" />],
+      icons: _icons,
       creator: 'Jack'
     }
     setCurrentCard(_card)
@@ -215,36 +228,25 @@ export default function SpotIndex({
           <CreationHeader current={current}>Index Parameter</CreationHeader>
 
           <AutoColumn gap="10px">
-            {assetParams.map((item: TempAssetsParameter, index: number) => {
+            {assetParams.map((item: AssetsParameter, index: number) => {
               return (
                 <>
-                  {/* <AutoRow justify="space-between" key={index}>
-                    <InputRow>
-                      <CustomNumericalInput
-                        className="token-amount-input"
-                        value={item.amount}
-                        onUserInput={val => {
-                          handleParameterInput(index, 'amount', val)
-                        }}
-                      />
-                      <StyledBalanceMax>Max</StyledBalanceMax>
-                    </InputRow>
-                    <TokenButtonDropdown>Select currency</TokenButtonDropdown>
-                  </AutoRow> */}
-
                   <CurrencyNFTInputPanel
                     hiddenLabel={true}
                     value={item.amount}
                     onUserInput={val => {
-                      handleParameterInput(index, 'amount', val)
+                      const newData = { ...item, amount: val }
+                      handleParameterInput(index, newData)
                     }}
                     // onMax={handleMax}
                     currency={item.currencyToken}
                     // pair={dummyPair}
-                    showMaxButton={true}
+                    showMaxButton={false}
                     onCurrencySelect={currency => {
-                      // can not get currency address
-                      handleParameterInput(index, 'currencyToken', currency)
+                      if (currency instanceof WrappedTokenInfo) {
+                        const newData = { ...item, currency: currency.address, currencyToken: currency }
+                        handleParameterInput(index, newData)
+                      }
                     }}
                     label="Amount"
                     disableCurrencySelect={false}
@@ -260,7 +262,7 @@ export default function SpotIndex({
             <ButtonOutlined height={60} onClick={addAsset} disabled={assetParams.length === 8}>
               + Add asset
             </ButtonOutlined>
-            <ButtonBlack height={60} onClick={toNextStep}>
+            <ButtonBlack height={60} onClick={toColorStep} disabled={assetsBtnDIsabled}>
               Next Step
             </ButtonBlack>
           </AutoColumn>
