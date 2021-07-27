@@ -7,7 +7,13 @@ import { ChainId, WETH } from '@uniswap/sdk'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import ANTIMATTER_ABI from '../constants/abis/antimatter.json'
 import { useMemo } from 'react'
-import { ANTIMATTER_ADDRESS, GOVERNANCE_ADDRESS, MERKLE_DISTRIBUTOR_ADDRESS, UNI } from '../constants'
+import {
+  ANTIMATTER_ADDRESS,
+  GOVERNANCE_ADDRESS,
+  INDEX_NFT_ADDRESS,
+  MERKLE_DISTRIBUTOR_ADDRESS,
+  UNI
+} from '../constants'
 import {
   ARGENT_WALLET_DETECTOR_ABI,
   ARGENT_WALLET_DETECTOR_MAINNET_ADDRESS
@@ -110,6 +116,10 @@ export function useMerkleDistributorContract(): Contract | null {
 
 export function useGovernanceContract(): Contract | null {
   return useContract(GOVERNANCE_ADDRESS, GOVERNANCE_ABI, true)
+}
+
+export function useIndexNFTContract(): Contract | null {
+  return useContract(INDEX_NFT_ADDRESS, GOVERNANCE_ABI, true)
 }
 
 export function useUniContract(): Contract | null {
