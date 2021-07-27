@@ -14,6 +14,7 @@ import useTheme from 'hooks/useTheme'
 import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 import { LoadingView, SubmittedView } from 'components/ModalViews'
 import { CrossCircle } from 'components/Icons/'
+import { TYPE } from 'theme'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -41,15 +42,18 @@ const StyledLogo = styled.img`
   margin-left: 6px;
 `
 
-function ConfirmationPendingContent({ onDismiss, pendingText }: { onDismiss: () => void; pendingText: string }) {
+function ConfirmationPendingContent({ onDismiss, pendingText = '' }: { onDismiss: () => void; pendingText?: string }) {
   const theme = useTheme()
   return (
     <>
       <LoadingView onDismiss={onDismiss}>
-        <AutoColumn gap="12px" justify={'center'}>
-          <Text fontWeight={400} fontSize={18}>
-            Waiting For Confirmation
+        <AutoColumn gap="12px">
+          <Text fontWeight={700} fontSize={30}>
+            Wallet interaction request
           </Text>
+          <TYPE.darkGray fontSize={16} fontWeight={400}>
+            Please open your wallet and confirm in the transaction activity to proceed your order
+          </TYPE.darkGray>
           <AutoColumn gap="12px" justify={'center'}>
             <Text fontWeight={400} fontSize={14} textAlign="center" color={theme.text2}>
               {pendingText}
@@ -81,7 +85,7 @@ function TransactionSubmittedContent({
   return (
     <>
       <SubmittedView onDismiss={onDismiss} hash={hash}>
-        <Text fontWeight={400} fontSize={18}>
+        <Text fontWeight={400} fontSize={30}>
           Transaction Submitted
         </Text>
 
@@ -167,9 +171,9 @@ interface ConfirmationModalProps {
   isOpen: boolean
   onDismiss: () => void
   hash: string | undefined
-  content: () => React.ReactNode
+  content?: () => React.ReactNode
   attemptingTxn: boolean
-  pendingText: string
+  pendingText?: string
   currencyToAdd?: Currency | undefined
   submittedContent?: () => React.ReactNode
 }
@@ -190,7 +194,7 @@ export default function TransactionConfirmationModal({
 
   // confirmation screen
   return (
-    <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90}>
+    <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90} width="600px" maxWidth={600}>
       {attemptingTxn ? (
         <ConfirmationPendingContent onDismiss={onDismiss} pendingText={pendingText} />
       ) : hash ? (
@@ -209,7 +213,7 @@ export default function TransactionConfirmationModal({
           ){' '}
         </>
       ) : (
-        content()
+        content && content()
       )}
     </Modal>
   )

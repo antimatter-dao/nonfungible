@@ -1,5 +1,6 @@
 import { Contract } from '@ethersproject/contracts'
 import { abi as GOVERNANCE_ABI } from '../constants/abis/governance.json'
+import { abi as FINANCE_INDEX_ABI } from '../constants/abis/FinanceIndex.json'
 import { abi as UNI_ABI } from '@uniswap/governance/build/Uni.json'
 import { abi as STAKING_REWARDS_ABI } from '@uniswap/liquidity-staker/build/StakingRewards.json'
 import { abi as MERKLE_DISTRIBUTOR_ABI } from '@uniswap/merkle-distributor/build/MerkleDistributor.json'
@@ -119,7 +120,7 @@ export function useGovernanceContract(): Contract | null {
 }
 
 export function useIndexNFTContract(): Contract | null {
-  return useContract(INDEX_NFT_ADDRESS, GOVERNANCE_ABI, true)
+  return useContract(INDEX_NFT_ADDRESS, FINANCE_INDEX_ABI, true)
 }
 
 export function useUniContract(): Contract | null {

@@ -18,6 +18,7 @@ import GovernanceDetail from './NFTGovernance/NFTGovernanceDetail'
 import Locker from './Locker'
 import CardDetail from './CardDetail'
 import { UserProvider } from 'context/UserContext'
+import UserLogin from '../pages/User/Login'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -81,6 +82,7 @@ export default function App() {
     <Suspense fallback={null}>
       <Route component={GoogleAnalyticsReporter} />
       <Route component={DarkModeQueryParamReader} />
+      <Route component={UserLogin} />
       <UserProvider>
         <AppWrapper id="app">
           {/* <URLWarning /> */}

@@ -108,12 +108,14 @@ export default function SpotIndex({
   current,
   setCurrent,
   data,
-  setData
+  setData,
+  onConfirm
 }: {
   current: number
   setCurrent: Dispatch<SetStateAction<number>>
   data: CreateSpotData
   setData: (key: string, value: AssetsParameter[] | CardColor | string) => void
+  onConfirm: () => void
 }) {
   const [assetParams, setAssetParams] = useState<AssetsParameter[]>(data.assetsParameters)
 
@@ -194,7 +196,7 @@ export default function SpotIndex({
           <TextValueInput
             value={data.indexName}
             onUserInput={val => {
-              setData('indexName', val.trim())
+              setData('indexName', val)
             }}
             maxLength={20}
             label="Index Name"
@@ -205,7 +207,7 @@ export default function SpotIndex({
           <TextValueInput
             value={data.description}
             onUserInput={val => {
-              setData('description', val.trim())
+              setData('description', val)
             }}
             maxLength={100}
             label="Description"
@@ -281,13 +283,7 @@ export default function SpotIndex({
 
       {current === 4 && (
         <SpotConfirmation dataInfo={data}>
-          <ButtonBlack
-            onClick={() => {
-              alert('commit')
-            }}
-          >
-            Confirm
-          </ButtonBlack>
+          <ButtonBlack onClick={onConfirm}>Confirm</ButtonBlack>
         </SpotConfirmation>
       )}
     </>

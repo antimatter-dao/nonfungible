@@ -28,7 +28,7 @@ export function SpotConfirmation({
   children?: string | JSX.Element
   dataInfo: CreateSpotData
 }) {
-  const { creator, creatorWalletAddress, creatorId, description } = dataInfo
+  const { creator, creatorWalletAddress, creatorId, description, indexName } = dataInfo
   return (
     <AutoColumn gap="40px">
       <div>
@@ -46,6 +46,10 @@ export function SpotConfirmation({
             <RightText>{creator}</RightText>
           </RowBetween>
           <RowBetween>
+            <TYPE.smallGray>IndexName</TYPE.smallGray>
+            <RightText>{indexName}</RightText>
+          </RowBetween>
+          <RowBetween>
             <TYPE.smallGray>Creator wallet address</TYPE.smallGray>
             <RightText>{creatorWalletAddress}</RightText>
           </RowBetween>
@@ -59,13 +63,13 @@ export function SpotConfirmation({
           </RowBetween>
         </AutoColumn>
 
-        <AutoColumn gap="12px">
+        {/* <AutoColumn gap="12px">
           <TYPE.smallHeader color="text6">NFT info</TYPE.smallHeader>
           <RowBetween>
             <TYPE.smallGray>Creator token address</TYPE.smallGray>
             <RightText>J0xCc39y...0E6f</RightText>
           </RowBetween>
-        </AutoColumn>
+        </AutoColumn> */}
 
         <AutoColumn gap="12px">
           <TYPE.smallHeader color="text6">Underlying Asset</TYPE.smallHeader>

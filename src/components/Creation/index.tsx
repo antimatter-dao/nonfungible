@@ -17,6 +17,9 @@ import SpotIndex from './SpotIndex'
 import LockerIndex from './Locker'
 import { CardColor } from 'components/NFTCard'
 import { Currency } from '@uniswap/sdk'
+import TransactionConfirmationModal from '../TransactionConfirmationModal'
+import { useIndexCreateCall } from '../../hooks/useIndexCreateCallback'
+import { useWeb3React } from '@web3-react/core'
 
 const useStyles = makeStyles({
   root: {
@@ -108,25 +111,32 @@ export interface CreateSpotData {
   creatorId: string
 }
 
+export const defaultSpotData = {
+  indexName: '',
+  description: '',
+  assetsParameters: [
+    {
+      currency: '',
+      amount: ''
+    },
+    {
+      currency: '',
+      amount: ''
+    }
+  ],
+  color: CardColor.PURPLE,
+  creator: '',
+  creatorWalletAddress: '',
+  creatorId: ''
+}
+
 export default function CreationNFTModal() {
-  const [createSpotData, setCreateSpotData] = useState<CreateSpotData>({
-    indexName: '',
-    description: '',
-    assetsParameters: [
-      {
-        currency: '',
-        amount: ''
-      },
-      {
-        currency: '',
-        amount: ''
-      }
-    ],
-    color: CardColor.BLUE,
-    creator: '',
-    creatorWalletAddress: '',
-    creatorId: ''
-  })
+  const { account } = useWeb3React()
+  const [transactionModalOpen, setTransactionModalOpen] = useState(false)
+  const [attemptingTxn, setAttemptingTxn] = useState(false)
+  const [hash, setHash] = useState('')
+
+  const [createSpotData, setCreateSpotData] = useState<CreateSpotData>(defaultSpotData)
   const handleCreateSpotData = useCallback(
     (key: string, value: AssetsParameter[] | CardColor | string) => {
       if (!Object.keys(createSpotData).includes(key)) return
@@ -156,70 +166,116 @@ export default function CreationNFTModal() {
     setCurrentStepIndexNumber(currentStepIndexNumber - 1)
   }, [currentStepIndexNumber, setCurrentStepIndexNumber, setCurrentStep])
 
+  const spotCommitSuccessHandler = useCallback(() => {
+    setCreateSpotData(defaultSpotData)
+    setCurrentStep(Step.Choose)
+    setCurrentStepIndexNumber(0)
+    toggleCreationModal()
+  }, [setCreateSpotData, setCurrentStep, setCurrentStepIndexNumber, toggleCreationModal])
+
+  const { callback } = useIndexCreateCall()
+  const createSpotConfirm = useCallback(() => {
+    if (!callback || !account || !createSpotData) return
+    const metadata = {
+      indexName: createSpotData.indexName,
+      walletAddress: account,
+      description: createSpotData.description,
+      color: createSpotData.color
+    }
+    const address: string[] = createSpotData.assetsParameters.map(v => v.currency)
+    const amounts: string[] = createSpotData.assetsParameters.map(v => v.amount)
+    setTransactionModalOpen(true)
+    setAttemptingTxn(true)
+    callback(JSON.stringify(metadata), address, amounts)
+      .then(hash => {
+        setAttemptingTxn(false)
+        setHash(hash)
+        spotCommitSuccessHandler()
+      })
+      .catch(err => {
+        setTransactionModalOpen(false)
+        setAttemptingTxn(false)
+        console.error('spo commit err', err)
+      })
+  }, [createSpotData, callback, account, spotCommitSuccessHandler, setAttemptingTxn, setTransactionModalOpen])
+
   return (
-    <Modal
-      isOpen={creationModalOpen}
-      onDismiss={toggleCreationModal}
-      minHeight={30}
-      maxHeight={70}
-      width="600px"
-      maxWidth={600}
-    >
-      <Wrapper>
-        {currentStep !== Step.Choose && <IconBack onEvent={handleBack} style={{ top: 28, left: 28 }} />}
-        <IconClose onEvent={toggleCreationModal} style={{ top: 28, right: 28 }} />
+    <>
+      <Modal
+        isOpen={creationModalOpen}
+        onDismiss={toggleCreationModal}
+        minHeight={30}
+        maxHeight={70}
+        width="600px"
+        maxWidth={600}
+      >
+        <Wrapper>
+          {currentStep !== Step.Choose && <IconBack onEvent={handleBack} style={{ top: 28, left: 28 }} />}
+          <IconClose onEvent={toggleCreationModal} style={{ top: 28, right: 28 }} />
 
-        {currentStep === Step.Choose && (
-          <AutoColumn gap="40px">
-            <AutoColumn gap="16px">
-              <TYPE.largeHeader fontSize={30} color="black">
-                Create your financial NFT
-              </TYPE.largeHeader>
-              <StyledNoticeBox>
-                <AlertCircle />
-                <TYPE.body fontSize={14} color="black">
-                  Please read docs about non-fungible finance before creating.
-                </TYPE.body>
-              </StyledNoticeBox>
-            </AutoColumn>
-            <AutoColumn gap="20px">
-              <TYPE.subHeader fontSize={16}>Select Creation Type</TYPE.subHeader>
-              <StyledRadioGroup
-                row
-                aria-label="gender"
-                name="gender1"
-                value={currentCreation}
-                onChange={handleCreationTypeChange}
+          {currentStep === Step.Choose && (
+            <AutoColumn gap="40px">
+              <AutoColumn gap="16px">
+                <TYPE.largeHeader fontSize={30} color="black">
+                  Create your financial NFT
+                </TYPE.largeHeader>
+                <StyledNoticeBox>
+                  <AlertCircle />
+                  <TYPE.body fontSize={14} color="black">
+                    Please read docs about non-fungible finance before creating.
+                  </TYPE.body>
+                </StyledNoticeBox>
+              </AutoColumn>
+              <AutoColumn gap="20px">
+                <TYPE.subHeader fontSize={16}>Select Creation Type</TYPE.subHeader>
+                <StyledRadioGroup
+                  row
+                  aria-label="gender"
+                  name="gender1"
+                  value={currentCreation}
+                  onChange={handleCreationTypeChange}
+                >
+                  <FormControlLabel value={Step.SpotIndex} control={<StyledRadio />} label={Step.SpotIndex} />
+                  <FormControlLabel value={Step.FutureIndex} control={<StyledRadio />} label={Step.FutureIndex} />
+                  <FormControlLabel value={Step.Locker} control={<StyledRadio />} label={Step.Locker} />
+                </StyledRadioGroup>
+              </AutoColumn>
+              <ButtonBlack
+                height={60}
+                style={{ marginTop: 20 }}
+                onClick={toCreateNext}
+                disabled={currentCreation === Step.FutureIndex}
               >
-                <FormControlLabel value={Step.SpotIndex} control={<StyledRadio />} label={Step.SpotIndex} />
-                <FormControlLabel value={Step.FutureIndex} control={<StyledRadio />} label={Step.FutureIndex} />
-                <FormControlLabel value={Step.Locker} control={<StyledRadio />} label={Step.Locker} />
-              </StyledRadioGroup>
+                Confirm
+              </ButtonBlack>
             </AutoColumn>
-            <ButtonBlack
-              height={60}
-              style={{ marginTop: 20 }}
-              onClick={toCreateNext}
-              disabled={currentCreation === Step.FutureIndex}
-            >
-              Confirm
-            </ButtonBlack>
-          </AutoColumn>
-        )}
+          )}
 
-        {currentStep === Step.SpotIndex && (
-          <SpotIndex
-            current={currentStepIndexNumber}
-            setCurrent={setCurrentStepIndexNumber}
-            setData={handleCreateSpotData}
-            data={createSpotData}
-          />
-        )}
-        {currentStep === Step.Locker && (
-          <LockerIndex current={currentStepIndexNumber} setCurrent={setCurrentStepIndexNumber} />
-        )}
-      </Wrapper>
-    </Modal>
+          {currentStep === Step.SpotIndex && (
+            <SpotIndex
+              current={currentStepIndexNumber}
+              setCurrent={setCurrentStepIndexNumber}
+              setData={handleCreateSpotData}
+              data={createSpotData}
+              onConfirm={createSpotConfirm}
+            />
+          )}
+          {currentStep === Step.Locker && (
+            <LockerIndex current={currentStepIndexNumber} setCurrent={setCurrentStepIndexNumber} />
+          )}
+        </Wrapper>
+      </Modal>
+
+      <TransactionConfirmationModal
+        isOpen={transactionModalOpen}
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        onDismiss={() => {
+          setTransactionModalOpen(false)
+        }}
+        hash={hash}
+        attemptingTxn={attemptingTxn}
+      />
+    </>
   )
 }
 
