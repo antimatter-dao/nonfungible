@@ -1,18 +1,19 @@
 import { AutoColumn } from 'components/Column'
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { TYPE } from 'theme'
+import { CreationHeader, NFTCardPanel } from './SpotIndex'
 import {
-  CreationHeader,
-  CustomNumericalInput,
-  InputRow,
-  NFTCardPanel,
-  StyledBalanceMax,
-  TokenButtonDropdown
-} from './SpotIndex'
-import { StyledRadio, StyledRadioGroup, LockerType } from './index'
-import TextInput from 'components/TextInput'
+  StyledRadio,
+  StyledRadioGroup,
+  LockerType,
+  TimeScheduleType,
+  AssetsParameter,
+  CreateLockerData,
+  UnlockData
+} from './index'
+import { TextValueInput } from 'components/TextInput'
 import { ButtonBlack, ButtonOutlined } from 'components/Button'
-import { AutoRow, RowBetween } from 'components/Row'
+import { RowBetween } from 'components/Row'
 import { FormControlLabel, RadioGroup } from '@material-ui/core'
 import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from '@material-ui/pickers'
 import DateFnsUtils from '@date-io/date-fns'
@@ -20,6 +21,9 @@ import styled from 'styled-components'
 import { CardColor, NFTCardProps } from 'components/NFTCard'
 import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 import { LockerConfirmation } from './Confirmation'
+import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
+import { WrappedTokenInfo } from 'state/lists/hooks'
+import { useCheckLockerSchedule } from 'state/creation/hooks'
 
 const StyledDateBox = styled.div`
   width: 260px;
@@ -37,48 +41,108 @@ const StyledTimeBox = styled(StyledDateBox)`
   width: 224px;
 `
 
-enum TimeScheduleType {
-  Flexible = 'Flexible (no lockup)',
-  OneTIme = 'One Time Future Unlock',
-  Shedule = 'Unlock with a shedule'
-}
-
 const indexArr = [1, 2, 3, 4]
-
-const cardData = {
-  id: '',
-  name: 'Index Name',
-  indexId: '2',
-  color: CardColor.RED,
-  address: '0xKos369cd6vwd94wq1gt4hr87ujv',
-  icons: [<ETH key="1" />, <ETH key="2" />],
-  creator: 'Jack'
-}
 
 export default function LockerIndex({
   current,
-  setCurrent
+  setCurrent,
+  data,
+  setData,
+  onConfirm
 }: {
   current: number
   setCurrent: Dispatch<SetStateAction<number>>
+  data: CreateLockerData
+  setData: (key: string, value: AssetsParameter[] | CardColor | string | UnlockData) => void
+  onConfirm: () => void
 }) {
-  const [currentLockerType, setCurrentLockerType] = useState<LockerType>(LockerType.ERC721)
-  const handleCurrentLockerTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentLockerType((event.target as HTMLInputElement).value as LockerType)
-  }
-  const [currentTimeSchedule, setCurrentTimeSchedule] = useState<TimeScheduleType>(TimeScheduleType.Flexible)
-  const handleCurrentTimeScheduleTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentTimeSchedule((event.target as HTMLInputElement).value as TimeScheduleType)
-  }
+  const { creationType, schedule } = data
+  const isPassLockerSchedule = useCheckLockerSchedule(data)
 
-  const [currentCard, setCurrentCard] = useState<NFTCardProps>(cardData)
-  const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date('2014-08-18T21:11:54'))
+  const handleCurrentLockerTypeChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setData('creationType', (event.target as HTMLInputElement).value as LockerType)
+    },
+    [setData]
+  )
 
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date)
-  }
+  const handleCurrentTimeScheduleTypeChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setData('schedule', (event.target as HTMLInputElement).value as TimeScheduleType)
+    },
+    [setData]
+  )
 
-  const [amountValue, setAmountValue] = useState('')
+  const handleDateChange = useCallback(
+    (date: Date | null) => {
+      const _data = { ...data.unlockData, datetime: date }
+      setData('unlockData', _data)
+    },
+    [setData, data]
+  )
+
+  const [assetParams, setAssetParams] = useState<AssetsParameter[]>(data.assetsParameters)
+
+  const handleParameterInput = useCallback(
+    (index: number, value: AssetsParameter) => {
+      if (!assetParams[index]) return
+      const retParam = assetParams.map((item, idx) => {
+        if (idx === index) {
+          return value
+        }
+        return item
+      })
+
+      setAssetParams(retParam)
+    },
+    [setAssetParams, assetParams]
+  )
+
+  const addAsset = useCallback(() => {
+    if (assetParams.length >= 8) return
+    setAssetParams([...assetParams, { amount: '', currency: '' }])
+  }, [assetParams, setAssetParams])
+
+  const assetsBtnDIsabled = useMemo(() => {
+    return (
+      assetParams.filter(val => {
+        return val.amount.trim() && val.currency.trim()
+      }).length < 2
+    )
+  }, [assetParams])
+
+  const toColorStep = useCallback(() => {
+    const _assetParams = assetParams
+      .filter(val => {
+        return val.amount.trim() && val.amount.trim()
+      })
+      .map(v => {
+        return {
+          currency: v.currency,
+          currencyToken: v.currencyToken,
+          amount: v.amount
+        }
+      })
+    if (_assetParams.length < 2) return
+    setData('assetsParameters', _assetParams)
+    setCurrent(++current)
+  }, [current, setCurrent, assetParams, setData])
+
+  const currentCard = useMemo((): NFTCardProps => {
+    const _icons = data.assetsParameters.map((val, idx) => {
+      console.log('🚀 ~ file: SpotIndex.tsx ~ line 168 ~ useEffect ~ val', val)
+      return <ETH key={idx} />
+    })
+    return {
+      id: '',
+      name: data.name,
+      indexId: '',
+      color: data.color,
+      address: '',
+      icons: _icons,
+      creator: 'Jack'
+    }
+  }, [data])
 
   return (
     <>
@@ -93,7 +157,7 @@ export default function LockerIndex({
               row
               aria-label="gender"
               name="gender1"
-              value={currentLockerType}
+              value={creationType}
               onChange={handleCurrentLockerTypeChange}
             >
               <FormControlLabel value={LockerType.ERC721} control={<StyledRadio />} label={LockerType.ERC721} />
@@ -101,17 +165,34 @@ export default function LockerIndex({
             </StyledRadioGroup>
           </AutoColumn>
 
-          {LockerType.ERC1155 === currentLockerType && (
-            <TextInput label="NFT Copies" placeholder="Please enter how many copies to create" />
+          {LockerType.ERC1155 === creationType && (
+            <TextValueInput
+              label="NFT Copies"
+              value={data.copies}
+              onUserInput={val => {
+                setData('copies', val)
+              }}
+              placeholder="Please enter how many copies to create"
+            />
           )}
 
-          <TextInput
+          <TextValueInput
+            value={data.name}
+            onUserInput={val => {
+              setData('name', val)
+            }}
+            maxLength={20}
             label="Locker Name"
             placeholder="Please enter the name of your index"
             hint="Maximum 20 characters"
           />
 
-          <TextInput
+          <TextValueInput
+            value={data.message}
+            onUserInput={val => {
+              setData('message', val)
+            }}
+            maxLength={100}
             label="Message"
             placeholder="Please explain why this index is meaningful"
             hint="Maximum 100 characters"
@@ -130,37 +211,40 @@ export default function LockerIndex({
           </CreationHeader>
 
           <AutoColumn gap="10px">
-            <AutoRow justify="space-between">
-              <InputRow>
-                <CustomNumericalInput
-                  className="token-amount-input"
-                  value={amountValue}
-                  onUserInput={val => {
-                    setAmountValue(val)
-                  }}
-                />
-                <StyledBalanceMax>Max</StyledBalanceMax>
-              </InputRow>
-              <TokenButtonDropdown>Select currency</TokenButtonDropdown>
-            </AutoRow>
-            <AutoRow justify="space-between">
-              <InputRow>
-                <CustomNumericalInput
-                  className="token-amount-input"
-                  value={amountValue}
-                  onUserInput={val => {
-                    setAmountValue(val)
-                  }}
-                />
-                <StyledBalanceMax>Max</StyledBalanceMax>
-              </InputRow>
-              <TokenButtonDropdown>Select currency</TokenButtonDropdown>
-            </AutoRow>
+            {assetParams.map((item: AssetsParameter, index: number) => {
+              return (
+                <>
+                  <CurrencyNFTInputPanel
+                    hiddenLabel={true}
+                    value={item.amount}
+                    onUserInput={val => {
+                      const newData = { ...item, amount: val }
+                      handleParameterInput(index, newData)
+                    }}
+                    // onMax={handleMax}
+                    currency={item.currencyToken}
+                    // pair={dummyPair}
+                    showMaxButton={false}
+                    onCurrencySelect={currency => {
+                      if (currency instanceof WrappedTokenInfo) {
+                        const newData = { ...item, currency: currency.address, currencyToken: currency }
+                        handleParameterInput(index, newData)
+                      }
+                    }}
+                    disableCurrencySelect={false}
+                    id="stake-liquidity-token"
+                    hideSelect={false}
+                  />
+                </>
+              )
+            })}
           </AutoColumn>
 
           <AutoColumn gap="12px">
-            <ButtonOutlined height={60}>+ Add asset</ButtonOutlined>
-            <ButtonBlack height={60} onClick={() => setCurrent(++current)}>
+            <ButtonOutlined height={60} onClick={addAsset} disabled={assetParams.length === 8}>
+              + Add asset
+            </ButtonOutlined>
+            <ButtonBlack height={60} onClick={toColorStep} disabled={assetsBtnDIsabled}>
               Next Step
             </ButtonBlack>
           </AutoColumn>
@@ -177,7 +261,7 @@ export default function LockerIndex({
             <RadioGroup
               aria-label="gender"
               name="gender1"
-              value={currentTimeSchedule}
+              value={schedule}
               onChange={handleCurrentTimeScheduleTypeChange}
             >
               <FormControlLabel
@@ -198,7 +282,7 @@ export default function LockerIndex({
             </RadioGroup>
           </AutoColumn>
 
-          {currentTimeSchedule !== TimeScheduleType.Flexible && (
+          {schedule !== TimeScheduleType.Flexible && (
             <>
               <RowBetween>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -208,7 +292,7 @@ export default function LockerIndex({
                       id="date-picker-dialog"
                       label="Unlock Date"
                       format="MM/dd/yyyy"
-                      value={selectedDate}
+                      value={data.unlockData.datetime}
                       onChange={handleDateChange}
                       KeyboardButtonProps={{
                         'aria-label': 'change date'
@@ -220,7 +304,7 @@ export default function LockerIndex({
                       margin="normal"
                       id="time-picker"
                       label="Unlock Time"
-                      value={selectedDate}
+                      value={data.unlockData.datetime}
                       onChange={handleDateChange}
                       KeyboardButtonProps={{
                         'aria-label': 'change time'
@@ -232,11 +316,25 @@ export default function LockerIndex({
             </>
           )}
 
-          {currentTimeSchedule === TimeScheduleType.Shedule && (
-            <TextInput label="Unlock Percentage" placeholder="0%" hint="From 0% to 100%" />
+          {schedule === TimeScheduleType.Shedule && (
+            <TextValueInput
+              value={data.unlockData.percentage}
+              onUserInput={val => {
+                setData('name', val)
+              }}
+              label="Unlock Percentage"
+              placeholder="0%"
+              hint="From 0% to 100%"
+            />
           )}
 
-          <ButtonBlack height={60} onClick={() => setCurrent(++current)}>
+          <ButtonBlack
+            height={60}
+            disabled={!isPassLockerSchedule}
+            onClick={() => {
+              setCurrent(++current)
+            }}
+          >
             Next Step
           </ButtonBlack>
         </AutoColumn>
@@ -247,14 +345,23 @@ export default function LockerIndex({
           <CreationHeader current={current} indexArr={indexArr}>
             NFT Cover Background
           </CreationHeader>
-          <NFTCardPanel cardData={currentCard} setCardData={setCurrentCard} />
+          <NFTCardPanel
+            cardData={currentCard}
+            setCardColor={(color: CardColor) => {
+              setData('color', color)
+            }}
+          />
           <ButtonBlack height={60} onClick={() => setCurrent(++current)}>
             Generate
           </ButtonBlack>
         </AutoColumn>
       )}
 
-      {current === 5 && <LockerConfirmation />}
+      {current === 5 && (
+        <LockerConfirmation>
+          <ButtonBlack onClick={onConfirm}>Confirm</ButtonBlack>
+        </LockerConfirmation>
+      )}
     </>
   )
 }

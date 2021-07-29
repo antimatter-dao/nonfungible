@@ -1,5 +1,5 @@
 import { AutoRow, RowBetween, RowFixed } from 'components/Row'
-import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { TYPE } from 'theme'
 import styled from 'styled-components'
 import { AutoColumn } from 'components/Column'
@@ -25,7 +25,6 @@ export const IndexIcon = styled.div<{ current?: boolean }>`
   text-transform: capitalize;
   border-radius: 50%;
   margin-left: 16px;
-  cursor: pointer;
   color: ${({ current }) => (current ? 'black' : 'rgba(0, 0, 0, 0.2)')};
 `
 export const InputRow = styled.div<{ disabled?: boolean }>`
@@ -94,16 +93,6 @@ const BackgroundItem = styled.div<{ selected?: boolean; color: CardColor }>`
   background: ${({ theme, color }) => theme[color]};
 `
 
-const cardData = {
-  id: '',
-  name: '',
-  indexId: '',
-  color: CardColor.YELLOW,
-  address: '',
-  icons: [],
-  creator: ''
-}
-
 export default function SpotIndex({
   current,
   setCurrent,
@@ -164,23 +153,21 @@ export default function SpotIndex({
     setCurrent(++current)
   }, [current, setCurrent, assetParams, setData])
 
-  const [currentCard, setCurrentCard] = useState<NFTCardProps>(cardData)
-  useEffect(() => {
+  const currentCard = useMemo((): NFTCardProps => {
     const _icons = data.assetsParameters.map((val, idx) => {
       console.log('🚀 ~ file: SpotIndex.tsx ~ line 168 ~ useEffect ~ val', val)
       return <ETH key={idx} />
     })
-    const _card: NFTCardProps = {
+    return {
       id: '',
-      name: data.indexName,
+      name: data.name,
       indexId: '',
       color: data.color,
       address: '',
       icons: _icons,
       creator: 'Jack'
     }
-    setCurrentCard(_card)
-  }, [data, setCurrentCard])
+  }, [data])
 
   const handleGenerate = useCallback(() => {
     setData('color', currentCard.color)
@@ -194,9 +181,9 @@ export default function SpotIndex({
           <CreationHeader current={current}>Index Content</CreationHeader>
 
           <TextValueInput
-            value={data.indexName}
+            value={data.name}
             onUserInput={val => {
-              setData('indexName', val)
+              setData('name', val)
             }}
             maxLength={20}
             label="Index Name"
@@ -218,7 +205,7 @@ export default function SpotIndex({
           <ButtonBlack
             height={60}
             onClick={() => setCurrent(++current)}
-            disabled={!data.description.trim() || !data.indexName.trim()}
+            disabled={!data.description.trim() || !data.name.trim()}
           >
             Next Step
           </ButtonBlack>
@@ -274,7 +261,12 @@ export default function SpotIndex({
       {current === 3 && (
         <AutoColumn gap="40px">
           <CreationHeader current={current}>NFT Cover Background</CreationHeader>
-          <NFTCardPanel cardData={currentCard} setCardData={setCurrentCard} />
+          <NFTCardPanel
+            cardData={currentCard}
+            setCardColor={(color: CardColor) => {
+              setData('color', color)
+            }}
+          />
           <ButtonBlack height={60} onClick={handleGenerate}>
             Generate
           </ButtonBlack>
@@ -292,18 +284,11 @@ export default function SpotIndex({
 
 export function NFTCardPanel({
   cardData,
-  setCardData
+  setCardColor
 }: {
   cardData: NFTCardProps
-  setCardData: Dispatch<SetStateAction<NFTCardProps>>
+  setCardColor: (color: CardColor) => void
 }) {
-  const setCardColor = useCallback(
-    (color: CardColor): void => {
-      setCardData({ ...cardData, color: color })
-    },
-    [cardData, setCardData]
-  )
-
   return (
     <AutoRow justify="space-between" style={{ alignItems: 'flex-start' }}>
       <AutoColumn gap="12px" style={{ width: 264 }}>

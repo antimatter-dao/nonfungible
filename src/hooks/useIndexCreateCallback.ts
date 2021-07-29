@@ -11,7 +11,9 @@ export enum IndexCreateCallbackState {
 
 export function useIndexCreateCall(): {
   state: IndexCreateCallbackState
-  callback: undefined | ((metadata: string, underlyingTokens: string[], underlyingAmounts: string[]) => Promise<string>)
+  callback:
+    | undefined
+    | ((name: string, metadata: string, underlyingTokens: string[], underlyingAmounts: string[]) => Promise<string>)
   error: string | null
 } {
   const addTransaction = useTransactionAdder()

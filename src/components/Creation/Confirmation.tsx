@@ -3,7 +3,6 @@ import { TYPE } from '../../theme'
 import { AutoColumn } from '../../components/Column'
 import styled from 'styled-components'
 import { RowBetween, RowFixed } from 'components/Row'
-import { ButtonBlack } from 'components/Button'
 import { CreateSpotData } from './index'
 import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 
@@ -28,7 +27,7 @@ export function SpotConfirmation({
   children?: string | JSX.Element
   dataInfo: CreateSpotData
 }) {
-  const { creator, creatorWalletAddress, creatorId, description, indexName } = dataInfo
+  const { creator, creatorWalletAddress, creatorId, description, name: indexName } = dataInfo
   return (
     <AutoColumn gap="40px">
       <div>
@@ -96,7 +95,7 @@ export function SpotConfirmation({
   )
 }
 
-export function LockerConfirmation() {
+export function LockerConfirmation({ children }: { children?: string | JSX.Element }) {
   return (
     <AutoColumn gap="40px">
       <div>
@@ -162,7 +161,7 @@ export function LockerConfirmation() {
 
         <div style={{ height: 8 }} />
       </Wrapper>
-      <ButtonBlack height="60px">Confirm</ButtonBlack>
+      {children}
     </AutoColumn>
   )
 }

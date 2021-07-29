@@ -96,13 +96,23 @@ export enum LockerType {
   ERC721 = 'ERC-721',
   ERC1155 = 'ERC-1155'
 }
+export enum TimeScheduleType {
+  Flexible = 'Flexible (no lockup)',
+  OneTIme = 'One Time Future Unlock',
+  Shedule = 'Unlock with a shedule'
+}
+
+export interface UnlockData {
+  datetime: Date | null
+  percentage: string
+}
 export interface AssetsParameter {
   currency: string
   amount: string
   currencyToken?: Currency
 }
 export interface CreateSpotData {
-  indexName: string
+  name: string
   description: string
   assetsParameters: AssetsParameter[]
   color: CardColor
@@ -111,8 +121,22 @@ export interface CreateSpotData {
   creatorId: string
 }
 
+export interface CreateLockerData {
+  creationType: LockerType
+  name: string
+  message: string
+  copies: string
+  schedule: TimeScheduleType
+  unlockData: UnlockData
+  assetsParameters: AssetsParameter[]
+  color: CardColor
+  creator: string
+  creatorWalletAddress: string
+  creatorId: string
+}
+
 export const defaultSpotData = {
-  indexName: '',
+  name: '',
   description: '',
   assetsParameters: [
     {
@@ -124,6 +148,32 @@ export const defaultSpotData = {
       amount: ''
     }
   ],
+  color: CardColor.PURPLE,
+  creator: '',
+  creatorWalletAddress: '',
+  creatorId: ''
+}
+
+export const defaultLockerData: CreateLockerData = {
+  creationType: LockerType.ERC721,
+  name: '',
+  message: '',
+  copies: '',
+  assetsParameters: [
+    {
+      currency: '',
+      amount: ''
+    },
+    {
+      currency: '',
+      amount: ''
+    }
+  ],
+  schedule: TimeScheduleType.Flexible,
+  unlockData: {
+    datetime: null,
+    percentage: ''
+  },
   color: CardColor.PURPLE,
   creator: '',
   creatorWalletAddress: '',
@@ -143,6 +193,15 @@ export default function CreationNFTModal() {
       setCreateSpotData({ ...createSpotData, [key]: value })
     },
     [setCreateSpotData, createSpotData]
+  )
+
+  const [createLockerData, setCreateLockerData] = useState<CreateLockerData>(defaultLockerData)
+  const handleCreateLockerData = useCallback(
+    (key: string, value: AssetsParameter[] | CardColor | string | UnlockData) => {
+      if (!Object.keys(createLockerData).includes(key)) return
+      setCreateLockerData({ ...createLockerData, [key]: value })
+    },
+    [setCreateLockerData, createLockerData]
   )
 
   const creationModalOpen = useModalOpen(ApplicationModal.Creation)
@@ -177,7 +236,6 @@ export default function CreationNFTModal() {
   const createSpotConfirm = useCallback(() => {
     if (!callback || !account || !createSpotData) return
     const metadata = {
-      indexName: createSpotData.indexName,
       walletAddress: account,
       description: createSpotData.description,
       color: createSpotData.color
@@ -186,7 +244,7 @@ export default function CreationNFTModal() {
     const amounts: string[] = createSpotData.assetsParameters.map(v => v.amount)
     setTransactionModalOpen(true)
     setAttemptingTxn(true)
-    callback(JSON.stringify(metadata), address, amounts)
+    callback(createSpotData.name, JSON.stringify(metadata), address, amounts)
       .then(hash => {
         setAttemptingTxn(false)
         setHash(hash)
@@ -198,6 +256,10 @@ export default function CreationNFTModal() {
         console.error('spo commit err', err)
       })
   }, [createSpotData, callback, account, spotCommitSuccessHandler, setAttemptingTxn, setTransactionModalOpen])
+
+  const createLockerConfirm = useCallback(() => {
+    alert('createLockerConfirm')
+  }, [])
 
   return (
     <>
@@ -261,7 +323,13 @@ export default function CreationNFTModal() {
             />
           )}
           {currentStep === Step.Locker && (
-            <LockerIndex current={currentStepIndexNumber} setCurrent={setCurrentStepIndexNumber} />
+            <LockerIndex
+              current={currentStepIndexNumber}
+              setCurrent={setCurrentStepIndexNumber}
+              setData={handleCreateLockerData}
+              data={createLockerData}
+              onConfirm={createLockerConfirm}
+            />
           )}
         </Wrapper>
       </Modal>
