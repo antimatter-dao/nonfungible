@@ -1,22 +1,24 @@
 import { ButtonDropdown, ButtonEmpty, ButtonBlack, ButtonWhite } from 'components/Button'
 import { RowBetween, RowFixed } from 'components/Row'
 import { StyledTabItem, StyledTabs } from 'components/Tabs'
-import React, { useEffect, useState } from 'react'
-
+import React, { useEffect, useMemo, useState } from 'react'
+import { TYPE, AnimatedImg, AnimatedWrapper } from 'theme'
 import { ChevronLeft } from 'react-feather'
 import styled from 'styled-components'
 import useTheme from 'hooks/useTheme'
 import { Hr, Paragraph } from './Paragraph'
-import { TYPE } from 'theme'
-import NFTCard, { CardColor } from 'components/NFTCard'
+import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
 import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 import { AutoColumn, ColumnCenter } from 'components/Column'
 import { createChart, IChartApi, ISeriesApi, LineStyle } from 'lightweight-charts'
 import { getDexTradeList, DexTradeData } from 'utils/option/httpRequests'
 // import { currencyId } from 'utils/currencyId'
 import { useNetwork } from 'hooks/useNetwork'
+import { NFTIndexInfoProps, useAssetsTokens, useNFTIndexInfo } from 'hooks/useIndexDetail'
 import NumericalInput from 'components/NumericalInput'
-import { useHistory } from 'react-router-dom'
+import { RouteComponentProps, useHistory } from 'react-router-dom'
+import Loader from 'assets/svg/antimatter_background_logo.svg'
+import { WrappedTokenInfo } from 'state/lists/hooks'
 
 const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
@@ -117,34 +119,28 @@ export enum TradeTabType {
   'Sell' = 'sell'
 }
 
-export interface Tokens {
-  avatar: string
-  symbol: string
-  balance: string
-}
-
-let tokenList = [
-  {
-    avatar: 'string',
-    symbol: 'string',
-    balance: 'string'
-  }
-]
-tokenList = [...tokenList, ...tokenList, ...tokenList, ...tokenList, ...tokenList, ...tokenList, ...tokenList]
-
-const cardData = {
+const defaultCardData = {
   id: '',
-  name: 'Index Name',
-  indexId: '2',
+  name: '',
+  indexId: '',
   color: CardColor.RED,
-  address: '0xKos369cd6vwd94wq1gt4hr87ujv',
-  icons: [<ETH key="1" />, <ETH key="2" />],
-  creator: 'Jack'
+  address: '',
+  icons: [],
+  creator: ''
 }
 
-export default function CardDetail() {
+export default function CardDetail({
+  match: {
+    params: { nftid }
+  }
+}: RouteComponentProps<{ nftid?: string }>) {
   const theme = useTheme()
   const history = useHistory()
+
+  const { loading: NFTIndexLoading, data: NFTIndexInfo } = useNFTIndexInfo(nftid)
+
+  const tokens = useAssetsTokens(NFTIndexInfo?.assetsParameters)
+
   const [currentSubTab, setCurrentSubTab] = useState<SubTabType>(SubTabType.Creater)
   const [currentTab, setCurrentTab] = useState<TabType>(TabType.Information)
   const [currentTradeTab, setCurrentTradeTab] = useState<TradeTabType>(TradeTabType.Buy)
@@ -243,6 +239,32 @@ export default function CardDetail() {
     }
   }, [candlestickSeries, priceChartData, chart])
 
+  const currentCard = useMemo((): NFTCardProps => {
+    if (!NFTIndexInfo) return defaultCardData
+    const _icons = NFTIndexInfo.assetsParameters.map((val, idx) => {
+      console.log('🚀 ~ file: SpotIndex.tsx ~ line 168 ~ useEffect ~ val', val)
+      return <ETH key={idx} />
+    })
+    return {
+      id: NFTIndexInfo.creatorId,
+      name: NFTIndexInfo.name,
+      indexId: NFTIndexInfo.creatorId,
+      color: NFTIndexInfo.color,
+      address: NFTIndexInfo.creator,
+      icons: _icons,
+      creator: NFTIndexInfo.creatorName
+    }
+  }, [NFTIndexInfo])
+
+  if (NFTIndexLoading || !NFTIndexInfo) {
+    return (
+      <AnimatedWrapper>
+        <AnimatedImg>
+          <img src={Loader} alt="loading-icon" />
+        </AnimatedImg>
+      </AnimatedWrapper>
+    )
+  }
   return (
     <>
       <RowBetween style={{ padding: '27px 20px' }}>
@@ -265,7 +287,7 @@ export default function CardDetail() {
       <Wrapper>
         <RowBetween style={{ marginTop: 70 }} align="flex-start">
           <StyledNFTCard>
-            <NFTCard {...cardData} />
+            <NFTCard {...currentCard} />
           </StyledNFTCard>
           {currentTab === TabType.Information ? (
             <InfoPanel>
@@ -290,13 +312,13 @@ export default function CardDetail() {
                 </StyledTabItem>
               </StyledTabs>
               {currentSubTab === SubTabType.Creater ? (
-                <CreaterInfo />
+                <CreaterInfo info={NFTIndexInfo} />
               ) : currentSubTab === SubTabType.Index ? (
-                <IndexInfo />
+                <IndexInfo info={NFTIndexInfo} />
               ) : (
                 <AssetsWrapper>
-                  {tokenList.map(val => {
-                    return <AssetItem {...val} key={val.symbol} />
+                  {tokens.map(({ amount, currencyToken }, index) => {
+                    return <AssetItem amount={amount} currencyToken={currencyToken} key={index} />
                   })}
                 </AssetsWrapper>
               )}
@@ -359,19 +381,19 @@ export default function CardDetail() {
   )
 }
 
-function CreaterInfo() {
+function CreaterInfo({ info }: { info: NFTIndexInfoProps }) {
   return (
     <div>
       <RowFixed>
         <StyledAvatar>
           <img src="" alt="" />
         </StyledAvatar>
-        <Paragraph header="Creator wallet Address">0xKos369cd6vwd94wq1gt4hr87ujv</Paragraph>
+        <Paragraph header="Creator">{info.creatorName}</Paragraph>
       </RowFixed>
       <Hr />
-      <Paragraph header="Creator wallet Address">0xKos369cd6vwd94wq1gt4hr87ujv</Paragraph>
+      <Paragraph header="Creator wallet Address">{info.creator}</Paragraph>
       <Hr />
-      <Paragraph header="Creator ID">#1234</Paragraph>
+      <Paragraph header="Creator ID">#{info.creatorId}</Paragraph>
       <Hr />
       <Paragraph header="Bio">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor. Incididunt ut labore et dolore
@@ -382,33 +404,29 @@ function CreaterInfo() {
   )
 }
 
-function IndexInfo() {
+function IndexInfo({ info }: { info: NFTIndexInfoProps }) {
   return (
     <div>
       <Paragraph header="Token contract address">0xKos369cd6vwd94wq1gt4hr87ujv</Paragraph>
       <Hr />
       <Paragraph header="Current issuance">123</Paragraph>
       <Hr />
-      <Paragraph header="Description">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor. Incididunt ut labore et dolore
-        magna aliqua. Ut enim ad minim veniam. Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-        consequat.
-      </Paragraph>
+      <Paragraph header="Description">{info.description}</Paragraph>
     </div>
   )
 }
 
-function AssetItem({ avatar, symbol, balance }: Tokens) {
+function AssetItem({ amount, currencyToken }: { amount: string; currencyToken: WrappedTokenInfo | undefined }) {
   return (
     <TokenWrapper>
       <RowFixed style={{ width: '100%' }}>
         <StyledAvatar wh="32px">
-          <img src={avatar} alt="" />
+          <img src={currencyToken?.logoURI} alt="" />
         </StyledAvatar>
         <RowBetween>
-          <TYPE.subHeader>{symbol}</TYPE.subHeader>
+          <TYPE.subHeader>{currencyToken?.symbol}</TYPE.subHeader>
           <TYPE.black color={'black'} fontWeight={400}>
-            {balance}
+            {amount}
           </TYPE.black>
         </RowBetween>
       </RowFixed>

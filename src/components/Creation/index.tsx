@@ -16,10 +16,10 @@ import clsx from 'clsx'
 import SpotIndex from './SpotIndex'
 import LockerIndex from './Locker'
 import { CardColor } from 'components/NFTCard'
-import { Currency } from '@uniswap/sdk'
 import TransactionConfirmationModal from '../TransactionConfirmationModal'
 import { useIndexCreateCall } from '../../hooks/useIndexCreateCallback'
 import { useWeb3React } from '@web3-react/core'
+import { WrappedTokenInfo } from 'state/lists/hooks'
 
 const useStyles = makeStyles({
   root: {
@@ -109,7 +109,7 @@ export interface UnlockData {
 export interface AssetsParameter {
   currency: string
   amount: string
-  currencyToken?: Currency
+  currencyToken?: WrappedTokenInfo
 }
 export interface CreateSpotData {
   name: string
@@ -236,7 +236,7 @@ export default function CreationNFTModal() {
   const createSpotConfirm = useCallback(() => {
     if (!callback || !account || !createSpotData) return
     const metadata = {
-      walletAddress: account,
+      // walletAddress: account,
       description: createSpotData.description,
       color: createSpotData.color
     }
