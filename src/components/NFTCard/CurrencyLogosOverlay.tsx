@@ -22,7 +22,8 @@ const LogoWrapper = styled.div<{ size: number; top: number; left: number }>`
   align-items: center;
   background: linear-gradient(169.06deg, #ffffff 8.1%, #f5f5f5 64.51%, #000000 176.95%),
     linear-gradient(135.43deg, #000000 -7.49%, #000000 60.86%, #02ff49 180.85%);
-  svg {
+  svg,
+  img {
     height: ${({ size }) => size / 2}px;
     width: ${({ size }) => size / 2}px;
   }

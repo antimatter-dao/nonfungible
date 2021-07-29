@@ -7,12 +7,12 @@ import { TextValueInput } from 'components/TextInput'
 import { ButtonBlack, ButtonDropdown, ButtonOutlined } from 'components/Button'
 import NumericalInput from 'components/NumericalInput'
 import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
-import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 import { SpotConfirmation } from './Confirmation'
 import { AssetsParameter, CreateSpotData } from './index'
 import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
 // import { Currency } from '@uniswap/sdk'
 import { WrappedTokenInfo } from 'state/lists/hooks'
+import { useAssetsTokens } from 'hooks/useIndexDetail'
 
 export const IndexIcon = styled.div<{ current?: boolean }>`
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -153,10 +153,11 @@ export default function SpotIndex({
     setCurrent(++current)
   }, [current, setCurrent, assetParams, setData])
 
+  const selectTokens = useAssetsTokens(data.assetsParameters)
+
   const currentCard = useMemo((): NFTCardProps => {
-    const _icons = data.assetsParameters.map((val, idx) => {
-      console.log('🚀 ~ file: SpotIndex.tsx ~ line 168 ~ useEffect ~ val', val)
-      return <ETH key={idx} />
+    const _icons = selectTokens.map((val, idx) => {
+      return <img src={val.currencyToken?.logoURI} alt="" key={idx} />
     })
     return {
       id: '',
@@ -167,7 +168,7 @@ export default function SpotIndex({
       icons: _icons,
       creator: 'Jack'
     }
-  }, [data])
+  }, [data, selectTokens])
 
   const handleGenerate = useCallback(() => {
     setData('color', currentCard.color)

@@ -8,7 +8,6 @@ import styled from 'styled-components'
 import useTheme from 'hooks/useTheme'
 import { Hr, Paragraph } from './Paragraph'
 import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
-import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 import { AutoColumn, ColumnCenter } from 'components/Column'
 import { createChart, IChartApi, ISeriesApi, LineStyle } from 'lightweight-charts'
 import { getDexTradeList, DexTradeData } from 'utils/option/httpRequests'
@@ -241,9 +240,8 @@ export default function CardDetail({
 
   const currentCard = useMemo((): NFTCardProps => {
     if (!NFTIndexInfo) return defaultCardData
-    const _icons = NFTIndexInfo.assetsParameters.map((val, idx) => {
-      console.log('🚀 ~ file: SpotIndex.tsx ~ line 168 ~ useEffect ~ val', val)
-      return <ETH key={idx} />
+    const _icons = tokens.map((val, idx) => {
+      return <img src={val.currencyToken?.logoURI} alt="" key={idx} />
     })
     return {
       id: NFTIndexInfo.creatorId,
@@ -254,7 +252,7 @@ export default function CardDetail({
       icons: _icons,
       creator: NFTIndexInfo.creatorName
     }
-  }, [NFTIndexInfo])
+  }, [NFTIndexInfo, tokens])
 
   if (NFTIndexLoading || !NFTIndexInfo) {
     return (

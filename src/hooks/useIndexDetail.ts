@@ -65,6 +65,7 @@ export function useAssetsTokens(assetsParameters: AssetsParameter[] | undefined)
     return assetsParameters.map(item => {
       // if (!Object.keys(tokens).includes(item.currency)) return []
       item.currencyToken = tokens[item.currency] as WrappedTokenInfo
+      if (!item.currencyToken) item.currencyToken = tokens[Object.keys(tokens)[0]] as WrappedTokenInfo
       return item
     })
   }, [tokens, assetsParameters])
