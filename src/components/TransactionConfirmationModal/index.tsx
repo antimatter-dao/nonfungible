@@ -6,24 +6,24 @@ import { Text } from 'rebass'
 import { CloseIcon } from '../../theme/components'
 import { RowBetween, RowFixed } from '../Row'
 import { CheckCircle } from 'react-feather'
-import { ButtonGray, ButtonOutlinedPrimary } from '../Button'
+import { ButtonBlack, ButtonGray } from '../Button'
 import { AutoColumn } from '../Column'
 import MetaMaskLogo from '../../assets/images/metamask.png'
 import { useActiveWeb3React } from '../../hooks'
 import useTheme from 'hooks/useTheme'
 import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 import { LoadingView, SubmittedView } from 'components/ModalViews'
-import { CrossCircle } from 'components/Icons/'
+// import { CrossCircle } from 'components/Icons/'
 import { TYPE } from 'theme'
 
 const Wrapper = styled.div`
   width: 100%;
-  max-width: 480px;
+  /* max-width: 480px; */
   border-radius: 42px;
-  background: ${({ theme }) => theme.gradient1};
+  /* background: ${({ theme }) => theme.gradient1}; */
 `
 const Section = styled(AutoColumn)`
-  padding: 24px;
+  padding: 50px;
 `
 
 const BottomSection = styled(Section)`
@@ -146,23 +146,24 @@ export function ConfirmationModalContent({
 }
 
 export function TransactionErrorContent({ message, onDismiss }: { message: string; onDismiss: () => void }) {
-  const theme = useContext(ThemeContext)
   return (
     <Wrapper>
       <Section>
         <RowBetween>
+          <Text fontWeight={700} fontSize={30}>
+            Oops!
+          </Text>
           <Close onClick={onDismiss} />
         </RowBetween>
-        <AutoColumn style={{ padding: '2rem 0' }} gap="24px" justify="center">
-          <CrossCircle color={theme.red1} size="25px" />
-          <Text fontWeight={500} fontSize={16} color={theme.text1} style={{ textAlign: 'center', width: '85%' }}>
+        <AutoColumn style={{ padding: '1rem 0 2rem' }} gap="24px">
+          <TYPE.darkGray fontWeight={400} fontSize={16} style={{ width: '85%' }}>
             {message}
-          </Text>
+          </TYPE.darkGray>
         </AutoColumn>
+        <ButtonBlack onClick={onDismiss} height={60}>
+          Close
+        </ButtonBlack>
       </Section>
-      <BottomSection gap="12px">
-        <ButtonOutlinedPrimary onClick={onDismiss}>Dismiss</ButtonOutlinedPrimary>
-      </BottomSection>
     </Wrapper>
   )
 }
@@ -185,9 +186,11 @@ export default function TransactionConfirmationModal({
   hash,
   pendingText,
   content,
+  error,
+  errorMsg,
   currencyToAdd,
   submittedContent
-}: ConfirmationModalProps) {
+}: ConfirmationModalProps & { error?: boolean; errorMsg?: string }) {
   const { chainId } = useActiveWeb3React()
 
   if (!chainId) return null
@@ -197,6 +200,11 @@ export default function TransactionConfirmationModal({
     <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90} width="600px" maxWidth={600}>
       {attemptingTxn ? (
         <ConfirmationPendingContent onDismiss={onDismiss} pendingText={pendingText} />
+      ) : error ? (
+        <TransactionErrorContent
+          message={errorMsg ?? 'Something went wrong. Please try again'}
+          onDismiss={onDismiss}
+        ></TransactionErrorContent>
       ) : hash ? (
         <>
           (

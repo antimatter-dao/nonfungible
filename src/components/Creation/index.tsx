@@ -186,6 +186,14 @@ export default function CreationNFTModal() {
   const [transactionModalOpen, setTransactionModalOpen] = useState(false)
   const [attemptingTxn, setAttemptingTxn] = useState(false)
   const [hash, setHash] = useState('')
+  const [error, setError] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
+
+  const transactionOnDismiss = () => {
+    setError(false)
+    setErrorMsg('')
+    setTransactionModalOpen(false)
+  }
 
   const [createSpotData, setCreateSpotData] = useState<CreateSpotData>(defaultSpotData)
   const handleCreateSpotData = useCallback(
@@ -256,8 +264,10 @@ export default function CreationNFTModal() {
         spotCommitSuccessHandler()
       })
       .catch(err => {
-        setTransactionModalOpen(false)
+        // setTransactionModalOpen(false)
         setAttemptingTxn(false)
+        setError(true)
+        setErrorMsg(err?.message)
         console.error('spo commit err', err)
       })
   }, [createSpotData, callback, account, spotCommitSuccessHandler, setAttemptingTxn, setTransactionModalOpen])
@@ -342,11 +352,11 @@ export default function CreationNFTModal() {
       <TransactionConfirmationModal
         isOpen={transactionModalOpen}
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        onDismiss={() => {
-          setTransactionModalOpen(false)
-        }}
+        onDismiss={transactionOnDismiss}
         hash={hash}
         attemptingTxn={attemptingTxn}
+        error={error}
+        errorMsg={errorMsg}
       />
     </>
   )

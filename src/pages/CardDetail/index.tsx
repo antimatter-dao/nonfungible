@@ -143,6 +143,14 @@ export default function CardDetail({
   const [transactionModalOpen, setTransactionModalOpen] = useState(false)
   const [attemptingTxn, setAttemptingTxn] = useState(false)
   const [hash, setHash] = useState('')
+  const [error, setError] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
+
+  const transactionOnDismiss = () => {
+    setError(false)
+    setErrorMsg('')
+    setTransactionModalOpen(false)
+  }
 
   const { loading: NFTIndexLoading, data: NFTIndexInfo } = useNFTIndexInfo(nftid)
 
@@ -275,8 +283,10 @@ export default function CardDetail({
         setBuyAmount('')
       })
       .catch(err => {
-        setTransactionModalOpen(false)
+        // setTransactionModalOpen(false)
         setAttemptingTxn(false)
+        setError(true)
+        setErrorMsg(err?.message)
         console.error('toBuyCall commit', err)
       })
   }, [buyAmount, toBuyCall, nftid])
@@ -423,11 +433,11 @@ export default function CardDetail({
       <TransactionConfirmationModal
         isOpen={transactionModalOpen}
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        onDismiss={() => {
-          setTransactionModalOpen(false)
-        }}
+        onDismiss={transactionOnDismiss}
         hash={hash}
         attemptingTxn={attemptingTxn}
+        error={error}
+        errorMsg={errorMsg}
       />
     </>
   )
