@@ -137,7 +137,7 @@ export default function CardDetail({
     params: { nftid }
   }
 }: RouteComponentProps<{ nftid?: string }>) {
-  const ETH = useToken('0xdac17f958d2ee523a2206206994597c13d831ec7')
+  const ETH = useToken('0x1f9840a85d5af5bf1d1762f925bdaddc4201f984')
   const theme = useTheme()
   const history = useHistory()
   const [transactionModalOpen, setTransactionModalOpen] = useState(false)
@@ -400,7 +400,9 @@ export default function CardDetail({
                           hideInput={true}
                         />
                       </AutoColumn>
-                      <ButtonBlack onClick={toBuy}>Buy</ButtonBlack>
+                      <ButtonBlack onClick={toBuy} disabled={!Number(buyAmount)}>
+                        Buy
+                      </ButtonBlack>
                     </BuyPannel>
                   </div>
 

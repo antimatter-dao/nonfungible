@@ -23,7 +23,7 @@ import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 import { LockerConfirmation } from './Confirmation'
 import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
 import { WrappedTokenInfo } from 'state/lists/hooks'
-import { useCheckLockerSchedule } from 'state/creation/hooks'
+import { useCheckLockerSchedule, useCheckLockerContent } from 'state/creation/hooks'
 
 const StyledDateBox = styled.div`
   width: 260px;
@@ -58,6 +58,7 @@ export default function LockerIndex({
 }) {
   const { creationType, schedule } = data
   const isPassLockerSchedule = useCheckLockerSchedule(data)
+  const isPassLockerContent = useCheckLockerContent(data)
 
   const handleCurrentLockerTypeChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -198,7 +199,7 @@ export default function LockerIndex({
             hint="Maximum 100 characters"
           />
 
-          <ButtonBlack height={60} onClick={() => setCurrent(++current)}>
+          <ButtonBlack height={60} disabled={!isPassLockerContent} onClick={() => setCurrent(++current)}>
             Next Step
           </ButtonBlack>
         </AutoColumn>
