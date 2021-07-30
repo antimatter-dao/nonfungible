@@ -20,6 +20,7 @@ import TransactionConfirmationModal from '../TransactionConfirmationModal'
 import { useIndexCreateCall } from '../../hooks/useIndexCreateCallback'
 import { useWeb3React } from '@web3-react/core'
 import { WrappedTokenInfo } from 'state/lists/hooks'
+import { tryParseAmount } from 'state/swap/hooks'
 
 const useStyles = makeStyles({
   root: {
@@ -241,7 +242,11 @@ export default function CreationNFTModal() {
       color: createSpotData.color
     }
     const address: string[] = createSpotData.assetsParameters.map(v => v.currency)
-    const amounts: string[] = createSpotData.assetsParameters.map(v => v.amount)
+    const amounts: string[] = createSpotData.assetsParameters.map(v => {
+      const ret = tryParseAmount(v.amount, v.currencyToken)?.raw.toString()
+      return ret || ''
+    })
+
     setTransactionModalOpen(true)
     setAttemptingTxn(true)
     callback(createSpotData.name, JSON.stringify(metadata), address, amounts)

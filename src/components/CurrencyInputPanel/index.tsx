@@ -413,13 +413,13 @@ export function CurrencyNFTInputPanel({
           </LabelRow>
         )}
         <Aligner>
-          <InputNFTRow
-            style={hideInput ? { padding: '0', borderRadius: '8px' } : {}}
-            halfWidth={halfWidth}
-            selected={disableCurrencySelect}
-            hideSelect={hideSelect}
-          >
-            {!hideInput && (
+          {!hideInput && (
+            <InputNFTRow
+              style={hideInput ? { padding: '0', borderRadius: '8px' } : {}}
+              halfWidth={halfWidth}
+              selected={disableCurrencySelect}
+              hideSelect={hideSelect}
+            >
               <>
                 <CustomNumericalInput
                   className="token-amount-input"
@@ -433,12 +433,13 @@ export function CurrencyNFTInputPanel({
                   <StyledBalanceMax onClick={onMax}>Max</StyledBalanceMax>
                 )}
               </>
-            )}
-          </InputNFTRow>
+            </InputNFTRow>
+          )}
 
           {!hideSelect && (
             <CurrencyNFTSelect
               selected={!!currency}
+              style={{ width: hideInput ? '100%' : '' }}
               className="open-currency-select-button"
               onClick={() => {
                 if (!disableCurrencySelect) {

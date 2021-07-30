@@ -5,6 +5,7 @@ import { WrappedTokenInfo } from 'state/lists/hooks'
 import { useSingleCallResult } from '../state/multicall/hooks'
 import { useAllTokens } from './Tokens'
 import { useIndexNFTContract } from './useContract'
+import { JSBI, TokenAmount } from '@uniswap/sdk'
 
 export interface NFTIndexInfoProps {
   name: string
@@ -16,6 +17,11 @@ export interface NFTIndexInfoProps {
   creatorName: string
 }
 
+function toNumber(weiValue: string, token: WrappedTokenInfo | undefined) {
+  if (!token) return '--'
+  return new TokenAmount(token, JSBI.BigInt(weiValue)).toSignificant()
+}
+
 export function useNFTIndexInfo(
   nftid: string | undefined
 ): {
@@ -24,6 +30,7 @@ export function useNFTIndexInfo(
 } {
   const contract = useIndexNFTContract()
   const nftIndexRes = useSingleCallResult(contract, 'getIndex', [nftid])
+  const tokens = useAllTokens()
 
   return useMemo(() => {
     if (!nftIndexRes.result)
@@ -35,9 +42,16 @@ export function useNFTIndexInfo(
     const metadata = JSON.parse(nft.metadata)
     const assetsParameters = nft.underlyingAmounts.map(
       (val: any, index: number): AssetsParameter => {
+        let _currencyToken = undefined
+        if (tokens) {
+          _currencyToken = tokens[val.currency] as WrappedTokenInfo
+          if (!_currencyToken) _currencyToken = tokens[Object.keys(tokens)[0]] as WrappedTokenInfo
+        }
+
         return {
-          amount: val.toString(),
-          currency: nft.underlyingTokens[index]
+          amount: toNumber(val.toString(), _currencyToken),
+          currency: nft.underlyingTokens[index],
+          currencyToken: _currencyToken
         }
       }
     )
@@ -54,7 +68,7 @@ export function useNFTIndexInfo(
       loading: nftIndexRes.loading,
       data: ret
     }
-  }, [nftIndexRes, nftid])
+  }, [nftIndexRes, nftid, tokens])
 }
 
 export function useAssetsTokens(assetsParameters: AssetsParameter[] | undefined): AssetsParameter[] {

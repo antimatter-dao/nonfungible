@@ -1,7 +1,7 @@
-import { ButtonDropdown, ButtonEmpty, ButtonBlack, ButtonWhite } from 'components/Button'
+import { ButtonEmpty, ButtonBlack, ButtonWhite } from 'components/Button'
 import { RowBetween, RowFixed } from 'components/Row'
 import { StyledTabItem, StyledTabs } from 'components/Tabs'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { TYPE, AnimatedImg, AnimatedWrapper } from 'theme'
 import { ChevronLeft } from 'react-feather'
 import styled from 'styled-components'
@@ -18,6 +18,10 @@ import NumericalInput from 'components/NumericalInput'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
 import { WrappedTokenInfo } from 'state/lists/hooks'
+import { useIndexBuyCall } from '../../hooks/useIndexBuyCallback'
+import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
+import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
+import { useToken } from 'hooks/Tokens'
 
 const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
@@ -54,12 +58,12 @@ const StyledAvatar = styled.div<{ wh?: string }>`
     height: 100%;
   }
 `
-const TokenButtonDropdown = styled(ButtonDropdown)`
-  background: linear-gradient(0deg, #ffffff, #ffffff);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  font-weight: normal;
-`
+// const TokenButtonDropdown = styled(ButtonDropdown)`
+//   background: linear-gradient(0deg, #ffffff, #ffffff);
+//   border: 1px solid rgba(0, 0, 0, 0.1);
+//   border-radius: 10px;
+//   font-weight: normal;
+// `
 
 const CustomNumericalInput = styled(NumericalInput)`
   background: transparent;
@@ -133,8 +137,12 @@ export default function CardDetail({
     params: { nftid }
   }
 }: RouteComponentProps<{ nftid?: string }>) {
+  const ETH = useToken('0xdac17f958d2ee523a2206206994597c13d831ec7')
   const theme = useTheme()
   const history = useHistory()
+  const [transactionModalOpen, setTransactionModalOpen] = useState(false)
+  const [attemptingTxn, setAttemptingTxn] = useState(false)
+  const [hash, setHash] = useState('')
 
   const { loading: NFTIndexLoading, data: NFTIndexInfo } = useNFTIndexInfo(nftid)
 
@@ -143,7 +151,7 @@ export default function CardDetail({
   const [currentSubTab, setCurrentSubTab] = useState<SubTabType>(SubTabType.Creater)
   const [currentTab, setCurrentTab] = useState<TabType>(TabType.Information)
   const [currentTradeTab, setCurrentTradeTab] = useState<TradeTabType>(TradeTabType.Buy)
-  const [value, setValue] = useState('')
+  const [buyAmount, setBuyAmount] = useState('')
 
   const [priceChartData, setPriceChartData] = useState<DexTradeData[] | undefined>()
   const [candlestickSeries, setCandlestickSeries] = useState<ISeriesApi<'Candlestick'> | undefined>(undefined)
@@ -254,6 +262,25 @@ export default function CardDetail({
     }
   }, [NFTIndexInfo, tokens])
 
+  const { callback: toBuyCall } = useIndexBuyCall()
+  const toBuy = useCallback(() => {
+    if (!buyAmount || !toBuyCall || !nftid) return
+
+    setTransactionModalOpen(true)
+    setAttemptingTxn(true)
+    toBuyCall(nftid, buyAmount)
+      .then(hash => {
+        setAttemptingTxn(false)
+        setHash(hash)
+        setBuyAmount('')
+      })
+      .catch(err => {
+        setTransactionModalOpen(false)
+        setAttemptingTxn(false)
+        console.error('toBuyCall commit', err)
+      })
+  }, [buyAmount, toBuyCall, nftid])
+
   if (NFTIndexLoading || !NFTIndexInfo) {
     return (
       <AnimatedWrapper>
@@ -348,17 +375,32 @@ export default function CardDetail({
                             width: 'unset',
                             height: '60px'
                           }}
-                          value={value}
+                          isInt={true}
+                          placeholder="0"
+                          value={buyAmount}
                           onUserInput={val => {
-                            setValue(val)
+                            setBuyAmount(val)
                           }}
                         />
                       </AutoColumn>
                       <AutoColumn gap="8px" style={{ width: '100%' }}>
                         <TYPE.black color="black">Payment Currency </TYPE.black>
-                        <TokenButtonDropdown>Select currency</TokenButtonDropdown>
+                        <CurrencyNFTInputPanel
+                          hiddenLabel={true}
+                          value={''}
+                          onUserInput={() => {}}
+                          // onMax={handleMax}
+                          currency={ETH}
+                          // pair={dummyPair}
+                          showMaxButton={false}
+                          // label="Amount"
+                          disableCurrencySelect={true}
+                          id="stake-liquidity-token"
+                          hideSelect={false}
+                          hideInput={true}
+                        />
                       </AutoColumn>
-                      <ButtonBlack>Buy</ButtonBlack>
+                      <ButtonBlack onClick={toBuy}>Buy</ButtonBlack>
                     </BuyPannel>
                   </div>
 
@@ -375,6 +417,16 @@ export default function CardDetail({
           )}
         </RowBetween>
       </Wrapper>
+
+      <TransactionConfirmationModal
+        isOpen={transactionModalOpen}
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        onDismiss={() => {
+          setTransactionModalOpen(false)
+        }}
+        hash={hash}
+        attemptingTxn={attemptingTxn}
+      />
     </>
   )
 }

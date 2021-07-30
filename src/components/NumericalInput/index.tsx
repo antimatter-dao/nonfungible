@@ -43,16 +43,22 @@ export const Input = React.memo(function InnerInput({
   value,
   onUserInput,
   placeholder,
+  isInt = false,
   ...rest
 }: {
   value: string | number
   onUserInput: (input: string) => void
   error?: boolean
   fontSize?: string
+  isInt?: boolean
   align?: 'right' | 'left'
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
+      if (isInt) {
+        onUserInput(Number(nextUserInput).toString())
+        return
+      }
       onUserInput(nextUserInput)
     }
   }
