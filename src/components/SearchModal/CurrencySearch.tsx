@@ -63,8 +63,9 @@ export function CurrencySearch({
   showImportView,
   setImportToken,
   hasManage,
-  tokenList
-}: CurrencySearchProps) {
+  tokenList,
+  disabledCurrencys
+}: CurrencySearchProps & { disabledCurrencys?: Currency[] }) {
   const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
   const theme = useTheme()

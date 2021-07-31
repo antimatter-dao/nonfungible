@@ -13,6 +13,7 @@ import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
 // import { Currency } from '@uniswap/sdk'
 import { WrappedTokenInfo } from 'state/lists/hooks'
 import { useAssetsTokens } from 'hooks/useIndexDetail'
+import CurrencyLogo from 'components/CurrencyLogo'
 
 export const IndexIcon = styled.div<{ current?: boolean }>`
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -157,7 +158,7 @@ export default function SpotIndex({
 
   const currentCard = useMemo((): NFTCardProps => {
     const _icons = selectTokens.map((val, idx) => {
-      return <img src={val.currencyToken?.logoURI} alt="" key={idx} />
+      return <CurrencyLogo currency={val.currencyToken} key={idx} />
     })
     return {
       id: '',

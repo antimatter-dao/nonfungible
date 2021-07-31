@@ -22,6 +22,7 @@ import { useIndexBuyCall } from '../../hooks/useIndexBuyCallback'
 import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
 import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
 import { useToken } from 'hooks/Tokens'
+import CurrencyLogo from 'components/CurrencyLogo'
 
 const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
@@ -52,7 +53,7 @@ const StyledAvatar = styled.div<{ wh?: string }>`
   height: ${({ wh }) => (wh ? wh : '36px')};
   flex-shrink: 1;
   margin-right: 12px;
-  > img {
+  > * {
     background-color: #eee;
     width: 100%;
     height: 100%;
@@ -257,7 +258,7 @@ export default function CardDetail({
   const currentCard = useMemo((): NFTCardProps => {
     if (!NFTIndexInfo) return defaultCardData
     const _icons = tokens.map((val, idx) => {
-      return <img src={val.currencyToken?.logoURI} alt="" key={idx} />
+      return <CurrencyLogo currency={val.currencyToken} key={idx} />
     })
     return {
       id: NFTIndexInfo.creatorId,
@@ -483,7 +484,7 @@ function AssetItem({ amount, currencyToken }: { amount: string; currencyToken: W
     <TokenWrapper>
       <RowFixed style={{ width: '100%' }}>
         <StyledAvatar wh="32px">
-          <img src={currencyToken?.logoURI} alt="" />
+          <CurrencyLogo currency={currencyToken} />
         </StyledAvatar>
         <RowBetween>
           <TYPE.subHeader>{currencyToken?.symbol}</TYPE.subHeader>
