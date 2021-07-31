@@ -198,6 +198,7 @@ export function CurrencySearch({
               <CurrencyList
                 height={height}
                 showETH={showETH}
+                disabledCurrencys={disabledCurrencys}
                 currencies={
                   tokenList
                     ? tokenList

@@ -15,11 +15,12 @@ export const StyledDialogOverlay = styled(AnimatedDialogOverlay)<{
   color?: string
   overflow?: string
   alignitems?: string
+  zIndex?: number
 }>`
   &[data-reach-dialog-overlay] {
-    z-index: 2;
+    z-index: ${({ zIndex }) => zIndex ?? 2};
     overflow: ${({ overflow }) => overflow ?? 'hidden'};
-    padding-top: ${({ theme }) => theme.headerHeight}
+    /* padding-top: ${({ theme }) => theme.headerHeight} */
 
     display: flex;
     align-items: ${({ alignitems }) => alignitems ?? 'center'};
@@ -29,7 +30,7 @@ export const StyledDialogOverlay = styled(AnimatedDialogOverlay)<{
     ${({ theme }) => theme.mediaWidth.upToSmall`
     height: calc(100% - ${theme.headerHeight});
     justify-content: flex-end;
-    padding-top: ${theme.mobileHeaderHeight}
+    // padding-top: ${theme.mobileHeaderHeight}
     `}
   }
 `
@@ -62,7 +63,7 @@ export const StyledDialogContent = styled(
   overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
 
   &[data-reach-dialog-content] {
-    margin: 0 0 2rem 0;
+    // margin: 0 0 2rem 0;
     background: ${({ theme }) => theme.gradient1};
     box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
     padding: 0px;
@@ -122,6 +123,7 @@ interface ModalProps {
   children?: React.ReactNode
   maxWidth?: number
   width?: string
+  zIndex?: number
 }
 
 export default function Modal({
@@ -132,6 +134,7 @@ export default function Modal({
   maxWidth = 480,
   width,
   initialFocusRef,
+  zIndex,
   children
 }: ModalProps) {
   const fadeTransition = useTransition(isOpen, null, {
@@ -164,6 +167,7 @@ export default function Modal({
               onDismiss={onDismiss}
               initialFocusRef={initialFocusRef}
               unstable_lockFocusAcrossFrames={false}
+              zIndex={zIndex}
             >
               {/* <Filler /> */}
               <Wrapper>

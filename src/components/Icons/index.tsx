@@ -23,6 +23,7 @@ export const Wrapper = styled.div<{ clickable: boolean; color?: string; size?: s
   }
   > svg {
     height: ${({ size }) => size ?? '20px'};
+    width: ${({ size }) => size ?? '20px'};
   }
 `
 

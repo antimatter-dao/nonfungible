@@ -36,8 +36,9 @@ export default function CurrencySearchModal({
   otherSelectedCurrency,
   showCommonBases = false,
   hasManage = true,
-  tokenList
-}: CurrencySearchModalProps) {
+  tokenList,
+  disabledCurrencys
+}: CurrencySearchModalProps & { disabledCurrencys?: Currency[] }) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage)
   const lastOpen = useLast(isOpen)
 
@@ -75,7 +76,7 @@ export default function CurrencySearchModal({
   const minHeight = modalView === CurrencyModalView.importToken || modalView === CurrencyModalView.importList ? 50 : 80
 
   return (
-    <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={80} minHeight={minHeight}>
+    <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={80} minHeight={minHeight} zIndex={5}>
       {modalView === CurrencyModalView.search ? (
         <CurrencySearch
           tokenList={tokenList}
@@ -89,6 +90,7 @@ export default function CurrencySearchModal({
           setImportToken={setImportToken}
           showManageView={onShowAll}
           hasManage={hasManage}
+          disabledCurrencys={disabledCurrencys}
         />
       ) : modalView === CurrencyModalView.importToken && importToken ? (
         <ImportToken

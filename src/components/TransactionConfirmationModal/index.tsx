@@ -197,7 +197,7 @@ export default function TransactionConfirmationModal({
 
   // confirmation screen
   return (
-    <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90} width="600px" maxWidth={600}>
+    <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90} width="600px" maxWidth={600} zIndex={5}>
       {attemptingTxn ? (
         <ConfirmationPendingContent onDismiss={onDismiss} pendingText={pendingText} />
       ) : error ? (

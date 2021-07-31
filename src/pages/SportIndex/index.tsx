@@ -194,7 +194,7 @@ export default function SportIndex() {
             key={indexId}
             creator={creator}
             name={name}
-            onClick={() => history.push('/card_detail/7')}
+            onClick={() => history.push('/spot_detail/7')}
           />
         ))}
       </ContentWrapper>

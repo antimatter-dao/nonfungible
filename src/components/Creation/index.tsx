@@ -282,9 +282,10 @@ export default function CreationNFTModal() {
         isOpen={creationModalOpen}
         onDismiss={toggleCreationModal}
         minHeight={30}
-        maxHeight={70}
+        maxHeight={85}
         width="600px"
         maxWidth={600}
+        zIndex={5}
       >
         <Wrapper>
           {currentStep !== Step.Choose && <IconBack onEvent={handleBack} style={{ top: 28, left: 28 }} />}

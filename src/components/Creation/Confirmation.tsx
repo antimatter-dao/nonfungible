@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { RowBetween, RowFixed } from 'components/Row'
 import { CreateSpotData } from './index'
 import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
+import CurrencyLogo from 'components/CurrencyLogo'
 
 const Wrapper = styled(AutoColumn)`
   padding: 24px 28px 0;
@@ -27,7 +28,7 @@ export function SpotConfirmation({
   children?: string | JSX.Element
   dataInfo: CreateSpotData
 }) {
-  const { creator, creatorWalletAddress, creatorId, description, name: indexName } = dataInfo
+  const { creator, creatorWalletAddress, creatorId, description, name, assetsParameters } = dataInfo
   return (
     <AutoColumn gap="40px">
       <div>
@@ -46,7 +47,7 @@ export function SpotConfirmation({
           </RowBetween>
           <RowBetween>
             <TYPE.smallGray>IndexName</TYPE.smallGray>
-            <RightText>{indexName}</RightText>
+            <RightText>{name}</RightText>
           </RowBetween>
           <RowBetween>
             <TYPE.smallGray>Creator wallet address</TYPE.smallGray>
@@ -72,20 +73,19 @@ export function SpotConfirmation({
 
         <AutoColumn gap="12px">
           <TYPE.smallHeader color="text6">Underlying Asset</TYPE.smallHeader>
-          <RowBetween>
-            <RowFixed>
-              <ETH style={{ marginRight: 10 }} />
-              <TYPE.smallGray>YFI</TYPE.smallGray>
-            </RowFixed>
-            <RightText>0.1</RightText>
-          </RowBetween>
-          <RowBetween>
-            <RowFixed>
-              <ETH style={{ marginRight: 10 }} />
-              <TYPE.smallGray>YFI</TYPE.smallGray>
-            </RowFixed>
-            <RightText>0.1</RightText>
-          </RowBetween>
+          {assetsParameters
+            .filter(v => v.currencyToken)
+            .map(({ amount, currencyToken }) => (
+              <>
+                <RowBetween>
+                  <RowFixed>
+                    <CurrencyLogo currency={currencyToken} style={{ marginRight: 10 }} />
+                    <TYPE.smallGray>{currencyToken?.symbol}</TYPE.smallGray>
+                  </RowFixed>
+                  <RightText>{amount}</RightText>
+                </RowBetween>
+              </>
+            ))}
         </AutoColumn>
 
         <div style={{ height: 8 }} />

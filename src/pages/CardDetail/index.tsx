@@ -21,7 +21,7 @@ import { WrappedTokenInfo } from 'state/lists/hooks'
 import { useIndexBuyCall } from '../../hooks/useIndexBuyCallback'
 import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
 import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
-import { useToken } from 'hooks/Tokens'
+import { useCurrency } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
 
 const Wrapper = styled.div`
@@ -138,7 +138,6 @@ export default function CardDetail({
     params: { nftid }
   }
 }: RouteComponentProps<{ nftid?: string }>) {
-  const ETH = useToken('0x1f9840a85d5af5bf1d1762f925bdaddc4201f984')
   const theme = useTheme()
   const history = useHistory()
   const [transactionModalOpen, setTransactionModalOpen] = useState(false)
@@ -152,6 +151,8 @@ export default function CardDetail({
     setErrorMsg('')
     setTransactionModalOpen(false)
   }
+
+  const ETHCurrency = useCurrency('ETH')
 
   const { loading: NFTIndexLoading, data: NFTIndexInfo } = useNFTIndexInfo(nftid)
 
@@ -401,7 +402,7 @@ export default function CardDetail({
                           value={''}
                           onUserInput={() => {}}
                           // onMax={handleMax}
-                          currency={ETH}
+                          currency={ETHCurrency}
                           // pair={dummyPair}
                           showMaxButton={false}
                           // label="Amount"
@@ -472,8 +473,8 @@ function IndexInfo({ info }: { info: NFTIndexInfoProps }) {
     <div>
       <Paragraph header="Token contract address">0xKos369cd6vwd94wq1gt4hr87ujv</Paragraph>
       <Hr />
-      <Paragraph header="Current issuance">123</Paragraph>
-      <Hr />
+      {/* <Paragraph header="Current issuance">123</Paragraph>
+      <Hr /> */}
       <Paragraph header="Description">{info.description}</Paragraph>
     </div>
   )

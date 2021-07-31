@@ -14,6 +14,7 @@ import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
 import { WrappedTokenInfo } from 'state/lists/hooks'
 import { useAssetsTokens } from 'hooks/useIndexDetail'
 import CurrencyLogo from 'components/CurrencyLogo'
+import { Currency } from '@uniswap/sdk'
 
 export const IndexIcon = styled.div<{ current?: boolean }>`
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -176,6 +177,11 @@ export default function SpotIndex({
     setCurrent(++current)
   }, [current, setCurrent, setData, currentCard])
 
+  const disabledCurrencys = useMemo(
+    () => assetParams.map(({ currencyToken }) => currencyToken as Currency).filter(item => item),
+    [assetParams]
+  )
+
   return (
     <>
       {current === 1 && (
@@ -229,6 +235,7 @@ export default function SpotIndex({
                       const newData = { ...item, amount: val }
                       handleParameterInput(index, newData)
                     }}
+                    disabledCurrencys={disabledCurrencys}
                     // onMax={handleMax}
                     currency={item.currencyToken}
                     // pair={dummyPair}
@@ -277,7 +284,9 @@ export default function SpotIndex({
 
       {current === 4 && (
         <SpotConfirmation dataInfo={data}>
-          <ButtonBlack onClick={onConfirm}>Confirm</ButtonBlack>
+          <ButtonBlack onClick={onConfirm} height={60}>
+            Confirm
+          </ButtonBlack>
         </SpotConfirmation>
       )}
     </>

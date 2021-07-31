@@ -366,7 +366,7 @@ export default function AccountDetails({
         <LowerSection>
           <AutoColumn gap="16px" style={{ width: '100%' }}>
             <RowBetween>
-              <TYPE.body>Recent Transactions</TYPE.body>
+              <TYPE.body color="text6">Recent Transactions</TYPE.body>
               <LinkStyledButton onClick={clearAllTransactionsCallback}>(clear all)</LinkStyledButton>
             </RowBetween>
             <AutoColumn>

@@ -154,7 +154,8 @@ export default function CurrencyList({
   showETH,
   showImportView,
   setImportToken,
-  breakIndex
+  breakIndex,
+  disabledCurrencys
 }: {
   height: number
   currencies: Currency[]
@@ -166,6 +167,7 @@ export default function CurrencyList({
   showImportView: () => void
   setImportToken: (token: Token) => void
   breakIndex: number | undefined
+  disabledCurrencys?: Currency[]
 }) {
   const itemData: (Currency | undefined)[] = useMemo(() => {
     let formatted: (Currency | undefined)[] = showETH ? [Currency.ETHER, ...currencies] : currencies
@@ -186,7 +188,11 @@ export default function CurrencyList({
     ({ data, index, style }) => {
       const currency: Currency = data[index]
       if (!currency) return null
-      const isSelected = Boolean(selectedCurrency && currencyEquals(selectedCurrency, currency))
+      const isSelected =
+        Boolean(selectedCurrency && currencyEquals(selectedCurrency, currency)) ||
+        (disabledCurrencys
+          ? disabledCurrencys?.filter(_currency => currencyEquals(_currency, currency)).length > 0
+          : false)
       const otherSelected = Boolean(otherCurrency && currencyEquals(otherCurrency, currency))
       const handleSelect = () => onCurrencySelect(currency)
 
@@ -243,7 +249,8 @@ export default function CurrencyList({
       setImportToken,
       showImportView,
       breakIndex,
-      theme.text1
+      theme.text1,
+      disabledCurrencys
     ]
   )
 

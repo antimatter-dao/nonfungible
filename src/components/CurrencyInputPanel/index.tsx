@@ -374,8 +374,9 @@ export function CurrencyNFTInputPanel({
   showCommonBases,
   customBalanceText,
   halfWidth,
-  negativeMarginTop
-}: CurrencyInputPanelProps & { hiddenLabel?: boolean }) {
+  negativeMarginTop,
+  disabledCurrencys
+}: CurrencyInputPanelProps & { hiddenLabel?: boolean; disabledCurrencys?: Currency[] }) {
   const [modalOpen, setModalOpen] = useState(false)
   const { account } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
@@ -483,6 +484,7 @@ export function CurrencyNFTInputPanel({
           selectedCurrency={currency}
           otherSelectedCurrency={otherCurrency}
           showCommonBases={showCommonBases}
+          disabledCurrencys={disabledCurrencys}
         />
       )}
     </InputPanel>

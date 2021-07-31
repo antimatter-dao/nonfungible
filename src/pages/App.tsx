@@ -100,7 +100,7 @@ export default function App() {
                 <Switch>
                   <Route exact strict path="/" component={SportIndex} />
                   <Route exact strict path="/sport_index" component={SportIndex} />
-                  <Route exact strict path="/card_detail/:nftid" component={CardDetail} />
+                  <Route exact strict path="/spot_detail/:nftid" component={CardDetail} />
                   <Route exact strict path="/locker" component={Locker} />
                   <Route exact strict path="/governance" component={Governance} />
                   <Route exact strict path="/governance/:governanceIndex" component={GovernanceDetail} />
