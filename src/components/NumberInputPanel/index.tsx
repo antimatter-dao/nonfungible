@@ -18,10 +18,27 @@ const InputRow = styled.div<{ disabled?: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
 `
 
+const InputNFTRow = styled.div<{ disabled?: boolean }>`
+  align-items: center;
+  padding: 0 0.8rem 0 1rem;
+  width: 100%;
+  /* background-color: ${({ theme, disabled }) => (disabled ? darken(0.2, theme.black) : theme.bg2)}; */
+  border-radius: 14px;
+  height: 60px;
+  border: 1px solid rgba(0,0,0,0.1);
+  ${({ theme }) => theme.flexRowNoWrap}
+`
+
 const CustomNumericalInput = styled(NumericalInput)<{ disabled?: boolean }>`
   font-size: 16px;
   background-color: transparent;
   color: ${({ theme, disabled }) => (disabled ? darken(0.6, theme.white) : theme.white)};
+`
+
+const CustomNFTNumericalInput = styled(NumericalInput)<{ disabled?: boolean }>`
+  font-size: 16px;
+  background-color: transparent;
+  color: ${({ theme, disabled }) => (disabled ? darken(0.6, theme.black) : theme.black)};
 `
 
 const LabelRow = styled.div`
@@ -130,6 +147,7 @@ export default function NumberInputPanel({
           <CustomNumericalInput
             placeholder={intOnly ? '0' : undefined}
             disabled={disabled}
+            isInt={intOnly}
             className="token-amount-input"
             value={value}
             onUserInput={val => {
@@ -138,6 +156,67 @@ export default function NumberInputPanel({
           />
           {account && showMaxButton && <StyledBalanceMax onClick={onMax}>Max</StyledBalanceMax>}
         </InputRow>
+      </Container>
+    </InputPanel>
+  )
+}
+
+export function NumberNFTInputPanel({
+  disabled = false,
+  value,
+  onMax,
+  label = 'Input',
+  hideBalance = false,
+  hideLabel = false,
+  showMaxButton,
+  id,
+  balance,
+  customBalanceText,
+  negativeMarginTop,
+  onUserInput,
+  intOnly,
+  error
+}: NumberInputPanelProps & { balance?: string; error?: string }) {
+  const { account } = useActiveWeb3React()
+  const theme = useTheme()
+
+  return (
+    <InputPanel id={id} negativeMarginTop={negativeMarginTop}>
+      <Container>
+        <LabelRow style={{ marginBottom: 8 }}>
+          <AutoRow justify="space-between">
+            {!hideLabel && (
+              <TYPE.body color={theme.black} fontWeight={500} fontSize={16}>
+                {label}
+              </TYPE.body>
+            )}
+            {account && (
+              <TYPE.body
+                onClick={onMax}
+                color={theme.black}
+                fontWeight={400}
+                fontSize={14}
+                style={{ display: 'inline', cursor: 'pointer' }}
+              >
+                {!hideBalance ? (customBalanceText ?? 'Your balance: ') + balance : ''}
+              </TYPE.body>
+            )}
+          </AutoRow>
+        </LabelRow>
+        <InputNFTRow disabled={disabled}>
+          <CustomNFTNumericalInput
+            placeholder={intOnly ? '0' : undefined}
+            disabled={disabled}
+            isInt={intOnly}
+            className="token-amount-input"
+            value={value}
+            onUserInput={val => {
+              onUserInput(val)
+            }}
+          />
+          {account && showMaxButton && <StyledBalanceMax onClick={onMax}>Max</StyledBalanceMax>}
+        </InputNFTRow>
+        <TYPE.error error={!!error}>{error}</TYPE.error>
       </Container>
     </InputPanel>
   )

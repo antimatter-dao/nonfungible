@@ -6,7 +6,7 @@ import { useSingleCallResult } from '../state/multicall/hooks'
 import { useAllTokens } from './Tokens'
 import { useIndexNFTContract } from './useContract'
 import { JSBI, TokenAmount } from '@uniswap/sdk'
-
+import { useWeb3React } from '@web3-react/core'
 export interface NFTIndexInfoProps {
   name: string
   description: string
@@ -83,4 +83,18 @@ export function useAssetsTokens(assetsParameters: AssetsParameter[] | undefined)
       return { ...item }
     })
   }, [tokens, assetsParameters])
+}
+
+export function useNFTBalance(nftid: string | undefined) {
+  const { account } = useWeb3React()
+  const contract = useIndexNFTContract()
+  const balanceRes = useSingleCallResult(contract, 'balanceOf', [account ?? undefined, nftid])
+  return useMemo(() => {
+    console.log('🚀 ~ file: useIndexDetail.ts ~ line 93 ~ useNFTBalance ~ balanceRes', balanceRes)
+
+    return {
+      loading: balanceRes.loading,
+      data: balanceRes.result
+    }
+  }, [balanceRes])
 }

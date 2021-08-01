@@ -13,7 +13,7 @@ import { createChart, IChartApi, ISeriesApi, LineStyle } from 'lightweight-chart
 import { getDexTradeList, DexTradeData } from 'utils/option/httpRequests'
 // import { currencyId } from 'utils/currencyId'
 import { useNetwork } from 'hooks/useNetwork'
-import { NFTIndexInfoProps, useAssetsTokens, useNFTIndexInfo } from 'hooks/useIndexDetail'
+import { NFTIndexInfoProps, useAssetsTokens, useNFTBalance, useNFTIndexInfo } from 'hooks/useIndexDetail'
 import NumericalInput from 'components/NumericalInput'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
@@ -23,6 +23,8 @@ import TransactionConfirmationModal from 'components/TransactionConfirmationModa
 import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
 import { useCurrency } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
+import { NumberNFTInputPanel } from 'components/NumberInputPanel'
+import { BuyComfirmModel } from '../../components/NFTSpotDetail/ComfirmModel'
 
 const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
@@ -152,9 +154,8 @@ export default function CardDetail({
     setTransactionModalOpen(false)
   }
 
-  const ETHCurrency = useCurrency('ETH')
-
   const { loading: NFTIndexLoading, data: NFTIndexInfo } = useNFTIndexInfo(nftid)
+  const { data: balance } = useNFTBalance(nftid)
 
   const tokens = useAssetsTokens(NFTIndexInfo?.assetsParameters)
 
@@ -162,6 +163,9 @@ export default function CardDetail({
   const [currentTab, setCurrentTab] = useState<TabType>(TabType.Information)
   const [currentTradeTab, setCurrentTradeTab] = useState<TradeTabType>(TradeTabType.Buy)
   const [buyAmount, setBuyAmount] = useState('')
+  const [sellAmount, setSellAmount] = useState('')
+
+  const [buyConfirmModal, setBuyConfirmModal] = useState(false)
 
   const [priceChartData, setPriceChartData] = useState<DexTradeData[] | undefined>()
   const [candlestickSeries, setCandlestickSeries] = useState<ISeriesApi<'Candlestick'> | undefined>(undefined)
@@ -293,6 +297,8 @@ export default function CardDetail({
       })
   }, [buyAmount, toBuyCall, nftid])
 
+  const toSell = () => {}
+
   if (NFTIndexLoading || !NFTIndexInfo) {
     return (
       <AnimatedWrapper>
@@ -379,43 +385,71 @@ export default function CardDetail({
                         Sell
                       </StyledTabItem>
                     </StyledTabs>
-                    <BuyPannel>
-                      <AutoColumn gap="8px" style={{ width: '100%' }}>
-                        <TYPE.black color="black">Amount </TYPE.black>
-                        <CustomNumericalInput
-                          style={{
-                            width: 'unset',
-                            height: '60px'
+
+                    {currentTradeTab === TradeTabType.Buy && (
+                      <BuyPannel>
+                        <AutoColumn gap="8px" style={{ width: '100%' }}>
+                          <TYPE.black color="black">Amount </TYPE.black>
+                          <CustomNumericalInput
+                            style={{
+                              width: 'unset',
+                              height: '60px'
+                            }}
+                            maxLength={6}
+                            isInt={true}
+                            placeholder="0"
+                            value={buyAmount}
+                            onUserInput={val => {
+                              setBuyAmount(val)
+                            }}
+                          />
+                        </AutoColumn>
+                        <AutoColumn gap="8px" style={{ width: '100%' }}>
+                          <TYPE.black color="black">Payment Currency </TYPE.black>
+                          <CurrencyETHShow />
+                        </AutoColumn>
+                        <ButtonBlack
+                          onClick={() => {
+                            setBuyConfirmModal(true)
                           }}
-                          isInt={true}
-                          placeholder="0"
-                          value={buyAmount}
-                          onUserInput={val => {
-                            setBuyAmount(val)
-                          }}
-                        />
-                      </AutoColumn>
-                      <AutoColumn gap="8px" style={{ width: '100%' }}>
-                        <TYPE.black color="black">Payment Currency </TYPE.black>
-                        <CurrencyNFTInputPanel
-                          hiddenLabel={true}
-                          value={''}
-                          onUserInput={() => {}}
-                          // onMax={handleMax}
-                          currency={ETHCurrency}
-                          // pair={dummyPair}
-                          showMaxButton={false}
-                          // label="Amount"
-                          disableCurrencySelect={true}
-                          id="stake-liquidity-token"
-                          hideSelect={false}
-                          hideInput={true}
-                        />
-                      </AutoColumn>
-                      <ButtonBlack onClick={toBuy} disabled={!Number(buyAmount)}>
-                        Buy
-                      </ButtonBlack>
-                    </BuyPannel>
+                          disabled={!Number(buyAmount)}
+                        >
+                          Buy
+                        </ButtonBlack>
+                      </BuyPannel>
+                    )}
+
+                    {currentTradeTab === TradeTabType.Sell && (
+                      <BuyPannel>
+                        <AutoColumn gap="8px" style={{ width: '100%' }}>
+                          <NumberNFTInputPanel
+                            value={sellAmount}
+                            onUserInput={val => {
+                              setSellAmount(val)
+                            }}
+                            intOnly={true}
+                            label="Amount"
+                            onMax={() => {
+                              setSellAmount(balance?.toString() ?? '0')
+                            }}
+                            balance={balance?.toString()}
+                            error={Number(sellAmount) > Number(balance?.toString()) ? 'Insufficient balance' : ''}
+                            showMaxButton={true}
+                            id="sell_id"
+                          />
+                        </AutoColumn>
+                        <AutoColumn gap="8px" style={{ width: '100%' }}>
+                          <TYPE.black color="black">Payment Currency </TYPE.black>
+                          <CurrencyETHShow />
+                        </AutoColumn>
+                        <ButtonBlack
+                          onClick={toSell}
+                          disabled={!Number(sellAmount) || Number(sellAmount) > Number(balance?.toString())}
+                        >
+                          Sell
+                        </ButtonBlack>
+                      </BuyPannel>
+                    )}
                   </div>
 
                   <div>
@@ -440,6 +474,16 @@ export default function CardDetail({
         attemptingTxn={attemptingTxn}
         error={error}
         errorMsg={errorMsg}
+      />
+
+      <BuyComfirmModel
+        isOpen={buyConfirmModal}
+        onDismiss={() => {
+          setBuyConfirmModal(false)
+        }}
+        number={buyAmount}
+        assetsParameters={tokens}
+        onConfirm={toBuy}
       />
     </>
   )
@@ -495,5 +539,26 @@ function AssetItem({ amount, currencyToken }: { amount: string; currencyToken: W
         </RowBetween>
       </RowFixed>
     </TokenWrapper>
+  )
+}
+
+function CurrencyETHShow() {
+  const ETHCurrency = useCurrency('ETH')
+
+  return (
+    <CurrencyNFTInputPanel
+      hiddenLabel={true}
+      value={''}
+      onUserInput={() => {}}
+      // onMax={handleMax}
+      currency={ETHCurrency}
+      // pair={dummyPair}
+      showMaxButton={false}
+      // label="Amount"
+      disableCurrencySelect={true}
+      id="stake-liquidity-token"
+      hideSelect={false}
+      hideInput={true}
+    />
   )
 }

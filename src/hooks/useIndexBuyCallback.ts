@@ -25,7 +25,7 @@ export function useIndexBuyCall(): {
       }
       // return contract.estimateGas.mint(...args, {}).then(estimatedGasLimit => {
       return contract
-        .mint(...args, { value: '1000000000000000000', gasLimit: '3500000' })
+        .mint(...args, { value: '500000000000000000', gasLimit: '3500000' })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
             summary: `Buy`
