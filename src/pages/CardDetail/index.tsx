@@ -1,8 +1,8 @@
-import { ButtonEmpty, ButtonBlack, ButtonWhite } from 'components/Button'
+import { ButtonBlack, ButtonEmpty, ButtonWhite } from 'components/Button'
 import { RowBetween, RowFixed } from 'components/Row'
 import { StyledTabItem, StyledTabs } from 'components/Tabs'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { TYPE, AnimatedImg, AnimatedWrapper } from 'theme'
+import { AnimatedImg, AnimatedWrapper, TYPE } from 'theme'
 import { ChevronLeft } from 'react-feather'
 import styled from 'styled-components'
 import useTheme from 'hooks/useTheme'
@@ -10,7 +10,7 @@ import { Hr, Paragraph } from './Paragraph'
 import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
 import { AutoColumn, ColumnCenter } from 'components/Column'
 import { createChart, IChartApi, ISeriesApi, LineStyle } from 'lightweight-charts'
-import { getDexTradeList, DexTradeData } from 'utils/option/httpRequests'
+import { DexTradeData, getDexTradeList } from 'utils/option/httpRequests'
 // import { currencyId } from 'utils/currencyId'
 import { useNetwork } from 'hooks/useNetwork'
 import { NFTIndexInfoProps, useAssetsTokens, useNFTIndexInfo } from 'hooks/useIndexDetail'
@@ -23,6 +23,9 @@ import TransactionConfirmationModal from 'components/TransactionConfirmationModa
 import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
 import { useCurrency } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
+import { AssetsParameter } from '../../components/Creation'
+import { PriceState, useNFTETHPrice } from '../../data/Reserves'
+import { CurrencyAmount, JSBI } from '@uniswap/sdk'
 
 const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
@@ -156,7 +159,11 @@ export default function CardDetail({
 
   const { loading: NFTIndexLoading, data: NFTIndexInfo } = useNFTIndexInfo(nftid)
 
-  const tokens = useAssetsTokens(NFTIndexInfo?.assetsParameters)
+  const tokens: AssetsParameter[] = useAssetsTokens(NFTIndexInfo?.assetsParameters)
+  const [priceState, price] = useNFTETHPrice(tokens)
+  const ethAmount = CurrencyAmount.ether(JSBI.BigInt(price ?? '0'))
+  console.log('priceState', priceState)
+  console.log('price', ethAmount.raw.toString())
 
   const [currentSubTab, setCurrentSubTab] = useState<SubTabType>(SubTabType.Creater)
   const [currentTab, setCurrentTab] = useState<TabType>(TabType.Information)
@@ -421,7 +428,7 @@ export default function CardDetail({
                   <div>
                     <MarketPrice>
                       <span>Market price per unit</span>
-                      <span>1234 USDT</span>
+                      <span>{priceState === PriceState.VALID ? ethAmount.toSignificant(6) : '--'} ETH</span>
                     </MarketPrice>
                     <AutoColumn id="chart"></AutoColumn>
                   </div>
