@@ -1,26 +1,41 @@
-export class FetchInterceptor {
-  public interceptors: any[] = []
-  public interceptor(
-    fetch: (input: RequestInfo, init?: RequestInit | undefined) => Promise<Response>,
-    options: { input: RequestInfo; init?: RequestInit | undefined }
-  ) {
-    const reversedInterceptors = this.interceptors.reduce((array, interceptor) => [...[interceptor], array])
-    let promise = Promise.resolve(options)
-    reversedInterceptors.forEach(({ request, requestError }: any) => {
-      if (request || requestError) {
-        promise = promise.then(opt => request(opt.input, opt.init), requestError)
-      }
-    })
-    let responsePromise = promise.then(opt => fetch(opt.input, opt.init))
-    reversedInterceptors.forEach(({ response, responseError }: any) => {
-      if (response || responseError) {
-        responsePromise = responsePromise.then((resp: Response) => {
-          return response(resp)
-        })
-      }
-    })
-    return responsePromise
-  }
-}
+import { getCurrentUserInfoSync } from 'state/userinfo/hooks'
 
-export const fetchInterceptor = new FetchInterceptor()
+const domain = 'http://47.241.14.27:8081'
+const headers = { 'content-type': 'application/json', accept: 'application/json' }
+
+export function appLogin(publicAddress: string, signature: string, message: string) {
+  const param = {
+    publicAddress,
+    signature,
+    message
+  }
+
+  // After the wallet is connected, it will be available after the effect is maintained.
+  const userinfo = getCurrentUserInfoSync()
+  let _headers = headers
+  if (userinfo) {
+    _headers = Object.assign(headers, { token: userinfo.token })
+  }
+
+  const request = new Request(`${domain}/app/login`, {
+    method: 'POST',
+    body: JSON.stringify(param),
+    headers: _headers
+  })
+
+  return new Promise((resolve, reject) => {
+    fetch(request)
+      .then(response => {
+        if (response.status !== 200) {
+          reject('server error')
+        }
+        return response.json()
+      })
+      .then(response => {
+        resolve(response.msg)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}

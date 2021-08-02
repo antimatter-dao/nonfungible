@@ -21,6 +21,10 @@ export default createReducer(initialState, builder =>
     })
     .addCase(saveUserInfo, (state, action) => {
       const { chainId, address, userinfo } = action.payload
-      state.tokens[chainId][address] = userinfo
+      state.tokens = {
+        [chainId]: {
+          [address]: userinfo
+        }
+      }
     })
 )

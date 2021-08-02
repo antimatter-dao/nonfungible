@@ -5,6 +5,7 @@ import application from './application/reducer'
 import { updateVersion } from './global/actions'
 import user from './user/reducer'
 import userinfo from './userinfo/reducer'
+import currentAccount from './currentAccount/reducer'
 import transactions from './transactions/reducer'
 import swap from './swap/reducer'
 import mint from './mint/reducer'
@@ -24,7 +25,8 @@ const store = configureStore({
     burn,
     multicall,
     lists,
-    userinfo
+    userinfo,
+    currentAccount
   },
   middleware: [...getDefaultMiddleware({ thunk: false }), save({ states: PERSISTED_KEYS })],
   preloadedState: load({ states: PERSISTED_KEYS })
