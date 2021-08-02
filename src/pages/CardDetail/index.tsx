@@ -1,8 +1,8 @@
-import { ButtonEmpty, ButtonBlack, ButtonWhite } from 'components/Button'
+import { ButtonBlack, ButtonEmpty, ButtonWhite } from 'components/Button'
 import { RowBetween, RowFixed } from 'components/Row'
 import { StyledTabItem, StyledTabs } from 'components/Tabs'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { TYPE, AnimatedImg, AnimatedWrapper } from 'theme'
+import { AnimatedImg, AnimatedWrapper, TYPE } from 'theme'
 import { ChevronLeft } from 'react-feather'
 import styled from 'styled-components'
 import useTheme from 'hooks/useTheme'
@@ -10,7 +10,7 @@ import { Hr, Paragraph } from './Paragraph'
 import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
 import { AutoColumn, ColumnCenter } from 'components/Column'
 import { createChart, IChartApi, ISeriesApi, LineStyle } from 'lightweight-charts'
-import { getDexTradeList, DexTradeData } from 'utils/option/httpRequests'
+import { DexTradeData, getDexTradeList } from 'utils/option/httpRequests'
 // import { currencyId } from 'utils/currencyId'
 import { useNetwork } from 'hooks/useNetwork'
 import { NFTIndexInfoProps, useAssetsTokens, useNFTBalance, useNFTIndexInfo } from 'hooks/useIndexDetail'
@@ -24,7 +24,13 @@ import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
 import { useCurrency } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { NumberNFTInputPanel } from 'components/NumberInputPanel'
-import { BuyComfirmModel } from '../../components/NFTSpotDetail/ComfirmModel'
+import { BuyComfirmModel, SellComfirmModel } from '../../components/NFTSpotDetail/ComfirmModel'
+import { AssetsParameter } from '../../components/Creation'
+import { PriceState, useNFTETHPrice } from '../../data/Reserves'
+import { CurrencyAmount, JSBI } from '@uniswap/sdk'
+import { useCurrencyBalance } from 'state/wallet/hooks'
+import { useWeb3React } from '@web3-react/core'
+import { useAmountOutMins, useIndexSellCall } from 'hooks/useIndexSellCallback'
 
 const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
@@ -140,6 +146,7 @@ export default function CardDetail({
     params: { nftid }
   }
 }: RouteComponentProps<{ nftid?: string }>) {
+  const { account } = useWeb3React()
   const theme = useTheme()
   const history = useHistory()
   const [transactionModalOpen, setTransactionModalOpen] = useState(false)
@@ -147,6 +154,7 @@ export default function CardDetail({
   const [hash, setHash] = useState('')
   const [error, setError] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
+  const ETHCurrency = useCurrency('ETH')
 
   const transactionOnDismiss = () => {
     setError(false)
@@ -155,9 +163,15 @@ export default function CardDetail({
   }
 
   const { loading: NFTIndexLoading, data: NFTIndexInfo } = useNFTIndexInfo(nftid)
-  const { data: balance } = useNFTBalance(nftid)
+  const { data: NFTbalance } = useNFTBalance(nftid)
 
-  const tokens = useAssetsTokens(NFTIndexInfo?.assetsParameters)
+  const ETHbalance = useCurrencyBalance(account ?? undefined, ETHCurrency ?? undefined)
+
+  const tokens: AssetsParameter[] = useAssetsTokens(NFTIndexInfo?.assetsParameters)
+  const [priceState, price] = useNFTETHPrice(tokens)
+  const ethAmount = CurrencyAmount.ether(JSBI.BigInt(price ?? '0'))
+  // console.log('priceState', priceState)
+  // console.log('price', ethAmount.raw.toString())
 
   const [currentSubTab, setCurrentSubTab] = useState<SubTabType>(SubTabType.Creater)
   const [currentTab, setCurrentTab] = useState<TabType>(TabType.Information)
@@ -166,6 +180,10 @@ export default function CardDetail({
   const [sellAmount, setSellAmount] = useState('')
 
   const [buyConfirmModal, setBuyConfirmModal] = useState(false)
+  const [sellConfirmModal, setSellConfirmModal] = useState(false)
+
+  const amountOutMins = useAmountOutMins(sellAmount, NFTIndexInfo?.assetsParameters, 0.95)
+  console.log('🚀 ~ file: index.tsx ~ line 173 ~ amountOutMins', amountOutMins)
 
   const [priceChartData, setPriceChartData] = useState<DexTradeData[] | undefined>()
   const [candlestickSeries, setCandlestickSeries] = useState<ISeriesApi<'Candlestick'> | undefined>(undefined)
@@ -278,11 +296,12 @@ export default function CardDetail({
 
   const { callback: toBuyCall } = useIndexBuyCall()
   const toBuy = useCallback(() => {
-    if (!buyAmount || !toBuyCall || !nftid) return
+    if (!buyAmount || !toBuyCall || !nftid || !ethAmount) return
 
     setTransactionModalOpen(true)
     setAttemptingTxn(true)
-    toBuyCall(nftid, buyAmount)
+    setBuyConfirmModal(false)
+    toBuyCall(nftid, buyAmount, ethAmount.raw.toString())
       .then(hash => {
         setAttemptingTxn(false)
         setHash(hash)
@@ -295,9 +314,28 @@ export default function CardDetail({
         setErrorMsg(err?.message)
         console.error('toBuyCall commit', err)
       })
-  }, [buyAmount, toBuyCall, nftid])
+  }, [buyAmount, toBuyCall, nftid, ethAmount])
 
-  const toSell = () => {}
+  const { callback: toSellCallback } = useIndexSellCall()
+  const toSell = useCallback(() => {
+    if (!toSellCallback || !sellAmount || !nftid || !amountOutMins) return
+    setTransactionModalOpen(true)
+    setAttemptingTxn(true)
+    setBuyConfirmModal(false)
+    toSellCallback(nftid, sellAmount, amountOutMins)
+      .then(hash => {
+        setAttemptingTxn(false)
+        setHash(hash)
+        setSellAmount('')
+      })
+      .catch(err => {
+        // setTransactionModalOpen(false)
+        setAttemptingTxn(false)
+        setError(true)
+        setErrorMsg(err?.message)
+        console.error('toSellCall commit', err)
+      })
+  }, [toSellCallback, nftid, sellAmount, amountOutMins])
 
   if (NFTIndexLoading || !NFTIndexInfo) {
     return (
@@ -412,7 +450,8 @@ export default function CardDetail({
                           onClick={() => {
                             setBuyConfirmModal(true)
                           }}
-                          disabled={!Number(buyAmount)}
+                          height={60}
+                          disabled={!Number(buyAmount) || !ethAmount}
                         >
                           Buy
                         </ButtonBlack>
@@ -430,10 +469,10 @@ export default function CardDetail({
                             intOnly={true}
                             label="Amount"
                             onMax={() => {
-                              setSellAmount(balance?.toString() ?? '0')
+                              setSellAmount(NFTbalance?.toString() ?? '0')
                             }}
-                            balance={balance?.toString()}
-                            error={Number(sellAmount) > Number(balance?.toString()) ? 'Insufficient balance' : ''}
+                            balance={NFTbalance?.toString()}
+                            error={Number(sellAmount) > Number(NFTbalance?.toString()) ? 'Insufficient balance' : ''}
                             showMaxButton={true}
                             id="sell_id"
                           />
@@ -443,8 +482,11 @@ export default function CardDetail({
                           <CurrencyETHShow />
                         </AutoColumn>
                         <ButtonBlack
-                          onClick={toSell}
-                          disabled={!Number(sellAmount) || Number(sellAmount) > Number(balance?.toString())}
+                          onClick={() => {
+                            setSellConfirmModal(true)
+                          }}
+                          height={60}
+                          disabled={!Number(sellAmount) || Number(sellAmount) > Number(NFTbalance?.toString())}
                         >
                           Sell
                         </ButtonBlack>
@@ -455,7 +497,7 @@ export default function CardDetail({
                   <div>
                     <MarketPrice>
                       <span>Market price per unit</span>
-                      <span>1234 USDT</span>
+                      <span>{priceState === PriceState.VALID ? ethAmount.toSignificant(6) : '--'} ETH</span>
                     </MarketPrice>
                     <AutoColumn id="chart"></AutoColumn>
                   </div>
@@ -481,9 +523,23 @@ export default function CardDetail({
         onDismiss={() => {
           setBuyConfirmModal(false)
         }}
+        ethAmount={ethAmount}
+        ETHbalance={ETHbalance ?? undefined}
         number={buyAmount}
         assetsParameters={tokens}
         onConfirm={toBuy}
+      />
+
+      <SellComfirmModel
+        isOpen={sellConfirmModal}
+        onDismiss={() => {
+          setSellConfirmModal(false)
+        }}
+        ethAmount={ethAmount}
+        ETHbalance={ETHbalance ?? undefined}
+        number={sellAmount}
+        assetsParameters={tokens}
+        onConfirm={toSell}
       />
     </>
   )

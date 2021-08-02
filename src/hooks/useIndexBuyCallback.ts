@@ -1,7 +1,8 @@
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { useIndexNFTContract } from './useContract'
-// import { calculateGasMargin } from '../utils'
+import { calculateGasMargin } from '../utils'
 import { TransactionResponse } from '@ethersproject/providers'
+import { JSBI } from '@uniswap/sdk'
 
 export enum IndexBuyCallbackState {
   INVALID,
@@ -11,7 +12,7 @@ export enum IndexBuyCallbackState {
 
 export function useIndexBuyCall(): {
   state: IndexBuyCallbackState
-  callback: undefined | ((nftId: string, nftAmount: string) => Promise<string>)
+  callback: undefined | ((nftId: string, nftAmount: string, ethAmount: string) => Promise<string>)
   error: string | null
 } {
   const addTransaction = useTransactionAdder()
@@ -19,20 +20,26 @@ export function useIndexBuyCall(): {
 
   return {
     state: IndexBuyCallbackState.VALID,
-    callback: async function onBuy(...args): Promise<string> {
+    callback: async function onBuy(nftId, nftAmount, ethAmount): Promise<string> {
       if (!contract) {
         throw new Error('Unexpected error. Contract error')
       }
-      // return contract.estimateGas.mint(...args, {}).then(estimatedGasLimit => {
-      return contract
-        .mint(...args, { value: '500000000000000000', gasLimit: '3500000' })
-        .then((response: TransactionResponse) => {
-          addTransaction(response, {
-            summary: `Buy`
+
+      const valueLimit = JSBI.multiply(JSBI.BigInt(ethAmount), JSBI.BigInt(nftAmount)).toString()
+
+      return contract.estimateGas.mint(nftId, nftAmount, { value: valueLimit }).then(estimatedGasLimit => {
+        return contract
+          .mint(nftId, nftAmount, {
+            value: valueLimit,
+            gasLimit: calculateGasMargin(estimatedGasLimit)
           })
-          return response.hash
-        })
-      // })
+          .then((response: TransactionResponse) => {
+            addTransaction(response, {
+              summary: `Buy`
+            })
+            return response.hash
+          })
+      })
     },
     error: ''
   }

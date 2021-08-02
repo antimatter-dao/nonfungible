@@ -109,37 +109,10 @@
           "type": "uint256"
         },
         {
-          "components": [
-            {
-              "internalType": "string",
-              "name": "name",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "metadata",
-              "type": "string"
-            },
-            {
-              "internalType": "address",
-              "name": "creator",
-              "type": "address"
-            },
-            {
-              "internalType": "address[]",
-              "name": "underlyingTokens",
-              "type": "address[]"
-            },
-            {
-              "internalType": "uint256[]",
-              "name": "underlyingAmounts",
-              "type": "uint256[]"
-            }
-          ],
           "indexed": false,
-          "internalType": "struct IndexBase.Index",
-          "name": "index",
-          "type": "tuple"
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
         }
       ],
       "name": "IndexCreated",

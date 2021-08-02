@@ -5,7 +5,7 @@ import { WrappedTokenInfo } from 'state/lists/hooks'
 import { useSingleCallResult } from '../state/multicall/hooks'
 import { useAllTokens } from './Tokens'
 import { useIndexNFTContract } from './useContract'
-import { JSBI, TokenAmount } from '@uniswap/sdk'
+import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
 import { useWeb3React } from '@web3-react/core'
 export interface NFTIndexInfoProps {
   name: string
@@ -15,6 +15,11 @@ export interface NFTIndexInfoProps {
   creator: string
   creatorId: string
   creatorName: string
+}
+
+export interface BuyButtonProps {
+  text: string
+  disabled: boolean
 }
 
 function toNumber(weiValue: string, token: WrappedTokenInfo | undefined) {
@@ -90,11 +95,38 @@ export function useNFTBalance(nftid: string | undefined) {
   const contract = useIndexNFTContract()
   const balanceRes = useSingleCallResult(contract, 'balanceOf', [account ?? undefined, nftid])
   return useMemo(() => {
-    console.log('🚀 ~ file: useIndexDetail.ts ~ line 93 ~ useNFTBalance ~ balanceRes', balanceRes)
-
     return {
       loading: balanceRes.loading,
       data: balanceRes.result
     }
   }, [balanceRes])
+}
+
+export function useCheckBuyButton(
+  ethAmount: CurrencyAmount | undefined,
+  ETHbalance: CurrencyAmount | undefined,
+  number: string | undefined
+): BuyButtonProps {
+  return useMemo(() => {
+    const ret: BuyButtonProps = {
+      text: 'Confirm',
+      disabled: false
+    }
+    if (!number || !ethAmount || !ETHbalance) {
+      ret.disabled = true
+      return ret
+    }
+    if (ETHbalance.lessThan(ethAmount.multiply(JSBI.BigInt(number)))) {
+      ret.disabled = true
+      ret.text = 'Insufficient ETH balance'
+      return ret
+    }
+    return ret
+  }, [number, ethAmount, ETHbalance])
+}
+
+export function useIsApprovedForAll(account: string | undefined, spender: string): boolean {
+  const contract = useIndexNFTContract()
+  const apprivedRes = useSingleCallResult(contract, 'isApprovedForAll', [account ?? undefined, spender])
+  return useMemo(() => (apprivedRes.result ? apprivedRes.result[0] : false), [apprivedRes])
 }

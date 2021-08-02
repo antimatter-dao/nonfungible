@@ -8,6 +8,10 @@ import { RowBetween, RowFixed } from 'components/Row'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { AssetsParameter } from 'components/Creation'
 import { BigNumber } from 'bignumber.js'
+import { CurrencyAmount } from '@uniswap/sdk'
+import { useCheckBuyButton } from 'hooks/useIndexDetail'
+import { useNFTApproveCallback, ApprovalState } from 'hooks/useNFTApproveCallback'
+import { INDEX_NFT_ADDRESS } from '../../constants'
 
 export const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -39,14 +43,20 @@ export function BuyComfirmModel({
   onDismiss,
   onConfirm,
   assetsParameters,
-  number
+  number,
+  ethAmount,
+  ETHbalance
 }: {
   isOpen: boolean
   onDismiss: () => void
   onConfirm: () => void
   assetsParameters: AssetsParameter[]
   number: string
+  ethAmount: CurrencyAmount | undefined
+  ETHbalance: CurrencyAmount | undefined
 }) {
+  const btn = useCheckBuyButton(ethAmount, ETHbalance, number)
+
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss} minHeight={30} maxHeight={85} width="480px" maxWidth={480}>
       <Wrapper>
@@ -68,18 +78,101 @@ export function BuyComfirmModel({
                       <CurrencyLogo currency={currencyToken} style={{ marginRight: 10 }} />
                       <TYPE.smallGray>{currencyToken?.symbol}</TYPE.smallGray>
                     </RowFixed>
-                    <RightText>{new BigNumber(amount).multipliedBy(number).toString()}</RightText>
+                    <RightText>
+                      {amount} * {number} = {new BigNumber(amount).multipliedBy(number).toString()}
+                    </RightText>
                   </RowBetween>
                 </>
               ))}
             <RowBetween style={{ marginTop: 10 }}>
               <TYPE.smallGray>You will pay :</TYPE.smallGray>
-              <RightText>10 ETH</RightText>
+              <RightText>
+                {new BigNumber(ethAmount ? ethAmount.toSignificant(6) : '')
+                  .multipliedBy(number)
+                  .toFixed(6)
+                  .toString()}{' '}
+                ETH
+              </RightText>
             </RowBetween>
           </InfoWrapper>
-          <ButtonBlack onClick={onConfirm} height={60}>
-            Confirm
+          <ButtonBlack onClick={onConfirm} disabled={btn.disabled} height={60}>
+            {btn.text}
           </ButtonBlack>
+        </AutoColumn>
+      </Wrapper>
+    </Modal>
+  )
+}
+
+export function SellComfirmModel({
+  isOpen,
+  onDismiss,
+  onConfirm,
+  assetsParameters,
+  number,
+  ethAmount,
+  ETHbalance
+}: {
+  isOpen: boolean
+  onDismiss: () => void
+  onConfirm: () => void
+  assetsParameters: AssetsParameter[]
+  number: string
+  ethAmount: CurrencyAmount | undefined
+  ETHbalance: CurrencyAmount | undefined
+}) {
+  const btn = useCheckBuyButton(ethAmount, ETHbalance, number)
+  const [approvalState, approveCallback] = useNFTApproveCallback(INDEX_NFT_ADDRESS)
+
+  return (
+    <Modal isOpen={isOpen} onDismiss={onDismiss} minHeight={30} maxHeight={85} width="480px" maxWidth={480}>
+      <Wrapper>
+        <AutoColumn gap="15px">
+          <div>
+            <TYPE.largeHeader fontSize={30} color="black">
+              Confirmation
+            </TYPE.largeHeader>
+            <TYPE.small fontSize={12}>Please review the following information </TYPE.small>
+          </div>
+          <InfoWrapper gap="10px">
+            <TYPE.smallGray>You will sell :</TYPE.smallGray>
+            {assetsParameters
+              .filter(v => v.currencyToken)
+              .map(({ amount, currencyToken }) => (
+                <>
+                  <RowBetween>
+                    <RowFixed>
+                      <CurrencyLogo currency={currencyToken} style={{ marginRight: 10 }} />
+                      <TYPE.smallGray>{currencyToken?.symbol}</TYPE.smallGray>
+                    </RowFixed>
+                    <RightText>
+                      {amount} * {number} = {new BigNumber(amount).multipliedBy(number).toString()}
+                    </RightText>
+                  </RowBetween>
+                </>
+              ))}
+            <RowBetween style={{ marginTop: 10 }}>
+              <TYPE.smallGray>You will receive :</TYPE.smallGray>
+              <RightText>
+                {new BigNumber(ethAmount ? ethAmount.toSignificant(6) : '')
+                  .multipliedBy(number)
+                  .toFixed(6)
+                  .toString()}{' '}
+                ETH
+              </RightText>
+            </RowBetween>
+          </InfoWrapper>
+          {approvalState === ApprovalState.PENDING ? (
+            <ButtonBlack disabled={true}>Approving</ButtonBlack>
+          ) : approvalState === ApprovalState.NOT_APPROVED ? (
+            <ButtonBlack onClick={approveCallback}>Approval</ButtonBlack>
+          ) : approvalState === ApprovalState.APPROVED ? (
+            <ButtonBlack onClick={onConfirm} disabled={btn.disabled} height={60}>
+              {btn.text}
+            </ButtonBlack>
+          ) : (
+            <ButtonBlack disabled={true}>UNKNOWN</ButtonBlack>
+          )}
         </AutoColumn>
       </Wrapper>
     </Modal>
