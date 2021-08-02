@@ -1,11 +1,11 @@
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { useIndexNFTContract } from './useContract'
-// import { calculateGasMargin } from '../utils'
+import { calculateGasMargin } from '../utils'
 import { TransactionResponse } from '@ethersproject/providers'
-import { AssetsParameter } from '../components/Creation'
 import { BigNumber } from 'bignumber.js'
 import { useMemo } from 'react'
-import { tryParseAmount } from 'state/swap/hooks'
+import { CurrencyAmount, JSBI } from '@uniswap/sdk'
+import { NFTETHPriceProp } from 'data/Reserves'
 
 export enum IndexBuyCallbackState {
   INVALID,
@@ -27,39 +27,33 @@ export function useIndexSellCall(): {
       if (!contract) {
         throw new Error('Unexpected error. Contract error')
       }
-      // console.log('nftId, nftAmount, amountOutMins', nftId, nftAmount, amountOutMins)
+      console.log('nftId, nftAmount, amountOutMins', nftId, nftAmount, amountOutMins)
 
-      // return contract.estimateGas.burn(nftId, nftAmount, amountOutMins, {}).then(estimatedGasLimit => {
-      return contract
-        .burn(nftId, nftAmount, amountOutMins, {
-          gasLimit: '3500000'
-        })
-        .then((response: TransactionResponse) => {
-          addTransaction(response, {
-            summary: `Sell`
+      return contract.estimateGas.burn(nftId, nftAmount, amountOutMins, {}).then(estimatedGasLimit => {
+        return contract
+          .burn(nftId, nftAmount, amountOutMins, {
+            gasLimit: calculateGasMargin(estimatedGasLimit)
           })
-          return response.hash
-        })
-      // })
+          .then((response: TransactionResponse) => {
+            addTransaction(response, {
+              summary: `Sell`
+            })
+            return response.hash
+          })
+      })
     },
     error: ''
   }
 }
 
-export function useAmountOutMins(
-  nftAmount: string,
-  assetsParameters: AssetsParameter[] | undefined,
-  slippage: string | number
-) {
+export function useAmountOutMins(eths: NFTETHPriceProp['eths'], nftAmount: string, slippage: string | number) {
   return useMemo(() => {
-    if (!assetsParameters || !Number(nftAmount)) return undefined
-    return assetsParameters.map(({ amount, currencyToken }) => {
-      const _amount = new BigNumber(amount)
+    if (!eths || !slippage || !nftAmount) return undefined
+    return eths.map(item => {
+      return new BigNumber(CurrencyAmount.ether(JSBI.BigInt(item[1] ?? '0')).raw.toString())
+        .multipliedBy(1 - Number(slippage))
         .multipliedBy(nftAmount)
-        .multipliedBy(slippage)
         .toString()
-
-      return tryParseAmount(_amount, currencyToken)?.raw.toString() ?? ''
     })
-  }, [assetsParameters, nftAmount, slippage])
+  }, [slippage, eths, nftAmount])
 }

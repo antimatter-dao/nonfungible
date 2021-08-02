@@ -69,7 +69,12 @@ export function usePair(tokenA?: Currency, tokenB?: Currency): [PairState, Pair 
   return usePairs([[tokenA, tokenB]])[0]
 }
 
-export function useNFTETHPrice(assets: AssetsParameter[]): [PriceState, string | null] {
+export interface NFTETHPriceProp {
+  ethAmount: [PriceState, string | null]
+  eths: [PriceState, string | null, CurrencyAmount | null][]
+}
+
+export function useNFTETHPrice(assets: AssetsParameter[]): NFTETHPriceProp {
   const { chainId } = useActiveWeb3React()
 
   const pairAddresses = useMemo(
@@ -82,22 +87,22 @@ export function useNFTETHPrice(assets: AssetsParameter[]): [PriceState, string |
   const results = useMultipleContractSingleData(pairAddresses, PAIR_INTERFACE, 'getReserves')
 
   return useMemo(() => {
-    const eths: [PriceState, string | null][] = results.map((result, i) => {
+    const eths: [PriceState, string | null, CurrencyAmount | null][] = results.map((result, i) => {
       const { result: reserves, loading } = result
       const token = assets[i]
-      if (loading) return [PriceState.LOADING, null]
-      if (!chainId || !token.currencyToken || !reserves) return [PriceState.INVALID, null]
+      if (loading) return [PriceState.LOADING, null, null]
+      if (!chainId || !token.currencyToken || !reserves) return [PriceState.INVALID, null, null]
       const { reserve0, reserve1 } = reserves
-      console.log(
-        'reserve0',
-        new Pair(
-          new TokenAmount(WETH[chainId], reserve0.toString()),
-          new TokenAmount(token.currencyToken, reserve1.toString())
-        )
-          .priceOf(WETH[chainId])
-          .toSignificant()
-          .toString()
-      )
+      // console.log(
+      //   'reserve0',
+      //   new Pair(
+      //     new TokenAmount(WETH[chainId], reserve0.toString()),
+      //     new TokenAmount(token.currencyToken, reserve1.toString())
+      //   )
+      //     .priceOf(WETH[chainId])
+      //     .toSignificant()
+      //     .toString()
+      // )
       const ethPrice: string = new Pair(
         new TokenAmount(WETH[chainId], reserve0.toString()),
         new TokenAmount(token.currencyToken, reserve1.toString())
@@ -106,20 +111,28 @@ export function useNFTETHPrice(assets: AssetsParameter[]): [PriceState, string |
         .toSignificant()
         .toString()
 
-      const tokenAmount: CurrencyAmount | undefined = tryParseAmount(
+      const ethAmount: CurrencyAmount | undefined = tryParseAmount(
         new BigNumber(ethPrice).multipliedBy(token.amount).toString(),
         WETH[chainId]
       )
-      if (!tokenAmount) return [PriceState.INVALID, null]
-      return [PriceState.VALID, tokenAmount.raw.toString()]
+      if (!ethAmount) return [PriceState.INVALID, null, null]
+      return [PriceState.VALID, ethAmount.raw.toString(), ethAmount]
     })
 
-    return eths.length !== 0
-      ? eths.reduce(([preState, preETH], [curState, curETH]) => {
-          return preState === PriceState.VALID && curState === PriceState.VALID && preETH && curETH
-            ? [PriceState.VALID, JSBI.add(JSBI.BigInt(preETH), JSBI.BigInt(curETH)).toString()]
-            : [PriceState.INVALID, '0']
-        })
-      : [PriceState.INVALID, '0']
+    const ret: [PriceState, string | null] =
+      eths.length !== 0
+        ? eths
+            .map((item): [PriceState, string | null] => [item[0], item[1]])
+            .reduce(([preState, preETH], [curState, curETH]): [PriceState, string | null] => {
+              return preState === PriceState.VALID || curState === PriceState.VALID
+                ? [PriceState.VALID, JSBI.add(JSBI.BigInt(preETH ?? 0), JSBI.BigInt(curETH ?? 0)).toString()]
+                : [PriceState.INVALID, '0']
+            })
+        : [PriceState.INVALID, '0']
+
+    return {
+      ethAmount: ret,
+      eths: eths
+    }
   }, [results, chainId, assets])
 }

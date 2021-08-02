@@ -18,7 +18,7 @@ import NumericalInput from 'components/NumericalInput'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
 import { WrappedTokenInfo } from 'state/lists/hooks'
-import { useIndexBuyCall } from '../../hooks/useIndexBuyCallback'
+import { useAmountInMins, useCalcBuyFee, useIndexBuyCall } from '../../hooks/useIndexBuyCallback'
 import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
 import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
 import { useCurrency } from 'hooks/Tokens'
@@ -31,6 +31,7 @@ import { CurrencyAmount, JSBI } from '@uniswap/sdk'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useWeb3React } from '@web3-react/core'
 import { useAmountOutMins, useIndexSellCall } from 'hooks/useIndexSellCallback'
+import { INDEX_NFT_BUY_FEE } from '../../constants'
 
 const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
@@ -168,10 +169,14 @@ export default function CardDetail({
   const ETHbalance = useCurrencyBalance(account ?? undefined, ETHCurrency ?? undefined)
 
   const tokens: AssetsParameter[] = useAssetsTokens(NFTIndexInfo?.assetsParameters)
-  const [priceState, price] = useNFTETHPrice(tokens)
-  const ethAmount = CurrencyAmount.ether(JSBI.BigInt(price ?? '0'))
+  const {
+    ethAmount: [priceState, price],
+    eths
+  } = useNFTETHPrice(tokens)
+
+  const thisNFTethAmount = CurrencyAmount.ether(JSBI.BigInt(price ?? '0'))
   // console.log('priceState', priceState)
-  // console.log('price', ethAmount.raw.toString())
+  // console.log('price', thisNHTethAmount.raw.toString())
 
   const [currentSubTab, setCurrentSubTab] = useState<SubTabType>(SubTabType.Creater)
   const [currentTab, setCurrentTab] = useState<TabType>(TabType.Information)
@@ -182,8 +187,10 @@ export default function CardDetail({
   const [buyConfirmModal, setBuyConfirmModal] = useState(false)
   const [sellConfirmModal, setSellConfirmModal] = useState(false)
 
-  const amountOutMins = useAmountOutMins(sellAmount, NFTIndexInfo?.assetsParameters, 0.95)
-  console.log('🚀 ~ file: index.tsx ~ line 173 ~ amountOutMins', amountOutMins)
+  const slippage = 0.005
+  const buyFee = useCalcBuyFee(thisNFTethAmount?.raw.toString(), buyAmount, slippage)
+  const amountInMins = useAmountInMins(eths, buyAmount, slippage)
+  const amountOutMins = useAmountOutMins(eths, sellAmount, slippage)
 
   const [priceChartData, setPriceChartData] = useState<DexTradeData[] | undefined>()
   const [candlestickSeries, setCandlestickSeries] = useState<ISeriesApi<'Candlestick'> | undefined>(undefined)
@@ -296,12 +303,12 @@ export default function CardDetail({
 
   const { callback: toBuyCall } = useIndexBuyCall()
   const toBuy = useCallback(() => {
-    if (!buyAmount || !toBuyCall || !nftid || !ethAmount) return
+    if (!buyAmount || !toBuyCall || !nftid || !buyFee || !amountInMins) return
 
     setTransactionModalOpen(true)
     setAttemptingTxn(true)
     setBuyConfirmModal(false)
-    toBuyCall(nftid, buyAmount, ethAmount.raw.toString())
+    toBuyCall(nftid, buyAmount, amountInMins, buyFee)
       .then(hash => {
         setAttemptingTxn(false)
         setHash(hash)
@@ -314,14 +321,14 @@ export default function CardDetail({
         setErrorMsg(err?.message)
         console.error('toBuyCall commit', err)
       })
-  }, [buyAmount, toBuyCall, nftid, ethAmount])
+  }, [buyAmount, toBuyCall, nftid, buyFee, amountInMins])
 
   const { callback: toSellCallback } = useIndexSellCall()
   const toSell = useCallback(() => {
     if (!toSellCallback || !sellAmount || !nftid || !amountOutMins) return
     setTransactionModalOpen(true)
     setAttemptingTxn(true)
-    setBuyConfirmModal(false)
+    setSellConfirmModal(false)
     toSellCallback(nftid, sellAmount, amountOutMins)
       .then(hash => {
         setAttemptingTxn(false)
@@ -451,7 +458,7 @@ export default function CardDetail({
                             setBuyConfirmModal(true)
                           }}
                           height={60}
-                          disabled={!Number(buyAmount) || !ethAmount}
+                          disabled={!Number(buyAmount) || !thisNFTethAmount}
                         >
                           Buy
                         </ButtonBlack>
@@ -497,7 +504,7 @@ export default function CardDetail({
                   <div>
                     <MarketPrice>
                       <span>Market price per unit</span>
-                      <span>{priceState === PriceState.VALID ? ethAmount.toSignificant(6) : '--'} ETH</span>
+                      <span>{priceState === PriceState.VALID ? thisNFTethAmount.toSignificant(6) : '--'} ETH</span>
                     </MarketPrice>
                     <AutoColumn id="chart"></AutoColumn>
                   </div>
@@ -523,7 +530,9 @@ export default function CardDetail({
         onDismiss={() => {
           setBuyConfirmModal(false)
         }}
-        ethAmount={ethAmount}
+        fee={INDEX_NFT_BUY_FEE}
+        slippage={slippage}
+        ethAmount={thisNFTethAmount}
         ETHbalance={ETHbalance ?? undefined}
         number={buyAmount}
         assetsParameters={tokens}
@@ -535,7 +544,7 @@ export default function CardDetail({
         onDismiss={() => {
           setSellConfirmModal(false)
         }}
-        ethAmount={ethAmount}
+        ethAmount={thisNFTethAmount}
         ETHbalance={ETHbalance ?? undefined}
         number={sellAmount}
         assetsParameters={tokens}

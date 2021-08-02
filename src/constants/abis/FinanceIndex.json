@@ -411,6 +411,19 @@
     },
     {
       "inputs": [],
+      "name": "factory",
+      "outputs": [
+        {
+          "internalType": "contract IUniswapV2Factory",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "fee",
       "outputs": [
         {
@@ -573,6 +586,11 @@
           "internalType": "uint256",
           "name": "nftAmount",
           "type": "uint256"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "amountInMaxs",
+          "type": "uint256[]"
         }
       ],
       "name": "mint",
@@ -631,7 +649,7 @@
       "name": "router",
       "outputs": [
         {
-          "internalType": "address",
+          "internalType": "contract IUniswapV2Router02",
           "name": "",
           "type": "address"
         }
@@ -745,6 +763,19 @@
         }
       ],
       "name": "setPlatform",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "factory_",
+          "type": "address"
+        }
+      ],
+      "name": "setUniswapV2Factory",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

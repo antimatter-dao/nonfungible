@@ -7,6 +7,7 @@ import { useAllTokens } from './Tokens'
 import { useIndexNFTContract } from './useContract'
 import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
 import { useWeb3React } from '@web3-react/core'
+
 export interface NFTIndexInfoProps {
   name: string
   description: string

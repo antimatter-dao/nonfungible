@@ -8,10 +8,11 @@ import { RowBetween, RowFixed } from 'components/Row'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { AssetsParameter } from 'components/Creation'
 import { BigNumber } from 'bignumber.js'
-import { CurrencyAmount } from '@uniswap/sdk'
+import { CurrencyAmount, JSBI } from '@uniswap/sdk'
 import { useCheckBuyButton } from 'hooks/useIndexDetail'
 import { useNFTApproveCallback, ApprovalState } from 'hooks/useNFTApproveCallback'
 import { INDEX_NFT_ADDRESS } from '../../constants'
+import { Dots } from 'components/swap/styleds'
 
 export const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -45,6 +46,8 @@ export function BuyComfirmModel({
   assetsParameters,
   number,
   ethAmount,
+  fee,
+  slippage,
   ETHbalance
 }: {
   isOpen: boolean
@@ -54,6 +57,8 @@ export function BuyComfirmModel({
   number: string
   ethAmount: CurrencyAmount | undefined
   ETHbalance: CurrencyAmount | undefined
+  fee: string
+  slippage: string | number
 }) {
   const btn = useCheckBuyButton(ethAmount, ETHbalance, number)
 
@@ -93,6 +98,14 @@ export function BuyComfirmModel({
                   .toString()}{' '}
                 ETH
               </RightText>
+            </RowBetween>
+            <RowBetween>
+              <TYPE.smallGray>Fee :</TYPE.smallGray>
+              <RightText>{CurrencyAmount.ether(JSBI.BigInt(fee ?? '0')).toSignificant(6)} ETH</RightText>
+            </RowBetween>
+            <RowBetween>
+              <TYPE.smallGray>Slippage :</TYPE.smallGray>
+              <RightText>{slippage}</RightText>
             </RowBetween>
           </InfoWrapper>
           <ButtonBlack onClick={onConfirm} disabled={btn.disabled} height={60}>
@@ -163,7 +176,10 @@ export function SellComfirmModel({
             </RowBetween>
           </InfoWrapper>
           {approvalState === ApprovalState.PENDING ? (
-            <ButtonBlack disabled={true}>Approving</ButtonBlack>
+            <ButtonBlack disabled={true}>
+              Approving
+              <Dots />
+            </ButtonBlack>
           ) : approvalState === ApprovalState.NOT_APPROVED ? (
             <ButtonBlack onClick={approveCallback}>Approval</ButtonBlack>
           ) : approvalState === ApprovalState.APPROVED ? (
