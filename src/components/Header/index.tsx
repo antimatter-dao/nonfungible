@@ -1,5 +1,5 @@
 import { TokenAmount } from '@uniswap/sdk'
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 // import { useTranslation } from 'react-i18next'
@@ -17,6 +17,7 @@ import { ReactComponent as AntimatterIcon } from 'assets/svg/antimatter_icon.svg
 import useUserPanel from 'hooks/useUserPanel'
 import { useToggleCreationModal } from 'state/application/hooks'
 import CreationNFTModal from 'components/Creation'
+import { useCurrentUserInfo, useLogin } from 'state/userinfo/hooks'
 
 const activeClassName = 'ACTIVE'
 
@@ -32,7 +33,7 @@ interface Tab extends TabContent {
 }
 
 export const tabs: Tab[] = [
-  { title: 'Sport Index', route: 'sport_index' },
+  { title: 'Spot Index', route: 'spot_index' },
   { title: 'Future Index', route: 'future_index' },
   { title: 'Locker', route: 'locker' },
   { title: 'Governance', route: 'governance' }
@@ -244,12 +245,24 @@ const UserButton = styled(ButtonText)<{ isOpen: boolean }>`
 
 export default function Header() {
   const { account } = useActiveWeb3React()
+  const userinfo = useCurrentUserInfo()
+  const login = useLogin()
   const { showUserPanel, isUserPanelOpen } = useUserPanel()
   const toggleCreationModal = useToggleCreationModal()
   const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
   const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
+
+  const onCreateOrLogin = useCallback(() => {
+    if (userinfo && userinfo.token) toggleCreationModal()
+    else login()
+  }, [userinfo, login, toggleCreationModal])
+
+  const toShowUserPanel = useCallback(() => {
+    if (userinfo && userinfo.token) showUserPanel()
+    else login()
+  }, [userinfo, showUserPanel, login])
 
   return (
     <HeaderFrame>
@@ -267,14 +280,7 @@ export default function Header() {
         <div style={{ paddingLeft: 8, display: 'flex', alignItems: 'center', marginLeft: 'auto', marginRight: '2rem' }}>
           <HeaderControls>
             {account && (
-              <ButtonOutlinedPrimary
-                width="120px"
-                marginRight="16px"
-                height={44}
-                onClick={() => {
-                  toggleCreationModal()
-                }}
-              >
+              <ButtonOutlinedPrimary width="120px" marginRight="16px" height={44} onClick={onCreateOrLogin}>
                 Create
               </ButtonOutlinedPrimary>
             )}
@@ -304,7 +310,7 @@ export default function Header() {
                 </UNIWrapper>
               )}
               <Web3Status />
-              <UserButton onClick={showUserPanel} isOpen={isUserPanelOpen}>
+              <UserButton onClick={toShowUserPanel} isOpen={isUserPanelOpen}>
                 <AntimatterIcon />
               </UserButton>
             </AccountElement>

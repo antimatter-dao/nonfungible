@@ -117,8 +117,6 @@ export interface CreateSpotData {
   description: string
   assetsParameters: AssetsParameter[]
   color: CardColor
-  creator: string
-  creatorWalletAddress: string
   creatorId: string
 }
 
@@ -131,12 +129,10 @@ export interface CreateLockerData {
   unlockData: UnlockData
   assetsParameters: AssetsParameter[]
   color: CardColor
-  creator: string
-  creatorWalletAddress: string
   creatorId: string
 }
 
-export const defaultSpotData = {
+export const defaultSpotData: CreateSpotData = {
   name: '',
   description: '',
   assetsParameters: [
@@ -150,9 +146,7 @@ export const defaultSpotData = {
     }
   ],
   color: CardColor.PURPLE,
-  creator: '',
-  creatorWalletAddress: '',
-  creatorId: ''
+  creatorId: '-'
 }
 
 export const defaultLockerData: CreateLockerData = {
@@ -176,9 +170,7 @@ export const defaultLockerData: CreateLockerData = {
     percentage: ''
   },
   color: CardColor.PURPLE,
-  creator: '',
-  creatorWalletAddress: '',
-  creatorId: ''
+  creatorId: '-'
 }
 
 export default function CreationNFTModal() {

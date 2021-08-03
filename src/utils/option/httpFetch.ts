@@ -3,7 +3,13 @@ import { getCurrentUserInfoSync } from 'state/userinfo/hooks'
 const domain = 'http://47.241.14.27:8081'
 const headers = { 'content-type': 'application/json', accept: 'application/json' }
 
-export function appLogin(publicAddress: string, signature: string, message: string) {
+interface LoginRes {
+  token: string
+  username: string | null
+  description: string | null
+}
+
+export function appLogin(publicAddress: string, signature: string, message: string): Promise<LoginRes> {
   const param = {
     publicAddress,
     signature,
@@ -32,7 +38,7 @@ export function appLogin(publicAddress: string, signature: string, message: stri
         return response.json()
       })
       .then(response => {
-        resolve(response.msg)
+        resolve(response.data)
       })
       .catch(error => {
         reject(error)

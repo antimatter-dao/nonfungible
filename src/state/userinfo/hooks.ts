@@ -1,11 +1,22 @@
 import Web3 from 'web3'
 import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { appLogin } from '../../utils/option/httpFetch'
 import { saveUserInfo } from './actions'
 import { useDispatch } from 'react-redux'
 import store from '../index'
 import { UserInfo } from './actions'
+
+export function useTimeIndex() {
+  const [index, setIndex] = useState(0)
+  useEffect(() => {
+    setTimeout(() => {
+      setIndex(index + 1)
+    }, 1000)
+  }, [index])
+
+  return index
+}
 
 export function getCurrentUserInfoSync(chainId?: number, account?: string): UserInfo | undefined {
   const allUserinfo = store.getState().userinfo
@@ -21,11 +32,28 @@ export function getCurrentUserInfoSync(chainId?: number, account?: string): User
 }
 
 export function useCurrentUserInfo(): UserInfo | undefined {
-  const allUserinfo = store.getState().userinfo
+  const index = useTimeIndex()
+  const [userinfo, setUserinfo] = useState<UserInfo | undefined>()
   const { account, chainId } = useWeb3ReactCore()
-  if (!account || !chainId) return undefined
-  if (!allUserinfo.tokens[chainId] || !allUserinfo.tokens[chainId][account]) return undefined
-  return allUserinfo.tokens[chainId][account]
+
+  useEffect(() => {
+    if (!account || !chainId) {
+      setUserinfo(undefined)
+      return
+    }
+    const allUserinfo = store.getState().userinfo
+    if (
+      !allUserinfo.tokens[chainId] ||
+      !allUserinfo.tokens[chainId][account] ||
+      !allUserinfo.tokens[chainId][account].token
+    ) {
+      setUserinfo(undefined)
+      return
+    }
+    setUserinfo(allUserinfo.tokens[chainId][account])
+  }, [index, account, chainId])
+
+  return userinfo
 }
 
 export function useLogin() {
@@ -37,7 +65,7 @@ export function useLogin() {
     if (!account || !library || !chainId) return
     if (chainId !== 1 && chainId !== 3) return
     const userinfo = getCurrentUserInfoSync(chainId, account)
-    if (userinfo) return
+    if (userinfo && userinfo.token) return
 
     const web3 = new Web3(library.provider)
     try {
@@ -48,7 +76,11 @@ export function useLogin() {
           saveUserInfo({
             chainId,
             address: account,
-            userinfo: { token: loginRes as string, username: '', bio: '', avatarUrl: '' }
+            userinfo: {
+              token: loginRes.token ?? '',
+              username: loginRes.username ?? '',
+              bio: loginRes.description ?? ''
+            }
           })
         )
       }

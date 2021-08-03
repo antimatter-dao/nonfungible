@@ -4,5 +4,5 @@ import { Redirect, RouteComponentProps } from 'react-router-dom'
 
 // Redirects to swap but only replace the pathname
 export function RedirectPathToSwapOnly({ location }: RouteComponentProps) {
-  return <Redirect to={{ ...location, pathname: '/sport_index' }} />
+  return <Redirect to={{ ...location, pathname: '/spot_index' }} />
 }

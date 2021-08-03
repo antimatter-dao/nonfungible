@@ -6,6 +6,8 @@ import { RowBetween, RowFixed } from 'components/Row'
 import { CreateSpotData } from './index'
 import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 import CurrencyLogo from 'components/CurrencyLogo'
+import { useWeb3React } from '@web3-react/core'
+import { useCurrentUserInfo } from 'state/userinfo/hooks'
 
 const Wrapper = styled(AutoColumn)`
   padding: 24px 28px 0;
@@ -28,7 +30,10 @@ export function SpotConfirmation({
   children?: string | JSX.Element
   dataInfo: CreateSpotData
 }) {
-  const { creator, creatorWalletAddress, creatorId, description, name, assetsParameters } = dataInfo
+  const { creatorId, description, name, assetsParameters } = dataInfo
+  const { account } = useWeb3React()
+  const userinfo = useCurrentUserInfo()
+  console.log('🚀 ~ file: Confirmation.tsx ~ line 36 ~ userinfo', userinfo)
   return (
     <AutoColumn gap="40px">
       <div>
@@ -43,7 +48,7 @@ export function SpotConfirmation({
           <TYPE.smallHeader color="text6">Creator Info</TYPE.smallHeader>
           <RowBetween>
             <TYPE.smallGray>Creator</TYPE.smallGray>
-            <RightText>{creator}</RightText>
+            <RightText>{userinfo?.username}</RightText>
           </RowBetween>
           <RowBetween>
             <TYPE.smallGray>IndexName</TYPE.smallGray>
@@ -51,7 +56,7 @@ export function SpotConfirmation({
           </RowBetween>
           <RowBetween>
             <TYPE.smallGray>Creator wallet address</TYPE.smallGray>
-            <RightText>{creatorWalletAddress}</RightText>
+            <RightText>{account}</RightText>
           </RowBetween>
           <RowBetween>
             <TYPE.smallGray>Creator ID</TYPE.smallGray>
