@@ -8,6 +8,7 @@ import NFTButtonSelect from 'components/Button/NFTButtonSelect'
 import { ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
 import { ReactComponent as SearchIcon } from '../../assets/svg/search.svg'
 import TextInput from 'components/TextInput'
+import useNFTList from 'hooks/useNFTList'
 
 export const dummyData: NFTCardProps[] = [
   {
@@ -180,6 +181,8 @@ export default function SportIndex() {
   const handleSearch = useCallback((searchParam: string, searchBy: string) => {
     console.log(searchParam, searchBy)
   }, [])
+
+  useNFTList()
   return (
     <Wrapper>
       <Search onSearch={handleSearch} />

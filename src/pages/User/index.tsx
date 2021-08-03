@@ -18,6 +18,7 @@ import { ReactComponent as Settings } from 'assets/svg/settings.svg'
 import { ReactComponent as LogOut } from 'assets/svg/log_out.svg'
 import ProfileSetting from './ProfileSetting'
 import { useCurrentUserInfo, useLogOut } from 'state/userinfo/hooks'
+import useMyPosition from 'hooks/useMyPosition'
 
 enum Tabs {
   POSITION = 'My Position',
@@ -160,6 +161,7 @@ export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss
   const [currentTab, setCurrentTab] = useState(Tabs.POSITION)
   const [showSetting, setShowSetting] = useState(false)
   const userinfo = useCurrentUserInfo()
+  useMyPosition(userinfo)
   const logout = useLogOut()
   const handleTabClick = useCallback(
     tab => () => {

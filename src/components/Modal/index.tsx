@@ -15,10 +15,10 @@ export const StyledDialogOverlay = styled(AnimatedDialogOverlay)<{
   color?: string
   overflow?: string
   alignitems?: string
-  zIndex?: number
+  zindex?: number
 }>`
   &[data-reach-dialog-overlay] {
-    z-index: ${({ zIndex }) => zIndex ?? 2};
+    z-index: ${({ zindex }) => zindex ?? 2};
     overflow: ${({ overflow }) => overflow ?? 'hidden'};
     /* padding-top: ${({ theme }) => theme.headerHeight} */
 
@@ -167,7 +167,7 @@ export default function Modal({
               onDismiss={onDismiss}
               initialFocusRef={initialFocusRef}
               unstable_lockFocusAcrossFrames={false}
-              zIndex={zIndex}
+              zindex={zIndex}
             >
               {/* <Filler /> */}
               <Wrapper>

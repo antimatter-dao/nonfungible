@@ -23,7 +23,7 @@ export interface BuyButtonProps {
   disabled: boolean
 }
 
-function toNumber(weiValue: string, token: WrappedTokenInfo | undefined) {
+export function toNumber(weiValue: string, token: WrappedTokenInfo | undefined) {
   if (!token) return '--'
   return new TokenAmount(token, JSBI.BigInt(weiValue)).toSignificant()
 }

@@ -46,3 +46,53 @@ export function appLogin(publicAddress: string, signature: string, message: stri
       })
   })
 }
+
+export function positionFetch(token: string | undefined) {
+  if (!token) {
+    return
+  }
+
+  const request = new Request(`${domain}/app/getPositionList`, {
+    method: 'POST',
+    headers: { ...headers, token }
+  })
+
+  return new Promise((resolve, reject) => {
+    fetch(request)
+      .then(response => {
+        if (response.status !== 200) {
+          reject('server error')
+        }
+        return response.json()
+      })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
+export function allNFTFetch(): Promise<any> {
+  const request = new Request(`${domain}/app/getNftList`, {
+    method: 'POST',
+    headers: headers
+  })
+
+  return new Promise((resolve, reject) => {
+    fetch(request)
+      .then(response => {
+        if (response.status !== 200) {
+          reject('server error')
+        }
+        return response.json()
+      })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
