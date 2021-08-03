@@ -4,6 +4,8 @@ export interface UserInfo {
   token: string
   username: string
   bio: string
+  account?: string
+  id?: string | number
   // avatarUrl: string
 }
 

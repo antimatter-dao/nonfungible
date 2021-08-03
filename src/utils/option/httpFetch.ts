@@ -7,6 +7,7 @@ interface LoginRes {
   token: string
   username: string | null
   description: string | null
+  id?: string
 }
 
 export function appLogin(publicAddress: string, signature: string, message: string): Promise<LoginRes> {

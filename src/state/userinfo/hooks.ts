@@ -2,7 +2,7 @@ import Web3 from 'web3'
 import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
 import { useCallback, useEffect, useState } from 'react'
 import { appLogin } from '../../utils/option/httpFetch'
-import { saveUserInfo } from './actions'
+import { removeUserInfo, saveUserInfo } from './actions'
 import { useDispatch } from 'react-redux'
 import store from '../index'
 import { UserInfo } from './actions'
@@ -79,7 +79,9 @@ export function useLogin() {
             userinfo: {
               token: loginRes.token ?? '',
               username: loginRes.username ?? '',
-              bio: loginRes.description ?? ''
+              bio: loginRes.description ?? '',
+              id: loginRes.id ?? '',
+              account: account
             }
           })
         )
@@ -88,4 +90,18 @@ export function useLogin() {
       console.error('login', error)
     }
   }, [account, library, chainId, dispatch])
+}
+
+export function useLogOut() {
+  const { account, chainId } = useWeb3ReactCore()
+  const dispatch = useDispatch()
+
+  return useCallback(async () => {
+    if (!account || !chainId) return
+    if (chainId !== 1 && chainId !== 3) return
+    const userinfo = getCurrentUserInfoSync(chainId, account)
+    if (userinfo && userinfo.token) {
+      dispatch(removeUserInfo({ chainId, address: account }))
+    }
+  }, [account, chainId, dispatch])
 }

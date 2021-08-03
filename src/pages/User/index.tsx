@@ -17,6 +17,7 @@ import { ReactComponent as Claim } from 'assets/svg/claim.svg'
 import { ReactComponent as Settings } from 'assets/svg/settings.svg'
 import { ReactComponent as LogOut } from 'assets/svg/log_out.svg'
 import ProfileSetting from './ProfileSetting'
+import { useCurrentUserInfo, useLogOut } from 'state/userinfo/hooks'
 
 enum Tabs {
   POSITION = 'My Position',
@@ -70,12 +71,12 @@ const ProfileImg = styled.div<{ url?: string }>`
 `
 
 const Capsule = styled.p`
-  padding: 5px 10px
+  padding: 5px 10px;
   border: 1px solid #000000;
   border-radius: 50px;
   font-size: 12px;
   font-weight: 400;
-  margin-left: 12px
+  margin-left: 12px;
 `
 
 const Synopsis = styled.p`
@@ -158,6 +159,8 @@ const dummyActivityData = [
 export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss: () => void }) {
   const [currentTab, setCurrentTab] = useState(Tabs.POSITION)
   const [showSetting, setShowSetting] = useState(false)
+  const userinfo = useCurrentUserInfo()
+  const logout = useLogOut()
   const handleTabClick = useCallback(
     tab => () => {
       setCurrentTab(tab)
@@ -170,7 +173,11 @@ export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss
   const handleShowSetting = useCallback(() => {
     setShowSetting(true)
   }, [])
-  const handleLogOut = useCallback(() => {}, [])
+
+  const handleLogOut = useCallback(() => {
+    logout()
+    onDismiss()
+  }, [logout, onDismiss])
 
   return (
     <>
@@ -185,12 +192,12 @@ export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss
                     <ProfileImg />
                     <AutoColumn>
                       <RowFixed>
-                        <TYPE.black>Unnamed</TYPE.black>
-                        <Capsule>#1234</Capsule>
+                        <TYPE.black>{userinfo?.username}</TYPE.black>
+                        <Capsule>#{userinfo?.id}</Capsule>
                       </RowFixed>
                       <TYPE.smallGray>
                         <AutoRow>
-                          0xKos369cd6vwd94wq1gt4hr87ujv <CopyHelper toCopy={'0xKos369cd6vwd94wq1gt4hr87ujv'} />
+                          {userinfo?.account} <CopyHelper toCopy={'{userinfo?.account}'} />
                         </AutoRow>
                       </TYPE.smallGray>
                     </AutoColumn>
@@ -205,11 +212,7 @@ export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss
                     </ButtonOutlinedBlack>
                   </RowFixed>
                 </RowBetween>
-                <Synopsis>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor. Incididunt ut labore
-                  et dolore magna aliqua. Ut enim ad minim veniam. Quis nostrud exercitation ullamco laboris nisi ut
-                  aliquip ex ea commodo consequat.
-                </Synopsis>
+                <Synopsis>{userinfo?.bio}</Synopsis>
               </AutoColumn>
               <SwitchTab onTabClick={handleTabClick} currentTab={currentTab} />
               {(currentTab === Tabs.POSITION || currentTab === Tabs.LOCKER) && (
