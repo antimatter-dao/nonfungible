@@ -5,6 +5,86 @@
   "timestamp": "2020-09-03T12:37:57.000+00:00",
   "tokens": [
     {
+      "chainId": 3,
+      "address": "0xc0e2D7d9279846B80EacdEa57220AB2333BC049d",
+      "name": "0x Protocol Token",
+      "symbol": "ZRX",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/compound-finance/token-list/master/assets/asset_ZRX.svg"
+    },
+    {
+      "chainId": 3,
+      "address": "0x2973e69b20563bcc66dC63Bde153072c33eF37fe",
+      "name": "Compound USD Coin",
+      "symbol": "cUSDC",
+      "decimals": 8,
+      "logoURI": "https://raw.githubusercontent.com/compound-finance/token-list/master/assets/ctoken_usdc.svg"
+    },
+    {
+      "chainId": 3,
+      "address": "0xbc689667C13FB2a04f09272753760E38a95B998C",
+      "name": "Compound Dai",
+      "symbol": "cDAI",
+      "decimals": 8,
+      "logoURI": "https://raw.githubusercontent.com/compound-finance/token-list/master/assets/ctoken_dai.svg"
+    },
+    {
+      "chainId": 3,
+      "address": "0x110a13FC3efE6A245B50102D2d79B3E76125Ae83",
+      "name": "Tether USD",
+      "symbol": "USDT",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/compound-finance/token-list/master/assets/asset_USDT.svg"
+    },
+    {
+      "chainId": 3,
+      "address": "0xf76D4a441E4ba86A923ce32B89AFF89dBccAA075",
+      "name": "Compound",
+      "symbol": "COMP",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/compound-finance/token-list/master/assets/asset_COMP.svg"
+    },
+    {
+      "chainId": 3,
+      "address": "0x70014768996439F71C041179Ffddce973a83EEf2",
+      "name": "Compound Collateral",
+      "symbol": "cCOMP",
+      "decimals": 8
+    },
+
+    {
+      "chainId": 3,
+      "address": "0xF6958Cf3127e62d3EB26c79F4f45d3F3b2CcdeD4",
+      "name": "Compound USDT",
+      "symbol": "cUSDT",
+      "decimals": 8,
+      "logoURI": "https://raw.githubusercontent.com/compound-finance/token-list/master/assets/ctoken_usdt.svg"
+    },
+    {
+      "chainId": 3,
+      "address": "0xaF50a5A6Af87418DAC1F28F9797CeB3bfB62750A",
+      "name": "Compound Basic Attention Token",
+      "symbol": "cBAT",
+      "decimals": 8,
+      "logoURI": "https://raw.githubusercontent.com/compound-finance/token-list/master/assets/ctoken_bat.svg"
+    },
+    {
+      "chainId": 3,
+      "address": "0x50390975D942E83D661D4Bde43BF73B0ef27b426",
+      "name": "Basic Attention Token",
+      "symbol": "BAT",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/compound-finance/token-list/master/assets/asset_BAT.svg"
+    },
+    {
+      "chainId": 3,
+      "address": "0x859e9d8a4edadfEDb5A2fF311243af80F85A91b8",
+      "name": "Compound Ether",
+      "symbol": "cETH",
+      "decimals": 8,
+      "logoURI": "https://raw.githubusercontent.com/compound-finance/token-list/master/assets/ctoken_eth.svg"
+    },
+    {
       "name": "Dai Stablecoin",
       "address": "0xaD6D458402F60fD3Bd25163575031ACDce07538D",
       "symbol": "DAI",

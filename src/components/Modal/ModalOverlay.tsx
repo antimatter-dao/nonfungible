@@ -16,10 +16,12 @@ const StyledDialogContent = styled(AnimatedDialogContent)`
 export default function ModalOverlay({
   children,
   isOpen,
+  zIndex,
   onDismiss
 }: {
   children: React.ReactNode
   isOpen: boolean
+  zIndex?: number
   onDismiss?: () => void
 }) {
   const theme = useTheme()
@@ -41,6 +43,7 @@ export default function ModalOverlay({
               unstable_lockFocusAcrossFrames={false}
               overflow="auto"
               alignitems="flex-start"
+              zindex={zIndex}
               onDismiss={onDismiss}
             >
               <StyledDialogContent aria-label="dialog content">{children}</StyledDialogContent>

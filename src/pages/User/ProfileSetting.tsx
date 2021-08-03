@@ -48,7 +48,7 @@ export default function ProfileSetting({ isOpen, onDismiss }: { isOpen: boolean;
     }
   }, [])
   return (
-    <Modal isOpen={isOpen} onDismiss={onDismiss} maxWidth={600}>
+    <Modal isOpen={isOpen} onDismiss={onDismiss} maxWidth={600} zIndex={6}>
       <AppBody maxWidth="100%" style={{ position: 'relative', padding: 0 }}>
         <Close onClick={onDismiss} />
         <form onSubmit={() => {}}>

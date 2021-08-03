@@ -21,6 +21,7 @@ const RightText = styled(TYPE.small)`
   max-width: 152px;
   text-align: right;
   align-self: flex-start;
+  word-break: break-all;
 `
 
 export function SpotConfirmation({
