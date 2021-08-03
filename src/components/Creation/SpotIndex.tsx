@@ -227,7 +227,7 @@ export default function SpotIndex({
           <AutoColumn gap="10px">
             {assetParams.map((item: AssetsParameter, index: number) => {
               return (
-                <>
+                <React.Fragment key={index}>
                   <CurrencyNFTInputPanel
                     hiddenLabel={true}
                     value={item.amount}
@@ -251,7 +251,7 @@ export default function SpotIndex({
                     id="stake-liquidity-token"
                     hideSelect={false}
                   />
-                </>
+                </React.Fragment>
               )
             })}
           </AutoColumn>

@@ -1,4 +1,5 @@
 import Web3 from 'web3'
+import { useSelector } from 'react-redux'
 import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
 import { useCallback, useEffect, useState } from 'react'
 import { appLogin } from '../../utils/option/httpFetch'
@@ -7,19 +8,8 @@ import { useDispatch } from 'react-redux'
 import store from '../index'
 import { UserInfo } from './actions'
 
-export function useTimeIndex() {
-  const [index, setIndex] = useState(0)
-  useEffect(() => {
-    setTimeout(() => {
-      setIndex(index + 1)
-    }, 1000)
-  }, [index])
-
-  return index
-}
-
 export function getCurrentUserInfoSync(chainId?: number, account?: string): UserInfo | undefined {
-  const allUserinfo = store.getState().userinfo
+  const allUserinfo = store.getState().userInfo
   if (!chainId || !account) {
     const { account, chainId } = store.getState().currentAccount
     if (!account || !chainId) return undefined
@@ -32,8 +22,8 @@ export function getCurrentUserInfoSync(chainId?: number, account?: string): User
 }
 
 export function useCurrentUserInfo(): UserInfo | undefined {
-  const index = useTimeIndex()
-  const [userinfo, setUserinfo] = useState<UserInfo | undefined>()
+  const allUserInfo = useSelector((store: { userInfo: any }) => store.userInfo)
+  const [userInfo, setUserinfo] = useState<UserInfo | undefined>()
   const { account, chainId } = useWeb3ReactCore()
 
   useEffect(() => {
@@ -41,19 +31,18 @@ export function useCurrentUserInfo(): UserInfo | undefined {
       setUserinfo(undefined)
       return
     }
-    const allUserinfo = store.getState().userinfo
     if (
-      !allUserinfo.tokens[chainId] ||
-      !allUserinfo.tokens[chainId][account] ||
-      !allUserinfo.tokens[chainId][account].token
+      !allUserInfo.tokens[chainId] ||
+      !allUserInfo.tokens[chainId][account] ||
+      !allUserInfo.tokens[chainId][account].token
     ) {
       setUserinfo(undefined)
       return
     }
-    setUserinfo(allUserinfo.tokens[chainId][account])
-  }, [index, account, chainId])
+    setUserinfo(allUserInfo.tokens[chainId][account])
+  }, [allUserInfo, account, chainId])
 
-  return userinfo
+  return userInfo
 }
 
 export function useLogin() {
@@ -64,8 +53,8 @@ export function useLogin() {
   return useCallback(async () => {
     if (!account || !library || !chainId) return
     if (chainId !== 1 && chainId !== 3) return
-    const userinfo = getCurrentUserInfoSync(chainId, account)
-    if (userinfo && userinfo.token) return
+    const userInfo = getCurrentUserInfoSync(chainId, account)
+    if (userInfo && userInfo.token && userInfo) return
 
     const web3 = new Web3(library.provider)
     try {
@@ -76,7 +65,7 @@ export function useLogin() {
           saveUserInfo({
             chainId,
             address: account,
-            userinfo: {
+            userInfo: {
               token: loginRes.token ?? '',
               username: loginRes.username ?? '',
               bio: loginRes.description ?? '',
@@ -99,8 +88,8 @@ export function useLogOut() {
   return useCallback(async () => {
     if (!account || !chainId) return
     if (chainId !== 1 && chainId !== 3) return
-    const userinfo = getCurrentUserInfoSync(chainId, account)
-    if (userinfo && userinfo.token) {
+    const userInfo = getCurrentUserInfoSync(chainId, account)
+    if (userInfo && userInfo.token) {
       dispatch(removeUserInfo({ chainId, address: account }))
     }
   }, [account, chainId, dispatch])

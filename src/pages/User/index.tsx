@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState, useMemo } from 'react'
 import styled from 'styled-components'
 import { AutoColumn } from 'components/Column'
 import ModalOverlay from 'components/Modal/ModalOverlay'
@@ -7,40 +7,39 @@ import { AutoRow, RowBetween, RowFixed } from 'components/Row'
 import { ButtonOutlinedBlack } from 'components/Button'
 import { TYPE } from 'theme'
 import CopyHelper from 'components/AccountDetails/Copy'
-import { dummyData } from 'pages/SportIndex'
 import NFTCard from 'components/NFTCard'
-import Table, { OwnerCell } from 'components/Table'
-import { ReactComponent as Buy } from 'assets/svg/buy.svg'
-import { ReactComponent as Send } from 'assets/svg/send.svg'
-import { ReactComponent as Sell } from 'assets/svg/sell.svg'
-import { ReactComponent as Claim } from 'assets/svg/claim.svg'
+import Table /*, { OwnerCell }*/ from 'components/Table'
+// import { ReactComponent as Buy } from 'assets/svg/buy.svg'
+// import { ReactComponent as Send } from 'assets/svg/send.svg'
+// import { ReactComponent as Sell } from 'assets/svg/sell.svg'
+// import { ReactComponent as Claim } from 'assets/svg/claim.svg'
 import { ReactComponent as Settings } from 'assets/svg/settings.svg'
 import { ReactComponent as LogOut } from 'assets/svg/log_out.svg'
 import ProfileSetting from './ProfileSetting'
-import { useCurrentUserInfo, useLogOut } from 'state/userinfo/hooks'
-import useMyPosition from 'hooks/useMyPosition'
+import { useCurrentUserInfo, useLogOut } from 'state/userInfo/hooks'
+import { usePositionList, useIndexList } from 'hooks/useMyList'
 import { useWeb3React } from '@web3-react/core'
 
 enum Tabs {
   POSITION = 'My Position',
-  INDEX = 'My Index',
-  LOCKER = 'My Locker',
-  ACTIVITY = 'Activity'
+  INDEX = 'My Index'
+  // LOCKER = 'My Locker',
+  // ACTIVITY = 'Activity'
 }
 
-enum Actions {
-  BUY = 'Buy',
-  SELL = 'Sell',
-  CLAIM = 'Claim',
-  SEND = 'Send'
-}
+// enum Actions {
+//   BUY = 'Buy',
+//   SELL = 'Sell',
+//   CLAIM = 'Claim',
+//   SEND = 'Send'
+// }
 
-const ActionIcons = {
-  [Actions.BUY]: <Buy />,
-  [Actions.SELL]: <Sell />,
-  [Actions.SEND]: <Send />,
-  [Actions.CLAIM]: <Claim />
-}
+// const ActionIcons = {
+//   [Actions.BUY]: <Buy />,
+//   [Actions.SELL]: <Sell />,
+//   [Actions.SEND]: <Send />,
+//   [Actions.CLAIM]: <Claim />
+// }
 
 const ContentWrapper = styled.div`
   position: relative;
@@ -61,6 +60,7 @@ const Wrapper = styled.div`
   max-width: 1284px;
   display: flex;
   justify-content: center;
+  min-height: 100vh;
 `
 
 const ProfileImg = styled.div<{ url?: string }>`
@@ -112,58 +112,52 @@ function ActionButton({ onClick }: { onClick: () => void }) {
   )
 }
 
-function ActionCell({ action }: { action: Actions }) {
-  return (
-    <>
-      {ActionIcons[action]}
-      {action}
-    </>
-  )
-}
+// function ActionCell({ action }: { action: Actions }) {
+//   return (
+//     <>
+//       {ActionIcons[action]}
+//       {action}
+//     </>
+//   )
+// }
 
-const dummyIndexData = [
-  ['121', 'Defi', '121', '12 MATTER'],
-  ['121', 'Defi', '121', '12 MATTER'],
-  ['121', 'Defi', '121', '12 MATTER', <ActionButton onClick={() => {}} key="1" />],
-  ['121', 'Defi', '121', '12 MATTER']
-]
-
-const dummyActivityData = [
-  [
-    'Sport Index',
-    '121',
-    <ActionCell action={Actions.BUY} key="1" />,
-    <OwnerCell name="2living0zen" key="1" />,
-    '1 day ago'
-  ],
-  [
-    'Sport Index',
-    '121',
-    <ActionCell action={Actions.SELL} key="2" />,
-    <OwnerCell name="2living0zen" key="2" />,
-    '1 day ago'
-  ],
-  [
-    'Sport Index',
-    '121',
-    <ActionCell action={Actions.SEND} key="3" />,
-    <OwnerCell name="2living0zen" key="3" />,
-    '1 day ago'
-  ],
-  [
-    'Sport Index',
-    '121',
-    <ActionCell action={Actions.CLAIM} key="4" />,
-    <OwnerCell name="2living0zen" key="4" />,
-    '1 day ago'
-  ]
-]
+// const dummyActivityData = [
+//   [
+//     'Sport Index',
+//     '121',
+//     <ActionCell action={Actions.BUY} key="1" />,
+//     <OwnerCell name="2living0zen" key="1" />,
+//     '1 day ago'
+//   ],
+//   [
+//     'Sport Index',
+//     '121',
+//     <ActionCell action={Actions.SELL} key="2" />,
+//     <OwnerCell name="2living0zen" key="2" />,
+//     '1 day ago'
+//   ],
+//   [
+//     'Sport Index',
+//     '121',
+//     <ActionCell action={Actions.SEND} key="3" />,
+//     <OwnerCell name="2living0zen" key="3" />,
+//     '1 day ago'
+//   ],
+//   [
+//     'Sport Index',
+//     '121',
+//     <ActionCell action={Actions.CLAIM} key="4" />,
+//     <OwnerCell name="2living0zen" key="4" />,
+//     '1 day ago'
+//   ]
+// ]
 export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss: () => void }) {
   const { account } = useWeb3React()
   const [currentTab, setCurrentTab] = useState(Tabs.POSITION)
   const [showSetting, setShowSetting] = useState(false)
-  const userinfo = useCurrentUserInfo()
-  useMyPosition(userinfo)
+  const userInfo = useCurrentUserInfo()
+  const positionCardList = usePositionList(userInfo)
+  const indexList = useIndexList(userInfo)
   const logout = useLogOut()
   const handleTabClick = useCallback(
     tab => () => {
@@ -184,10 +178,22 @@ export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss
   }, [logout, onDismiss])
 
   useEffect(() => {
-    if (!account || account !== userinfo?.account) {
+    if (!account || account !== userInfo?.account) {
       onDismiss()
     }
-  }, [account, onDismiss, userinfo])
+  }, [account, onDismiss, userInfo])
+
+  const indexData = useMemo(
+    () =>
+      indexList.map(({ indexId, indexName }) => [
+        indexId,
+        indexName,
+        '',
+        '',
+        <ActionButton onClick={() => {}} key={indexId} />
+      ]),
+    [indexList]
+  )
 
   return (
     <>
@@ -202,12 +208,12 @@ export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss
                     <ProfileImg />
                     <AutoColumn>
                       <RowFixed>
-                        <TYPE.black>{userinfo?.username}</TYPE.black>
-                        <Capsule>#{userinfo?.id}</Capsule>
+                        <TYPE.black>{userInfo?.username}</TYPE.black>
+                        <Capsule>#{userInfo?.id}</Capsule>
                       </RowFixed>
                       <TYPE.smallGray>
                         <AutoRow>
-                          {userinfo?.account} <CopyHelper toCopy={'{userinfo?.account}'} />
+                          {userInfo?.account} <CopyHelper toCopy={userInfo?.account ?? ''} />
                         </AutoRow>
                       </TYPE.smallGray>
                     </AutoColumn>
@@ -222,40 +228,44 @@ export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss
                     </ButtonOutlinedBlack>
                   </RowFixed>
                 </RowBetween>
-                <Synopsis>{userinfo?.bio}</Synopsis>
+                <Synopsis>{userInfo?.bio}</Synopsis>
               </AutoColumn>
               <SwitchTab onTabClick={handleTabClick} currentTab={currentTab} />
-              {(currentTab === Tabs.POSITION || currentTab === Tabs.LOCKER) && (
+              {currentTab === Tabs.POSITION /*|| currentTab === Tabs.LOCKER*/ && (
                 <ContentWrapper>
-                  {dummyData.map(({ color, address, icons, indexId, creator, name, id }) => (
-                    <NFTCard
-                      id={id}
-                      color={color}
-                      address={address}
-                      icons={icons}
-                      indexId={indexId}
-                      key={indexId}
-                      creator={creator}
-                      name={name}
-                      onClick={() => {}}
-                    />
-                  ))}
+                  {positionCardList.map(item => {
+                    if (!item) return null
+                    const { color, address, icons, indexId, creator, name, id } = item
+                    return (
+                      <NFTCard
+                        id={id}
+                        color={color}
+                        address={address}
+                        icons={icons}
+                        indexId={indexId}
+                        key={indexId}
+                        creator={creator}
+                        name={name}
+                        onClick={() => {}}
+                      />
+                    )
+                  })}
                 </ContentWrapper>
               )}
               {currentTab === Tabs.INDEX && (
                 <Table
                   header={['IndexId', 'Index Name', 'Current Issurance', 'Fees Earned', '']}
-                  rows={dummyIndexData}
+                  rows={indexData}
                   isHeaderGray
                 />
               )}
-              {currentTab === Tabs.ACTIVITY && (
+              {/* {currentTab === Tabs.ACTIVITY && (
                 <Table
                   header={['Catagory', 'IndexId', 'Action', 'Owner', 'Date']}
                   rows={dummyActivityData}
                   isHeaderGray
                 />
-              )}
+              )} */}
             </AutoColumn>
           </AppBody>
         </Wrapper>

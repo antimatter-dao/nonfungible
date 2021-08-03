@@ -1,4 +1,4 @@
-import { getCurrentUserInfoSync } from 'state/userinfo/hooks'
+import { getCurrentUserInfoSync } from 'state/userInfo/hooks'
 
 const domain = 'http://47.241.14.27:8081'
 const headers = { 'content-type': 'application/json', accept: 'application/json' }
@@ -10,6 +10,24 @@ interface LoginRes {
   id?: string
 }
 
+const promiseGenerator = (request: Request) => {
+  return new Promise((resolve, reject) => {
+    fetch(request)
+      .then(response => {
+        if (response.status !== 200) {
+          reject('server error')
+        }
+        return response.json()
+      })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
 export function appLogin(publicAddress: string, signature: string, message: string): Promise<LoginRes> {
   const param = {
     publicAddress,
@@ -18,10 +36,10 @@ export function appLogin(publicAddress: string, signature: string, message: stri
   }
 
   // After the wallet is connected, it will be available after the effect is maintained.
-  const userinfo = getCurrentUserInfoSync()
+  const userInfo = getCurrentUserInfoSync()
   let _headers = headers
-  if (userinfo) {
-    _headers = Object.assign(headers, { token: userinfo.token })
+  if (userInfo) {
+    _headers = Object.assign(headers, { token: userInfo.token })
   }
 
   const request = new Request(`${domain}/app/login`, {
@@ -47,31 +65,32 @@ export function appLogin(publicAddress: string, signature: string, message: stri
   })
 }
 
-export function positionFetch(token: string | undefined) {
-  if (!token) {
+export function positionListFetch(token: string | undefined, address: string | undefined) {
+  if (!token || !address) {
     return
   }
 
   const request = new Request(`${domain}/app/getPositionList`, {
     method: 'POST',
-    headers: { ...headers, token }
+    headers: { ...headers, token },
+    body: JSON.stringify({ address })
   })
 
-  return new Promise((resolve, reject) => {
-    fetch(request)
-      .then(response => {
-        if (response.status !== 200) {
-          reject('server error')
-        }
-        return response.json()
-      })
-      .then(response => {
-        resolve(response.data)
-      })
-      .catch(error => {
-        reject(error)
-      })
+  return promiseGenerator(request)
+}
+
+export function indexListFetch(token: string | undefined, address: string | undefined) {
+  if (!token || !address) {
+    return
+  }
+
+  const request = new Request(`${domain}/app/getIndexList`, {
+    method: 'POST',
+    headers: { ...headers, token },
+    body: JSON.stringify({ address })
   })
+
+  return promiseGenerator(request)
 }
 
 export function allNFTFetch(): Promise<any> {
@@ -80,19 +99,5 @@ export function allNFTFetch(): Promise<any> {
     headers: headers
   })
 
-  return new Promise((resolve, reject) => {
-    fetch(request)
-      .then(response => {
-        if (response.status !== 200) {
-          reject('server error')
-        }
-        return response.json()
-      })
-      .then(response => {
-        resolve(response.data)
-      })
-      .catch(error => {
-        reject(error)
-      })
-  })
+  return promiseGenerator(request)
 }

@@ -9,7 +9,7 @@ export interface UserInfo {
   // avatarUrl: string
 }
 
-export const removeUserInfo = createAction<{ chainId: number; address: string }>('userinfo/removeUserInfo')
-export const saveUserInfo = createAction<{ chainId: number; address: string; userinfo: UserInfo }>(
-  'userinfo/saveUserInfo'
+export const removeUserInfo = createAction<{ chainId: number; address: string }>('userInfo/removeUserInfo')
+export const saveUserInfo = createAction<{ chainId: number; address: string; userInfo: UserInfo }>(
+  'userInfo/saveUserInfo'
 )

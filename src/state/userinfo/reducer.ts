@@ -20,12 +20,12 @@ export default createReducer(initialState, builder =>
       if (state.tokens[chainId] && state.tokens[chainId][address]) delete state.tokens[chainId][address]
     })
     .addCase(saveUserInfo, (state, action) => {
-      const { chainId, address, userinfo } = action.payload
+      const { chainId, address, userInfo } = action.payload
 
       if (Object.keys(state.tokens).length === 0) {
         state.tokens = {
           [chainId]: {
-            [address]: userinfo
+            [address]: userInfo
           }
         }
         return
@@ -36,7 +36,7 @@ export default createReducer(initialState, builder =>
         if (parseInt(_chainid) === chainId) {
           _curr = {
             ...state.tokens[chainId],
-            [address]: userinfo
+            [address]: userInfo
           }
         } else {
           _curr = state.tokens[chainId][address]

@@ -7,7 +7,7 @@ import { CreateSpotData } from './index'
 import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { useWeb3React } from '@web3-react/core'
-import { useCurrentUserInfo } from 'state/userinfo/hooks'
+import { useCurrentUserInfo } from 'state/userInfo/hooks'
 
 const Wrapper = styled(AutoColumn)`
   padding: 24px 28px 0;
@@ -33,8 +33,8 @@ export function SpotConfirmation({
 }) {
   const { creatorId, description, name, assetsParameters } = dataInfo
   const { account } = useWeb3React()
-  const userinfo = useCurrentUserInfo()
-  console.log('🚀 ~ file: Confirmation.tsx ~ line 36 ~ userinfo', userinfo)
+  const userInfo = useCurrentUserInfo()
+  console.log('🚀 ~ file: Confirmation.tsx ~ line 36 ~ userInfo', userInfo)
   return (
     <AutoColumn gap="40px">
       <div>
@@ -49,7 +49,7 @@ export function SpotConfirmation({
           <TYPE.smallHeader color="text6">Creator Info</TYPE.smallHeader>
           <RowBetween>
             <TYPE.smallGray>Creator</TYPE.smallGray>
-            <RightText>{userinfo?.username}</RightText>
+            <RightText>{userInfo?.username}</RightText>
           </RowBetween>
           <RowBetween>
             <TYPE.smallGray>IndexName</TYPE.smallGray>

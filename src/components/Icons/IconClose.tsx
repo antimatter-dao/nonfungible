@@ -18,9 +18,9 @@ const StyledBackIcon = styled(CloseIcon)`
   left: 0;
 `
 
-const CloseColor = styled(Close)<{ strokeColor?: string }>`
+const CloseColor = styled(Close)<{ strokecolor?: string }>`
   path {
-    stroke: ${({ theme, strokeColor }) => (strokeColor ? strokeColor : theme.text4)};
+    stroke: ${({ theme, strokecolor }) => (strokecolor ? strokecolor : theme.text4)};
   }
 `
 
@@ -35,7 +35,7 @@ export default function IconClose({
 }) {
   return (
     <CloseIcon onClick={onEvent} style={style}>
-      <CloseColor strokeColor={strokeColor} />
+      <CloseColor strokecolor={strokeColor} />
     </CloseIcon>
   )
 }

@@ -17,7 +17,7 @@ import { ReactComponent as AntimatterIcon } from 'assets/svg/antimatter_icon.svg
 import useUserPanel from 'hooks/useUserPanel'
 import { useToggleCreationModal } from 'state/application/hooks'
 import CreationNFTModal from 'components/Creation'
-import { useCurrentUserInfo, useLogin } from 'state/userinfo/hooks'
+import { useCurrentUserInfo, useLogin } from 'state/userInfo/hooks'
 
 const activeClassName = 'ACTIVE'
 
@@ -245,7 +245,7 @@ const UserButton = styled(ButtonText)<{ isOpen: boolean }>`
 
 export default function Header() {
   const { account } = useActiveWeb3React()
-  const userinfo = useCurrentUserInfo()
+  const userInfo = useCurrentUserInfo()
   const login = useLogin()
   const { showUserPanel, isUserPanelOpen } = useUserPanel()
   const toggleCreationModal = useToggleCreationModal()
@@ -255,14 +255,14 @@ export default function Header() {
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   const onCreateOrLogin = useCallback(() => {
-    if (userinfo && userinfo.token) toggleCreationModal()
+    if (userInfo && userInfo.token) toggleCreationModal()
     else login()
-  }, [userinfo, login, toggleCreationModal])
+  }, [userInfo, login, toggleCreationModal])
 
   const toShowUserPanel = useCallback(() => {
-    if (userinfo && userinfo.token) showUserPanel()
+    if (userInfo && userInfo.token) showUserPanel()
     else login()
-  }, [userinfo, showUserPanel, login])
+  }, [userInfo, showUserPanel, login])
 
   return (
     <HeaderFrame>

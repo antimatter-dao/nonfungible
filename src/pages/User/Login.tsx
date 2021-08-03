@@ -2,7 +2,7 @@ import { useWeb3React } from '@web3-react/core'
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { saveCurrentAccount } from 'state/currentAccount/actions'
-import { useLogin } from '../../state/userinfo/hooks'
+import { useLogin } from '../../state/userInfo/hooks'
 
 export default function Login() {
   const { account, chainId } = useWeb3React()
@@ -12,8 +12,8 @@ export default function Login() {
   const login = useLogin()
   useEffect(() => {
     // setTimeout(() => {
-    //   const userinfo = getCurrentUserInfoSync()
-    //   if (!userinfo) login()
+    //   const userInfo = getCurrentUserInfoSync()
+    //   if (!userInfo) login()
     // }, 2000)
     login()
   }, [login])
