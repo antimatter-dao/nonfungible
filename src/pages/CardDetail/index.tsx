@@ -31,7 +31,7 @@ import { CurrencyAmount, JSBI } from '@uniswap/sdk'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useWeb3React } from '@web3-react/core'
 import { useAmountOutMins, useIndexSellCall } from 'hooks/useIndexSellCallback'
-import { INDEX_NFT_BUY_FEE } from '../../constants'
+import { INDEX_NFT_ADDRESS, INDEX_NFT_BUY_FEE } from '../../constants'
 
 const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
@@ -144,9 +144,9 @@ const defaultCardData = {
 
 export default function CardDetail({
   match: {
-    params: { nftid }
+    params: { nftid, creatorAddress }
   }
-}: RouteComponentProps<{ nftid?: string }>) {
+}: RouteComponentProps<{ nftid?: string; creatorAddress: string }>) {
   const { account } = useWeb3React()
   const theme = useTheme()
   const history = useHistory()
@@ -163,7 +163,7 @@ export default function CardDetail({
     setTransactionModalOpen(false)
   }
 
-  const { loading: NFTIndexLoading, data: NFTIndexInfo } = useNFTIndexInfo(nftid)
+  const { loading: NFTIndexLoading, data: NFTIndexInfo } = useNFTIndexInfo(nftid, creatorAddress)
   const { data: NFTbalance } = useNFTBalance(nftid)
 
   const ETHbalance = useCurrencyBalance(account ?? undefined, ETHCurrency ?? undefined)
@@ -568,11 +568,7 @@ function CreaterInfo({ info }: { info: NFTIndexInfoProps }) {
       <Hr />
       <Paragraph header="Creator ID">#{info.creatorId}</Paragraph>
       <Hr />
-      <Paragraph header="Bio">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor. Incididunt ut labore et dolore
-        magna aliqua. Ut enim ad minim veniam. Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-        consequat.
-      </Paragraph>
+      <Paragraph header="Bio">{info.bio}</Paragraph>
     </div>
   )
 }
@@ -580,7 +576,7 @@ function CreaterInfo({ info }: { info: NFTIndexInfoProps }) {
 function IndexInfo({ info }: { info: NFTIndexInfoProps }) {
   return (
     <div>
-      <Paragraph header="Token contract address">0xKos369cd6vwd94wq1gt4hr87ujv</Paragraph>
+      <Paragraph header="Token contract address">{INDEX_NFT_ADDRESS}</Paragraph>
       <Hr />
       {/* <Paragraph header="Current issuance">123</Paragraph>
       <Hr /> */}

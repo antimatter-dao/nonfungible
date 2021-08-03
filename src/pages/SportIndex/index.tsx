@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
@@ -9,6 +9,7 @@ import { ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
 import { ReactComponent as SearchIcon } from '../../assets/svg/search.svg'
 import TextInput from 'components/TextInput'
 import useNFTList from 'hooks/useNFTList'
+import CurrencyLogo from 'components/CurrencyLogo'
 
 export const dummyData: NFTCardProps[] = [
   {
@@ -176,29 +177,59 @@ const ButtonWrapper = styled(RowFixed)`
 `};
 `
 
+const defaultCardData = {
+  id: '',
+  name: '',
+  indexId: '',
+  color: CardColor.RED,
+  address: '',
+  icons: [],
+  creator: ''
+}
+
 export default function SportIndex() {
   const history = useHistory()
+  const NFTListData = useNFTList()
+
+  const NFTListCardData = useMemo((): NFTCardProps[] => {
+    return NFTListData.map(NFTIndexInfo => {
+      if (!NFTIndexInfo) return defaultCardData
+      const _icons = NFTIndexInfo.assetsParameters.map((val, idx) => {
+        return <CurrencyLogo currency={val.currencyToken} key={idx} />
+      })
+      return {
+        id: NFTIndexInfo.indexId,
+        name: NFTIndexInfo.name,
+        indexId: NFTIndexInfo.indexId,
+        color: NFTIndexInfo.color,
+        address: NFTIndexInfo.creator,
+        icons: _icons,
+        creator: NFTIndexInfo.creatorName
+      }
+    })
+  }, [NFTListData])
+
   const handleSearch = useCallback((searchParam: string, searchBy: string) => {
     console.log(searchParam, searchBy)
   }, [])
 
-  useNFTList()
   return (
     <Wrapper>
       <Search onSearch={handleSearch} />
       <ContentWrapper>
-        {dummyData.map(({ color, address, icons, indexId, creator, name, id }) => (
-          <NFTCard
-            id={id}
-            color={color}
-            address={address}
-            icons={icons}
-            indexId={indexId}
-            key={indexId}
-            creator={creator}
-            name={name}
-            onClick={() => history.push('/spot_detail/0')}
-          />
+        {NFTListCardData.map(({ color, address, icons, indexId, creator, name, id }) => (
+          <>
+            <NFTCard
+              id={id}
+              color={color}
+              address={address}
+              icons={icons}
+              indexId={indexId}
+              creator={creator}
+              name={name}
+              onClick={() => history.push(`/spot_detail/${indexId}/${address}`)}
+            />
+          </>
         ))}
       </ContentWrapper>
     </Wrapper>

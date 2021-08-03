@@ -65,11 +65,34 @@ export function appLogin(publicAddress: string, signature: string, message: stri
   })
 }
 
+export function getAccountInfo(address: string): Promise<LoginRes> {
+  const request = new Request(`${domain}/app/getAccountInfo`, {
+    method: 'POST',
+    body: address,
+    headers: headers
+  })
+
+  return new Promise((resolve, reject) => {
+    fetch(request)
+      .then(response => {
+        if (response.status !== 200) {
+          reject('server error')
+        }
+        return response.json()
+      })
+      .then(response => {
+        resolve(response.data)
+      })
+      .catch(error => {
+        reject(error)
+      })
+  })
+}
+
 export function positionListFetch(token: string | undefined, address: string | undefined) {
   if (!token || !address) {
     return
   }
-
   const request = new Request(`${domain}/app/getPositionList`, {
     method: 'POST',
     headers: { ...headers, token },
@@ -94,8 +117,13 @@ export function indexListFetch(token: string | undefined, address: string | unde
 }
 
 export function allNFTFetch(): Promise<any> {
+  const param = {
+    indexName: '',
+    nftId: ''
+  }
   const request = new Request(`${domain}/app/getNftList`, {
     method: 'POST',
+    body: JSON.stringify(param),
     headers: headers
   })
 

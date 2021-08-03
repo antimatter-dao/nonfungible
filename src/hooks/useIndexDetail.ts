@@ -1,12 +1,13 @@
 import { AssetsParameter } from 'components/Creation'
 import { CardColor } from 'components/NFTCard'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { WrappedTokenInfo } from 'state/lists/hooks'
 import { useSingleCallResult } from '../state/multicall/hooks'
 import { useAllTokens } from './Tokens'
 import { useIndexNFTContract } from './useContract'
 import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
 import { useWeb3React } from '@web3-react/core'
+import { getAccountInfo } from 'utils/option/httpFetch'
 
 export interface NFTIndexInfoProps {
   name: string
@@ -16,11 +17,22 @@ export interface NFTIndexInfoProps {
   creator: string
   creatorId: string
   creatorName: string
+  bio?: string
 }
 
 export interface BuyButtonProps {
   text: string
   disabled: boolean
+}
+
+export function useNFTCreatorInfo(address: string) {
+  const [info, setInfo] = useState<any>()
+  useEffect(() => {
+    getAccountInfo(address).then(res => {
+      setInfo(res)
+    })
+  }, [address])
+  return info
 }
 
 export function toNumber(weiValue: string, token: WrappedTokenInfo | undefined) {
@@ -29,7 +41,8 @@ export function toNumber(weiValue: string, token: WrappedTokenInfo | undefined) 
 }
 
 export function useNFTIndexInfo(
-  nftid: string | undefined
+  nftid: string | undefined,
+  creatorAddress: string
 ): {
   loading: boolean
   data: undefined | NFTIndexInfoProps
@@ -37,6 +50,7 @@ export function useNFTIndexInfo(
   const contract = useIndexNFTContract()
   const nftIndexRes = useSingleCallResult(contract, 'getIndex', [nftid])
   const tokens = useAllTokens()
+  const creatorInfo = useNFTCreatorInfo(creatorAddress)
 
   return useMemo(() => {
     if (!nftIndexRes.result)
@@ -67,14 +81,15 @@ export function useNFTIndexInfo(
       color: metadata.color,
       creator: nft.creator,
       creatorId: nftid as string,
-      creatorName: 'jack',
-      assetsParameters
+      creatorName: creatorInfo?.username,
+      assetsParameters,
+      bio: creatorInfo?.description
     }
     return {
       loading: nftIndexRes.loading,
       data: ret
     }
-  }, [nftIndexRes, nftid, tokens])
+  }, [nftIndexRes, nftid, tokens, creatorInfo])
 }
 
 export function useAssetsTokens(assetsParameters: AssetsParameter[] | undefined): AssetsParameter[] {
