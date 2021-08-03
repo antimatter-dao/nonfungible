@@ -405,6 +405,7 @@ export default function WalletModal({
       maxHeight={90}
       maxWidth={700}
       width="fit-content"
+      zIndex={5}
     >
       <Wrapper>{getModalContent()}</Wrapper>
     </Modal>

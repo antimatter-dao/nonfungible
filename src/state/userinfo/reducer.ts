@@ -21,10 +21,28 @@ export default createReducer(initialState, builder =>
     })
     .addCase(saveUserInfo, (state, action) => {
       const { chainId, address, userinfo } = action.payload
-      state.tokens = {
-        [chainId]: {
-          [address]: userinfo
+
+      if (Object.keys(state.tokens).length === 0) {
+        state.tokens = {
+          [chainId]: {
+            [address]: userinfo
+          }
         }
+        return
       }
+      const currentUser: UserState['tokens'] = {}
+      for (const _chainid of Object.keys(state.tokens)) {
+        let _curr = {}
+        if (parseInt(_chainid) === chainId) {
+          _curr = {
+            ...state.tokens[chainId],
+            [address]: userinfo
+          }
+        } else {
+          _curr = state.tokens[chainId][address]
+        }
+        currentUser[parseInt(_chainid)] = _curr
+      }
+      state.tokens = currentUser
     })
 )

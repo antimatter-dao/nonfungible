@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { AutoColumn } from 'components/Column'
 import ModalOverlay from 'components/Modal/ModalOverlay'
@@ -18,6 +18,7 @@ import { ReactComponent as Settings } from 'assets/svg/settings.svg'
 import { ReactComponent as LogOut } from 'assets/svg/log_out.svg'
 import ProfileSetting from './ProfileSetting'
 import { useCurrentUserInfo, useLogOut } from 'state/userinfo/hooks'
+import { useWeb3React } from '@web3-react/core'
 
 enum Tabs {
   POSITION = 'My Position',
@@ -157,6 +158,7 @@ const dummyActivityData = [
   ]
 ]
 export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss: () => void }) {
+  const { account } = useWeb3React()
   const [currentTab, setCurrentTab] = useState(Tabs.POSITION)
   const [showSetting, setShowSetting] = useState(false)
   const userinfo = useCurrentUserInfo()
@@ -179,10 +181,16 @@ export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss
     onDismiss()
   }, [logout, onDismiss])
 
+  useEffect(() => {
+    if (!account || account !== userinfo?.account) {
+      onDismiss()
+    }
+  }, [account, onDismiss, userinfo])
+
   return (
     <>
       <ProfileSetting isOpen={showSetting} onDismiss={handleHideSetting} />
-      <ModalOverlay isOpen={isOpen} onDismiss={onDismiss}>
+      <ModalOverlay isOpen={isOpen} onDismiss={onDismiss} zIndex={5}>
         <Wrapper>
           <AppBody maxWidth="1284px" style={{ width: '100%', padding: 52 }} isCard>
             <AutoColumn gap="40px">
