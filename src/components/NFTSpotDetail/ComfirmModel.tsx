@@ -77,17 +77,15 @@ export function BuyComfirmModel({
             {assetsParameters
               .filter(v => v.currencyToken)
               .map(({ amount, currencyToken }) => (
-                <>
-                  <RowBetween>
-                    <RowFixed>
-                      <CurrencyLogo currency={currencyToken} style={{ marginRight: 10 }} />
-                      <TYPE.smallGray>{currencyToken?.symbol}</TYPE.smallGray>
-                    </RowFixed>
-                    <RightText>
-                      {amount} * {number} = {new BigNumber(amount).multipliedBy(number).toString()}
-                    </RightText>
-                  </RowBetween>
-                </>
+                <RowBetween key={currencyToken?.address}>
+                  <RowFixed>
+                    <CurrencyLogo currency={currencyToken} style={{ marginRight: 10 }} />
+                    <TYPE.smallGray>{currencyToken?.symbol}</TYPE.smallGray>
+                  </RowFixed>
+                  <RightText>
+                    {amount} * {number} = {new BigNumber(amount).multipliedBy(number).toString()}
+                  </RightText>
+                </RowBetween>
               ))}
             <RowBetween style={{ marginTop: 10 }}>
               <TYPE.smallGray>You will pay :</TYPE.smallGray>
@@ -154,17 +152,15 @@ export function SellComfirmModel({
             {assetsParameters
               .filter(v => v.currencyToken)
               .map(({ amount, currencyToken }) => (
-                <>
-                  <RowBetween>
-                    <RowFixed>
-                      <CurrencyLogo currency={currencyToken} style={{ marginRight: 10 }} />
-                      <TYPE.smallGray>{currencyToken?.symbol}</TYPE.smallGray>
-                    </RowFixed>
-                    <RightText>
-                      {amount} * {number} = {new BigNumber(amount).multipliedBy(number).toString()}
-                    </RightText>
-                  </RowBetween>
-                </>
+                <RowBetween key={currencyToken?.address}>
+                  <RowFixed>
+                    <CurrencyLogo currency={currencyToken} style={{ marginRight: 10 }} />
+                    <TYPE.smallGray>{currencyToken?.symbol}</TYPE.smallGray>
+                  </RowFixed>
+                  <RightText>
+                    {amount} * {number} = {new BigNumber(amount).multipliedBy(number).toString()}
+                  </RightText>
+                </RowBetween>
               ))}
             <RowBetween style={{ marginTop: 10 }}>
               <TYPE.smallGray>You will receive :</TYPE.smallGray>
