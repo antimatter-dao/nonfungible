@@ -126,10 +126,12 @@ export function indexListFetch(token: string | undefined, address: string | unde
   return promiseGenerator(request)
 }
 
-export function allNFTFetch(): Promise<any> {
+export function allNFTFetch(curPage: number): Promise<any> {
   const param = {
     indexName: '',
-    nftId: ''
+    nftId: '',
+    curPage,
+    pageSize: '8'
   }
   const request = new Request(`${domain}/app/getNftList`, {
     method: 'POST',

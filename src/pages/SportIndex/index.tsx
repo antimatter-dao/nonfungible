@@ -100,8 +100,11 @@ const defaultCardData = {
 
 export default function SportIndex() {
   const history = useHistory()
-  const [currentPage, setCurrentPage] = useState<number>(1)
-  const { countPages, loading, data: NFTListData } = useNFTList(currentPage)
+  const {
+    page: { countPages, currentPage, setCurrentPage },
+    loading,
+    data: NFTListData
+  } = useNFTList()
 
   const NFTListCardData = useMemo((): NFTCardProps[] => {
     return NFTListData.map(NFTIndexInfo => {

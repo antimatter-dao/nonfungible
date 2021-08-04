@@ -24,24 +24,27 @@ interface NFTSpotListProps {
   assetsParameters: AssetsParameter[]
 }
 
-export default function useNFTList(
-  page: number
-): {
+export default function useNFTList(): {
   loading: boolean
-  countPages: number
+  page: {
+    countPages: number
+    currentPage: number
+    setCurrentPage: (page: number) => void
+  }
   data: NFTSpotListProps[]
 } {
   const [nftIdList, setNftIdList] = useState<string[][]>([])
   const [recordList, setRecordList] = useState<RecordListProps[]>()
   const [reqLoading, setReqLoading] = useState<boolean>(false)
   const [countPages, setCountPages] = useState<number>(0)
+  const [currentPage, setCurrentPage] = useState<number>(1)
   const tokens = useAllTokens()
 
   useEffect(() => {
     ;(async () => {
       try {
         setReqLoading(true)
-        const positionList = await allNFTFetch()
+        const positionList = await allNFTFetch(currentPage)
         setReqLoading(false)
         setCountPages(positionList.pages ?? 0)
         const idList: string[][] | undefined = positionList?.list?.map(({ indexId }: { indexId: string }) => [indexId])
@@ -59,7 +62,7 @@ export default function useNFTList(
         console.error('fetch NFT List', error)
       }
     })()
-  }, [page])
+  }, [currentPage])
 
   const contract = useIndexNFTContract()
   const nftRes = useSingleContractMultipleData(contract, 'getIndex', nftIdList)
@@ -103,7 +106,11 @@ export default function useNFTList(
     return {
       loading: !!(reqLoading || (nftRes.length && nftRes[0].loading)),
       data: data as NFTSpotListProps[],
-      countPages
+      page: {
+        countPages,
+        currentPage,
+        setCurrentPage: setCurrentPage
+      }
     }
-  }, [nftRes, tokens, recordList, reqLoading, countPages])
+  }, [nftRes, reqLoading, countPages, currentPage, recordList, tokens])
 }
