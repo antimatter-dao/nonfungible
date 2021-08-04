@@ -17,7 +17,7 @@ import { ReactComponent as AntimatterIcon } from 'assets/svg/antimatter_icon.svg
 import useUserPanel from 'hooks/useUserPanel'
 import { useToggleCreationModal } from 'state/application/hooks'
 import CreationNFTModal from 'components/Creation'
-import { useCurrentUserInfo, useLogin } from 'state/userinfo/hooks'
+import { useCurrentUserInfo, useLogin } from 'state/userInfo/hooks'
 
 const activeClassName = 'ACTIVE'
 

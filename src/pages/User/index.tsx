@@ -16,7 +16,7 @@ import Table /*, { OwnerCell }*/ from 'components/Table'
 import { ReactComponent as Settings } from 'assets/svg/settings.svg'
 import { ReactComponent as LogOut } from 'assets/svg/log_out.svg'
 import ProfileSetting from './ProfileSetting'
-import { useCurrentUserInfo, useLogOut } from 'state/userinfo/hooks'
+import { useCurrentUserInfo, useLogOut } from 'state/userInfo/hooks'
 import { usePositionList, useIndexList } from 'hooks/useMyList'
 import { useWeb3React } from '@web3-react/core'
 
@@ -102,15 +102,15 @@ const Tab = styled.button<{ selected: boolean }>`
   transition: 0.5s;
 `
 
-function ActionButton({ onClick }: { onClick: () => void }) {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-      <ButtonOutlinedBlack key="1" width="120px" onClick={onClick}>
-        Claim Fees
-      </ButtonOutlinedBlack>
-    </div>
-  )
-}
+// function ActionButton({ onClick }: { onClick: () => void }) {
+//   return (
+//     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+//       <ButtonOutlinedBlack key="1" width="120px" onClick={onClick}>
+//         Claim Fees
+//       </ButtonOutlinedBlack>
+//     </div>
+//   )
+// }
 
 // function ActionCell({ action }: { action: Actions }) {
 //   return (
@@ -189,15 +189,15 @@ export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss
         indexId,
         indexName,
         '',
-        '',
-        <ActionButton onClick={() => {}} key={indexId} />
+        '0.05eth'
+        // <ActionButton onClick={() => {}} key={indexId} />
       ]),
     [indexList]
   )
 
   return (
     <>
-      <ProfileSetting isOpen={showSetting} onDismiss={handleHideSetting} />
+      <ProfileSetting isOpen={showSetting} onDismiss={handleHideSetting} userInfo={userInfo} />
       <ModalOverlay isOpen={isOpen} onDismiss={onDismiss} zIndex={5}>
         <Wrapper>
           <AppBody maxWidth="1284px" style={{ width: '100%', padding: 52 }} isCard>
@@ -233,23 +233,27 @@ export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss
               <SwitchTab onTabClick={handleTabClick} currentTab={currentTab} />
               {currentTab === Tabs.POSITION /*|| currentTab === Tabs.LOCKER*/ && (
                 <ContentWrapper>
-                  {positionCardList.map(item => {
-                    if (!item) return null
-                    const { color, address, icons, indexId, creator, name, id } = item
-                    return (
-                      <NFTCard
-                        id={id}
-                        color={color}
-                        address={address}
-                        icons={icons}
-                        indexId={indexId}
-                        key={indexId}
-                        creator={creator}
-                        name={name}
-                        onClick={() => {}}
-                      />
-                    )
-                  })}
+                  {positionCardList.length === 0 ? (
+                    <span>You have no NFT at the moment</span>
+                  ) : (
+                    positionCardList.map(item => {
+                      if (!item) return null
+                      const { color, address, icons, indexId, creator, name, id } = item
+                      return (
+                        <NFTCard
+                          id={id}
+                          color={color}
+                          address={address}
+                          icons={icons}
+                          indexId={indexId}
+                          key={indexId}
+                          creator={creator}
+                          name={name}
+                          onClick={() => {}}
+                        />
+                      )
+                    })
+                  )}
                 </ContentWrapper>
               )}
               {currentTab === Tabs.INDEX && (

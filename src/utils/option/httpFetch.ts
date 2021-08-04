@@ -1,4 +1,4 @@
-import { getCurrentUserInfoSync } from 'state/userinfo/hooks'
+import { getCurrentUserInfoSync } from 'state/userInfo/hooks'
 
 const domain = 'http://47.241.14.27:8081'
 const headers = { 'content-type': 'application/json', accept: 'application/json' }
@@ -8,6 +8,16 @@ interface LoginRes {
   username: string | null
   description: string | null
   id?: string
+}
+
+export interface UserInfoQuery {
+  createTime?: string
+  creater?: string
+  description?: string
+  id?: string | number
+  remark?: string
+  updateTime?: string
+  username?: string
 }
 
 const promiseGenerator = (request: Request) => {
@@ -125,6 +135,19 @@ export function allNFTFetch(): Promise<any> {
     method: 'POST',
     body: JSON.stringify(param),
     headers: headers
+  })
+
+  return promiseGenerator(request)
+}
+
+export function userInfoFetch(token: string | undefined, params: UserInfoQuery) {
+  if (!token) {
+    return
+  }
+  const request = new Request(`${domain}/app/createAccount`, {
+    method: 'POST',
+    body: JSON.stringify(params),
+    headers: { ...headers, token }
   })
 
   return promiseGenerator(request)

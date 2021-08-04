@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useWeb3React } from '@web3-react/core'
+import { useEffect, useMemo, useState, useCallback } from 'react'
+import { useDispatch } from 'react-redux'
 import { useSingleContractMultipleData } from 'state/multicall/hooks'
-import { UserInfo } from 'state/userinfo/actions'
-import { positionListFetch, indexListFetch } from 'utils/option/httpFetch'
+import { saveUserInfo, UserInfo } from 'state/userInfo/actions'
+import { positionListFetch, indexListFetch, userInfoFetch, UserInfoQuery } from 'utils/option/httpFetch'
 import { formatNFTCardDetail } from 'utils/option/nftUtils'
 import { useAllTokens } from './Tokens'
 import { useIndexNFTContract } from './useContract'
@@ -57,4 +59,33 @@ export function useIndexList(userInfo: UserInfo | undefined) {
   }, [userInfo])
 
   return indexList
+}
+
+export function useUserInfoUpdate(userInfo: UserInfo | undefined) {
+  const { account, chainId } = useWeb3React()
+  const dispatch = useDispatch()
+  const callback = useCallback(
+    async (params: UserInfoQuery) => {
+      const res: any = await userInfoFetch(userInfo?.token, params)
+      if (res && userInfo && chainId && account) {
+        console.log(res)
+        dispatch(
+          saveUserInfo({
+            chainId,
+            address: account,
+            userInfo: {
+              ...userInfo,
+              username: res.username ?? '',
+              bio: res.description ?? ''
+            }
+          })
+        )
+      }
+    },
+    [account, chainId, dispatch, userInfo]
+  )
+
+  return useMemo(() => {
+    return { updateUserInfoCallback: callback }
+  }, [callback])
 }
