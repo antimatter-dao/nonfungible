@@ -19,6 +19,7 @@ import ProfileSetting from './ProfileSetting'
 import { useCurrentUserInfo, useLogOut } from 'state/userInfo/hooks'
 import { usePositionList, useIndexList } from 'hooks/useMyList'
 import { useWeb3React } from '@web3-react/core'
+import { useHistory } from 'react-router-dom'
 
 enum Tabs {
   POSITION = 'My Position',
@@ -153,6 +154,7 @@ const Tab = styled.button<{ selected: boolean }>`
 // ]
 export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss: () => void }) {
   const { account } = useWeb3React()
+  const history = useHistory()
   const [currentTab, setCurrentTab] = useState(Tabs.POSITION)
   const [showSetting, setShowSetting] = useState(false)
   const userInfo = useCurrentUserInfo()
@@ -249,7 +251,7 @@ export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss
                           key={indexId}
                           creator={creator}
                           name={name}
-                          onClick={() => {}}
+                          onClick={() => history.push(`/spot_detail/${indexId}`)}
                         />
                       )
                     })

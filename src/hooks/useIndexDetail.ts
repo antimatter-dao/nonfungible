@@ -3,11 +3,11 @@ import { CardColor } from 'components/NFTCard'
 import { useEffect, useMemo, useState } from 'react'
 import { WrappedTokenInfo } from 'state/lists/hooks'
 import { useSingleCallResult } from '../state/multicall/hooks'
-import { useAllTokens } from './Tokens'
+import { useAllTokens, useCurrency } from './Tokens'
 import { useIndexNFTContract } from './useContract'
 import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
 import { useWeb3React } from '@web3-react/core'
-import { getAccountInfo } from 'utils/option/httpFetch'
+import { getAccountInfo, getNFTTransferRecords } from 'utils/option/httpFetch'
 
 export interface NFTIndexInfoProps {
   name: string
@@ -16,8 +16,6 @@ export interface NFTIndexInfoProps {
   assetsParameters: AssetsParameter[]
   creator: string
   creatorId: string
-  creatorName: string
-  bio?: string
 }
 
 export interface BuyButtonProps {
@@ -25,11 +23,23 @@ export interface BuyButtonProps {
   disabled: boolean
 }
 
-export function useNFTCreatorInfo(address: string) {
+export interface NFTCreatorInfo {
+  username: string
+  bio: string
+}
+export function useNFTCreatorInfo(address: string | undefined): NFTCreatorInfo | undefined {
   const [info, setInfo] = useState<any>()
   useEffect(() => {
+    if (!address) {
+      setInfo(undefined)
+      return
+    }
     getAccountInfo(address).then(res => {
-      setInfo(res)
+      const ret: NFTCreatorInfo = {
+        username: res.username ?? '',
+        bio: res.description ?? ''
+      }
+      setInfo(ret)
     })
   }, [address])
   return info
@@ -41,8 +51,7 @@ export function toNumber(weiValue: string, token: WrappedTokenInfo | undefined) 
 }
 
 export function useNFTIndexInfo(
-  nftid: string | undefined,
-  creatorAddress: string
+  nftid: string | undefined
 ): {
   loading: boolean
   data: undefined | NFTIndexInfoProps
@@ -50,8 +59,6 @@ export function useNFTIndexInfo(
   const contract = useIndexNFTContract()
   const nftIndexRes = useSingleCallResult(contract, 'getIndex', [nftid])
   const tokens = useAllTokens()
-  const creatorInfo = useNFTCreatorInfo(creatorAddress)
-
   return useMemo(() => {
     if (!nftIndexRes.result)
       return {
@@ -81,15 +88,13 @@ export function useNFTIndexInfo(
       color: metadata.color,
       creator: nft.creator,
       creatorId: nftid as string,
-      creatorName: creatorInfo?.username,
-      assetsParameters,
-      bio: creatorInfo?.description
+      assetsParameters
     }
     return {
       loading: nftIndexRes.loading,
       data: ret
     }
-  }, [nftIndexRes, nftid, tokens, creatorInfo])
+  }, [nftIndexRes, nftid, tokens])
 }
 
 export function useAssetsTokens(assetsParameters: AssetsParameter[] | undefined): AssetsParameter[] {
@@ -145,4 +150,41 @@ export function useIsApprovedForAll(account: string | undefined, spender: string
   const contract = useIndexNFTContract()
   const apprivedRes = useSingleCallResult(contract, 'isApprovedForAll', [account ?? undefined, spender])
   return useMemo(() => (apprivedRes.result ? apprivedRes.result[0] : false), [apprivedRes])
+}
+
+export interface NFTTransactionRecordsProps {
+  id: string
+  indexId: string
+  nftAmount: string
+  sender: string
+  totalSpend: string
+  type: string
+}
+export function useNFTTransactionRecords(nftId: string | undefined): NFTTransactionRecordsProps[] | undefined {
+  const [info, setInfo] = useState<any>()
+  const ETHCurrency = useCurrency('ETH')
+  useEffect(() => {
+    if (!nftId) {
+      setInfo(undefined)
+      return
+    }
+    getNFTTransferRecords(nftId).then(res => {
+      const ret: NFTTransactionRecordsProps[] = res.records.map(
+        (item: any): NFTTransactionRecordsProps => {
+          return {
+            id: item.id ?? '',
+            indexId: item.indexId ?? '',
+            nftAmount: item.nftAmount ?? '',
+            sender: item.sender ?? '',
+            totalSpend: item.totalSpend
+              ? toNumber(item.totalSpend, (ETHCurrency as WrappedTokenInfo) ?? undefined)
+              : '',
+            type: item.type ? (item.type === 1 ? 'buy' : 'sell') : ''
+          }
+        }
+      )
+      setInfo(ret)
+    })
+  }, [ETHCurrency, nftId])
+  return info
 }

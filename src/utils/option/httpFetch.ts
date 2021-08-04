@@ -149,6 +149,19 @@ export function userInfoFetch(token: string | undefined, params: UserInfoQuery) 
     body: JSON.stringify(params),
     headers: { ...headers, token }
   })
+  return promiseGenerator(request)
+}
 
+export function getNFTTransferRecords(nftId: string): Promise<any> {
+  const param = {
+    indexName: '',
+    address: '',
+    nftId
+  }
+  const request = new Request(`${domain}/app/transferRecord`, {
+    method: 'POST',
+    body: JSON.stringify(param),
+    headers: headers
+  })
   return promiseGenerator(request)
 }

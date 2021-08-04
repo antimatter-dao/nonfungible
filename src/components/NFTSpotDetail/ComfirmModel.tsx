@@ -124,12 +124,14 @@ export function SellComfirmModel({
   assetsParameters,
   number,
   ethAmount,
+  slippage,
   ETHbalance
 }: {
   isOpen: boolean
   onDismiss: () => void
   onConfirm: () => void
   assetsParameters: AssetsParameter[]
+  slippage: string | number
   number: string
   ethAmount: CurrencyAmount | undefined
   ETHbalance: CurrencyAmount | undefined
@@ -173,6 +175,10 @@ export function SellComfirmModel({
                   .toString()}{' '}
                 ETH
               </RightText>
+            </RowBetween>
+            <RowBetween>
+              <TYPE.smallGray>Slippage :</TYPE.smallGray>
+              <RightText>{slippage}</RightText>
             </RowBetween>
           </InfoWrapper>
           {approvalState === ApprovalState.PENDING ? (

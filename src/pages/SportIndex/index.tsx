@@ -160,6 +160,7 @@ const StyledSearch = styled.div`
     flex-wrap: wrap
     flex-direction: column
     width: 100%;
+    grid-gap:10px;
   `}
 `
 const ButtonWrapper = styled(RowFixed)`
@@ -227,7 +228,7 @@ export default function SportIndex() {
             indexId={indexId}
             creator={creator}
             name={name}
-            onClick={() => history.push(`/spot_detail/${indexId}/${address}`)}
+            onClick={() => history.push(`/spot_detail/${indexId}`)}
           />
         ))}
       </ContentWrapper>
