@@ -248,7 +248,7 @@ export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss
                           address={address}
                           icons={icons}
                           indexId={indexId}
-                          key={indexId}
+                          key={indexId + id}
                           creator={creator}
                           name={name}
                           onClick={() => {

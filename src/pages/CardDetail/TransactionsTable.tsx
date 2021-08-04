@@ -34,10 +34,9 @@ export function OwnerCell({ url, name }: { url?: string; name: string }) {
 
 const useStyles = makeStyles({
   root: {
-    display: 'table',
+    overflowX: 'hidden',
     backgroundColor: '#ffffff',
-    borderRadius: '40px',
-    maxHeight: '100px',
+    maxHeight: 314,
     '& .MuiTableCell-root': {
       fontSize: '12px',
       borderBottom: 'none',
@@ -54,7 +53,8 @@ const useStyles = makeStyles({
     },
     '& table': {
       width: '100%',
-      borderCollapse: 'collapse'
+      borderCollapse: 'collapse',
+      maxHeight: '100%'
     }
   },
   tableHeader: {
@@ -100,7 +100,7 @@ export function BaseTable({
   const classes = useStyles({ isHeaderGray })
   return (
     <TableContainer className={classes.root}>
-      <Table>
+      <Table stickyHeader>
         <TableHead className={classes.tableHeader}>
           <TableRow>
             {header.map((string, idx) => (

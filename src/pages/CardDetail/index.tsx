@@ -63,6 +63,7 @@ const InfoPanel = styled.div`
   width: 69%;
   padding: 26px 52px;
   min-height: 490px;
+  max-height: 490px;
 `
 const StyledNFTCard = styled.div`
   transform-origin: 0 0;
