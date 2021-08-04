@@ -29,7 +29,7 @@ export const formatNFTCardDetail = (
 
   return {
     id: nftId,
-    name: nft.nam,
+    name: nft.name,
     indexId: nftId,
     color: metadata.color,
     address: nft.creator,
