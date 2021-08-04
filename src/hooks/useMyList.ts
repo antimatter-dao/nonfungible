@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSingleContractMultipleData } from 'state/multicall/hooks'
-import { UserInfo } from 'state/userInfo/actions'
+import { UserInfo } from 'state/userinfo/actions'
 import { positionListFetch, indexListFetch } from 'utils/option/httpFetch'
 import { formatNFTCardDetail } from 'utils/option/nftUtils'
 import { useAllTokens } from './Tokens'
@@ -34,7 +34,9 @@ export function usePositionList(userInfo: UserInfo | undefined) {
   const positionListRes = useSingleContractMultipleData(contract, 'getIndex', positionIdList)
 
   const res = useMemo(() => {
-    return positionListRes.map(({ result }, idx) => formatNFTCardDetail(positionIdList[idx][0], result, tokens))
+    return positionListRes.map(({ result }, idx) =>
+      formatNFTCardDetail(positionIdList[idx][0], result ? result[0] : undefined, tokens)
+    )
   }, [positionIdList, positionListRes, tokens])
 
   return res

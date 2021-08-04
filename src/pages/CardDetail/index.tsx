@@ -32,6 +32,7 @@ import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useWeb3React } from '@web3-react/core'
 import { useAmountOutMins, useIndexSellCall } from 'hooks/useIndexSellCallback'
 import { INDEX_NFT_ADDRESS, INDEX_NFT_BUY_FEE } from '../../constants'
+import Slippage from './Slippage'
 
 const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
@@ -485,7 +486,10 @@ export default function CardDetail({
                           />
                         </AutoColumn>
                         <AutoColumn gap="8px" style={{ width: '100%' }}>
-                          <TYPE.black color="black">Payment Currency </TYPE.black>
+                          <RowBetween>
+                            <TYPE.black color="black">Payment Currency </TYPE.black>
+                            <Slippage />
+                          </RowBetween>
                           <CurrencyETHShow />
                         </AutoColumn>
                         <ButtonBlack

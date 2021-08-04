@@ -16,7 +16,7 @@ import Table /*, { OwnerCell }*/ from 'components/Table'
 import { ReactComponent as Settings } from 'assets/svg/settings.svg'
 import { ReactComponent as LogOut } from 'assets/svg/log_out.svg'
 import ProfileSetting from './ProfileSetting'
-import { useCurrentUserInfo, useLogOut } from 'state/userInfo/hooks'
+import { useCurrentUserInfo, useLogOut } from 'state/userinfo/hooks'
 import { usePositionList, useIndexList } from 'hooks/useMyList'
 import { useWeb3React } from '@web3-react/core'
 

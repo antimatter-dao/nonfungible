@@ -7,7 +7,7 @@ import { CreateSpotData } from './index'
 import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { useWeb3React } from '@web3-react/core'
-import { useCurrentUserInfo } from 'state/userInfo/hooks'
+import { useCurrentUserInfo } from 'state/userinfo/hooks'
 
 const Wrapper = styled(AutoColumn)`
   padding: 24px 28px 0;
