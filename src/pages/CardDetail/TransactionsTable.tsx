@@ -100,7 +100,7 @@ export function BaseTable({
   const classes = useStyles({ isHeaderGray })
   return (
     <TableContainer className={classes.root}>
-      <Table stickyHeader={true} aria-label="sticky table">
+      <Table>
         <TableHead className={classes.tableHeader}>
           <TableRow>
             {header.map((string, idx) => (
