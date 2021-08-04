@@ -63,6 +63,9 @@ const BodyWrapper = styled.div`
   ${({ theme }) => theme.mediaWidth.upToMedium`
   margin-bottom: ${({ theme }) => theme.headerHeight}
   `}
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+  margin-bottom: ${({ theme }) => theme.headerHeight}
+  `}
   ${({ theme }) => theme.mediaWidth.upToSmall`
   margin-top: ${({ theme }) => theme.mobileHeaderHeight}
   `};

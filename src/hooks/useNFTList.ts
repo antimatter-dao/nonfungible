@@ -7,21 +7,43 @@ import { useAllTokens } from './Tokens'
 import { useIndexNFTContract } from './useContract'
 import { toNumber } from './useIndexDetail'
 import { ZERO_ADDRESS } from '../constants'
+import { CardColor } from 'components/NFTCard'
 
 interface RecordListProps {
   creatorName: string
   id: string
 }
 
-export default function useNFTList() {
+interface NFTSpotListProps {
+  name: string
+  description: string
+  color: CardColor
+  creator: string
+  indexId: string
+  creatorName: string
+  assetsParameters: AssetsParameter[]
+}
+
+export default function useNFTList(
+  page: number
+): {
+  loading: boolean
+  countPages: number
+  data: NFTSpotListProps[]
+} {
   const [nftIdList, setNftIdList] = useState<string[][]>([])
   const [recordList, setRecordList] = useState<RecordListProps[]>()
+  const [reqLoading, setReqLoading] = useState<boolean>(false)
+  const [countPages, setCountPages] = useState<number>(0)
   const tokens = useAllTokens()
 
   useEffect(() => {
     ;(async () => {
       try {
+        setReqLoading(true)
         const positionList = await allNFTFetch()
+        setReqLoading(false)
+        setCountPages(positionList.pages ?? 0)
         const idList: string[][] | undefined = positionList?.list?.map(({ indexId }: { indexId: string }) => [indexId])
         const _recordList: RecordListProps[] = positionList?.list?.map(
           (item: { indexId: string; username: string }) => {
@@ -37,13 +59,13 @@ export default function useNFTList() {
         console.error('fetch NFT List', error)
       }
     })()
-  }, [])
+  }, [page])
 
   const contract = useIndexNFTContract()
   const nftRes = useSingleContractMultipleData(contract, 'getIndex', nftIdList)
 
   return useMemo(() => {
-    return nftRes
+    const data = nftRes
       .map((res, idx) => {
         if (!res.result) {
           return undefined
@@ -76,6 +98,12 @@ export default function useNFTList() {
           assetsParameters
         }
       })
-      .filter(v => v)
-  }, [nftRes, tokens, recordList])
+      .filter(v => !!v)
+
+    return {
+      loading: !!(reqLoading || (nftRes.length && nftRes[0].loading)),
+      data: data as NFTSpotListProps[],
+      countPages
+    }
+  }, [nftRes, tokens, recordList, reqLoading, countPages])
 }

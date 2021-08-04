@@ -1,7 +1,7 @@
 import { ButtonBlack, ButtonEmpty, ButtonWhite } from 'components/Button'
 import { RowBetween, RowFixed } from 'components/Row'
 import { StyledTabItem, StyledTabs } from 'components/Tabs'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { AnimatedImg, AnimatedWrapper, TYPE } from 'theme'
 import { ChevronLeft } from 'react-feather'
 import styled from 'styled-components'
@@ -9,10 +9,6 @@ import useTheme from 'hooks/useTheme'
 import { Hr, Paragraph } from './Paragraph'
 import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
 import { AutoColumn, ColumnCenter } from 'components/Column'
-import { createChart, IChartApi, ISeriesApi, LineStyle } from 'lightweight-charts'
-import { DexTradeData, getDexTradeList } from 'utils/option/httpRequests'
-// import { currencyId } from 'utils/currencyId'
-import { useNetwork } from 'hooks/useNetwork'
 import {
   NFTCreatorInfo,
   NFTIndexInfoProps,
@@ -213,99 +209,6 @@ export default function CardDetail({
   const buyFee = useCalcBuyFee(thisNFTethAmount?.raw.toString(), buyAmount, slippage)
   const amountInMins = useAmountInMins(eths, buyAmount, slippage)
   const amountOutMins = useAmountOutMins(eths, sellAmount, slippage)
-
-  const [priceChartData, setPriceChartData] = useState<DexTradeData[] | undefined>()
-  const [candlestickSeries, setCandlestickSeries] = useState<ISeriesApi<'Candlestick'> | undefined>(undefined)
-  const [chart, setChart] = useState<IChartApi | undefined>(undefined)
-  const currencyA = undefined
-  const {
-    httpHandlingFunctions: { errorFunction }
-    // networkErrorModal
-  } = useNetwork()
-  useEffect(() => {
-    const id = currencyA
-    if (id) {
-      getDexTradeList(
-        (list: DexTradeData[] | undefined) => {
-          setPriceChartData(list)
-        },
-        id,
-        errorFunction
-      )
-    }
-  }, [currencyA, errorFunction])
-
-  useEffect(() => {
-    if (!document.getElementById('chart')) return
-    const chart = createChart(document.getElementById('chart') ?? '', {
-      width: 556,
-      height: 354,
-      // watermark: {
-      //   visible: true,
-      //   fontSize: 24,
-      //   horzAlign: 'left',
-      //   vertAlign: 'top',
-      //   color: '#FFFFFF',
-      //   text: '327.4739'
-      // },
-      layout: {
-        backgroundColor: '#000000',
-        textColor: '#FFFFFF',
-        fontSize: 12,
-        fontFamily: 'Roboto'
-      },
-      grid: {
-        vertLines: {
-          style: LineStyle.Dotted,
-          color: 'rgba(255, 255, 255, 0.4)'
-        },
-        horzLines: {
-          style: LineStyle.Dotted,
-          color: 'rgba(255, 255, 255, 0.4)'
-        }
-      }
-    })
-    chart.applyOptions({
-      rightPriceScale: { autoScale: true },
-      timeScale: {
-        timeVisible: true,
-        secondsVisible: true,
-        shiftVisibleRangeOnNewBar: true,
-        tickMarkFormatter: (time: any) => {
-          const date = new Date(time)
-          const year = date.getUTCFullYear()
-          const month = date.getUTCMonth()
-          const day = date.getUTCDate()
-          return year + '/' + month + '/' + day
-        }
-      },
-      crosshair: {
-        vertLine: {
-          labelVisible: false
-        }
-      }
-    })
-    setChart(chart)
-    const candlestickSeries = chart.addCandlestickSeries({
-      upColor: '#33E74F',
-      downColor: '#FF0000',
-      wickVisible: false,
-      priceFormat: {
-        type: 'price',
-        precision: 2
-      }
-    })
-    setCandlestickSeries(candlestickSeries)
-  }, [])
-
-  useEffect(() => {
-    if (candlestickSeries) {
-      priceChartData && candlestickSeries.setData(priceChartData)
-    }
-    if (chart) {
-      chart.timeScale().fitContent()
-    }
-  }, [candlestickSeries, priceChartData, chart])
 
   const currentCard = useMemo((): NFTCardProps => {
     if (!NFTIndexInfo) return defaultCardData

@@ -2,7 +2,6 @@ import React, { useState, useCallback, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
-import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 import { RowFixed } from 'components/Row'
 import NFTButtonSelect from 'components/Button/NFTButtonSelect'
 import { ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
@@ -10,98 +9,9 @@ import { ReactComponent as SearchIcon } from '../../assets/svg/search.svg'
 import TextInput from 'components/TextInput'
 import useNFTList from 'hooks/useNFTList'
 import CurrencyLogo from 'components/CurrencyLogo'
-
-export const dummyData: NFTCardProps[] = [
-  {
-    id: 1,
-    name: 'Index Name',
-    indexId: '1',
-    color: CardColor.RED,
-    address: '0xKos369cd6vwd94wq1gt4hr87ujv',
-    icons: [<ETH key="1" />],
-    creator: 'Jack'
-  },
-  {
-    id: 2,
-    name: 'Index Name',
-    indexId: '2',
-    color: CardColor.RED,
-    address: '0xKos369cd6vwd94wq1gt4hr87ujv',
-    icons: [<ETH key="1" />, <ETH key="2" />],
-    creator: 'Jack'
-  },
-  {
-    id: 3,
-    name: 'Index Name',
-    indexId: '3',
-    color: CardColor.BLUE,
-    address: '0xKos369cd6vwd94wq1gt4hr87ujv',
-    icons: [<ETH key="1" />, <ETH key="2" />, <ETH key="3" />],
-    creator: 'Jack'
-  },
-  {
-    id: 4,
-    name: 'Index Name',
-    indexId: '4',
-    color: CardColor.YELLOW,
-    address: '0xKos369cd6vwd94wq1gt4hr87ujv',
-    icons: [<ETH key="1" />, <ETH key="2" />, <ETH key="3" />, <ETH key="4" />],
-    creator: 'Jack'
-  },
-  {
-    id: 5,
-    name: 'Index Name',
-    indexId: '5',
-    color: CardColor.GREEN,
-    address: '0xKos369cd6vwd94wq1gt4hr87ujv',
-    icons: [<ETH key="1" />, <ETH key="2" />, <ETH key="3" />, <ETH key="4" />, <ETH key="5" />],
-    creator: 'Jack'
-  },
-  {
-    id: 6,
-    name: 'Index Name',
-    indexId: '6',
-    color: CardColor.PURPLE,
-    address: '0xKos369cd6vwd94wq1gt4hr87ujv',
-    icons: [<ETH key="1" />, <ETH key="2" />, <ETH key="3" />, <ETH key="4" />, <ETH key="5" />, <ETH key="6" />],
-    creator: 'Jack'
-  },
-  {
-    id: 7,
-    name: 'Index Name',
-    indexId: '7',
-    color: CardColor.PURPLE,
-    address: '0xKos369cd6vwd94wq1gt4hr87ujv',
-    icons: [
-      <ETH key="1" />,
-      <ETH key="2" />,
-      <ETH key="3" />,
-      <ETH key="4" />,
-      <ETH key="5" />,
-      <ETH key="6" />,
-      <ETH key="7" />
-    ],
-    creator: 'Jack'
-  },
-  {
-    id: 8,
-    name: 'Index Name',
-    indexId: '8',
-    color: CardColor.PURPLE,
-    address: '0xKos369cd6vwd94wq1gt4hr87ujv',
-    icons: [
-      <ETH key="1" />,
-      <ETH key="2" />,
-      <ETH key="3" />,
-      <ETH key="4" />,
-      <ETH key="5" />,
-      <ETH key="6" />,
-      <ETH key="7" />,
-      <ETH key="8" />
-    ],
-    creator: 'Jack'
-  }
-]
+import BasicPagination from './BasicPagination'
+import { AnimatedImg, AnimatedWrapper } from 'theme'
+import Loader from 'assets/svg/antimatter_background_logo.svg'
 
 const SearchParams = [
   {
@@ -190,7 +100,8 @@ const defaultCardData = {
 
 export default function SportIndex() {
   const history = useHistory()
-  const NFTListData = useNFTList()
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const { countPages, loading, data: NFTListData } = useNFTList(currentPage)
 
   const NFTListCardData = useMemo((): NFTCardProps[] => {
     return NFTListData.map(NFTIndexInfo => {
@@ -217,21 +128,32 @@ export default function SportIndex() {
   return (
     <Wrapper>
       <Search onSearch={handleSearch} />
-      <ContentWrapper>
-        {NFTListCardData.map(({ color, address, icons, indexId, creator, name, id }, idx) => (
-          <NFTCard
-            key={`${id}${idx}`}
-            id={id}
-            color={color}
-            address={address}
-            icons={icons}
-            indexId={indexId}
-            creator={creator}
-            name={name}
-            onClick={() => history.push(`/spot_detail/${indexId}`)}
-          />
-        ))}
-      </ContentWrapper>
+      {loading ? (
+        <AnimatedWrapper style={{ marginTop: 40 }}>
+          <AnimatedImg>
+            <img src={Loader} alt="loading-icon" />
+          </AnimatedImg>
+        </AnimatedWrapper>
+      ) : (
+        <>
+          <ContentWrapper>
+            {NFTListCardData.map(({ color, address, icons, indexId, creator, name, id }, idx) => (
+              <NFTCard
+                key={`${id}${idx}`}
+                id={id}
+                color={color}
+                address={address}
+                icons={icons}
+                indexId={indexId}
+                creator={creator}
+                name={name}
+                onClick={() => history.push(`/spot_detail/${indexId}`)}
+              />
+            ))}
+          </ContentWrapper>
+          <BasicPagination page={currentPage} count={countPages} setPage={setCurrentPage} />
+        </>
+      )}
     </Wrapper>
   )
 }
