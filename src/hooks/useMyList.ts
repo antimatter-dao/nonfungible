@@ -28,7 +28,7 @@ export function usePositionList(userInfo: UserInfo | undefined) {
         const positionList = await positionListFetch(userInfo?.token, userInfo?.account)
         const list = (positionList as any)?.list.map(({ indexId }: MyListItem) => [indexId])
         list && setPositionIdList(list)
-        positionList && setPositionDataList((positionList as any) ?? [])
+        positionList && setPositionDataList((positionList as any)?.list ?? [])
       } catch (error) {
         console.error('fetch positionList', error)
       }
@@ -42,11 +42,10 @@ export function usePositionList(userInfo: UserInfo | undefined) {
     return positionListRes.map(({ result }, idx) => {
       return {
         ...formatNFTCardDetail(positionIdList[idx][0], result ? result[0] : undefined, tokens),
-        creator: positionDataList[idx]?.creatorName ?? ''
+        creator: positionDataList[idx]?.username ?? ''
       } as NFTCardProps
     })
   }, [positionDataList, positionIdList, positionListRes, tokens])
-
   return res
 }
 
