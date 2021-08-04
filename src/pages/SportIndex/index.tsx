@@ -218,9 +218,9 @@ export default function SportIndex() {
     <Wrapper>
       <Search onSearch={handleSearch} />
       <ContentWrapper>
-        {NFTListCardData.map(({ color, address, icons, indexId, creator, name, id }) => (
+        {NFTListCardData.map(({ color, address, icons, indexId, creator, name, id }, idx) => (
           <NFTCard
-            key={id}
+            key={`${id}${idx}`}
             id={id}
             color={color}
             address={address}
