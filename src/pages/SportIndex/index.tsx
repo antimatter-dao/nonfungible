@@ -219,17 +219,19 @@ export default function SportIndex() {
       <Search onSearch={handleSearch} />
       <ContentWrapper>
         {NFTListCardData.map(({ color, address, icons, indexId, creator, name, id }) => (
-          <NFTCard
-            key={id}
-            id={id}
-            color={color}
-            address={address}
-            icons={icons}
-            indexId={indexId}
-            creator={creator}
-            name={name}
-            onClick={() => history.push(`/spot_detail/${indexId}`)}
-          />
+          <>
+            <NFTCard
+              key={id}
+              id={id}
+              color={color}
+              address={address}
+              icons={icons}
+              indexId={indexId}
+              creator={creator}
+              name={name}
+              onClick={() => history.push(`/spot_detail/${indexId}`)}
+            />
+          </>
         ))}
       </ContentWrapper>
     </Wrapper>
