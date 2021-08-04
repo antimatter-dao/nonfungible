@@ -218,20 +218,18 @@ export default function SportIndex() {
     <Wrapper>
       <Search onSearch={handleSearch} />
       <ContentWrapper>
-        {NFTListCardData.map(({ color, address, icons, indexId, creator, name, id }) => (
-          <>
-            <NFTCard
-              key={id}
-              id={id}
-              color={color}
-              address={address}
-              icons={icons}
-              indexId={indexId}
-              creator={creator}
-              name={name}
-              onClick={() => history.push(`/spot_detail/${indexId}`)}
-            />
-          </>
+        {NFTListCardData.map(({ color, address, icons, indexId, creator, name, id }, idx) => (
+          <NFTCard
+            key={`${id}${idx}`}
+            id={id}
+            color={color}
+            address={address}
+            icons={icons}
+            indexId={indexId}
+            creator={creator}
+            name={name}
+            onClick={() => history.push(`/spot_detail/${indexId}`)}
+          />
         ))}
       </ContentWrapper>
     </Wrapper>
@@ -251,15 +249,12 @@ export function Search({ onSearch }: { onSearch: (searchParam: string, searchBy:
     setSearchBy('')
   }, [])
 
-  const handleSearchParam = useCallback((id: string) => {
-    setSearchParam(id)
-  }, [])
   return (
     <>
       <WrapperSearch>
         <StyledSearch>
           <NFTButtonSelect
-            onSelection={handleSearchParam}
+            onSelection={() => {}}
             width="280px"
             options={SearchParams}
             selectedId={searchParam}
