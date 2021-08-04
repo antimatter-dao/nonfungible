@@ -1,4 +1,4 @@
-import { getCurrentUserInfoSync } from 'state/userinfo/hooks'
+import { getCurrentUserInfoSync } from 'state/userInfo/hooks'
 
 const domain = 'http://47.241.14.27:8081'
 const headers = { 'content-type': 'application/json', accept: 'application/json' }

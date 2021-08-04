@@ -9,7 +9,7 @@ import { CloseIcon, TYPE } from 'theme'
 // import { AutoRow } from 'components/Row'
 // import fallbackImg from 'assets/svg/fallback_image.svg'
 import { useUserInfoUpdate } from 'hooks/useMyList'
-import { UserInfo } from 'state/userinfo/actions'
+import { UserInfo } from 'state/userInfo/actions'
 
 // const Upload = styled.label`
 //   & input {
