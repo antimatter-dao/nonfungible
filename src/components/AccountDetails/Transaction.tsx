@@ -16,6 +16,7 @@ const TransactionStatusText = styled.div`
   margin-right: 0.5rem;
   display: flex;
   align-items: center;
+  color: #333;
   :hover {
     text-decoration: underline;
   }

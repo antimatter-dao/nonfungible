@@ -8,14 +8,15 @@ import Polling from '../components/Header/Polling'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
+import ComingSoon from './ComingSoon'
 
 import { RedirectPathToSwapOnly } from './Swap/redirects'
 import Info from './Info'
 import FAQ from './FAQ'
-import Governance from './NFTGovernance'
+// import Governance from './NFTGovernance'
 import SportIndex from './SportIndex'
 import GovernanceDetail from './NFTGovernance/NFTGovernanceDetail'
-import Locker from './Locker'
+// import Locker from './Locker'
 import CardDetail from './CardDetail'
 import { UserProvider } from 'context/UserContext'
 import UserLogin from '../pages/User/Login'
@@ -100,9 +101,12 @@ export default function App() {
                 <Switch>
                   <Route exact strict path="/" component={SportIndex} />
                   <Route exact strict path="/spot_index" component={SportIndex} />
-                  <Route exact strict path="/spot_detail/:nftid/:creatorAddress" component={CardDetail} />
-                  <Route exact strict path="/locker" component={Locker} />
-                  <Route exact strict path="/governance" component={Governance} />
+                  <Route exact strict path="/spot_detail/:nftid" component={CardDetail} />
+                  <Route exact strict path="/future_index" component={ComingSoon} />
+                  {/* <Route exact strict path="/locker" component={Locker} /> */}
+                  <Route exact strict path="/locker" component={ComingSoon} />
+                  {/* <Route exact strict path="/governance" component={Governance} /> */}
+                  <Route exact strict path="/governance" component={ComingSoon} />
                   <Route exact strict path="/governance/:governanceIndex" component={GovernanceDetail} />
                   <Route exact strict path="/info" component={Info} />
                   <Route exact strict path="/faq" component={FAQ} />

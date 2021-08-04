@@ -13,7 +13,15 @@ import { createChart, IChartApi, ISeriesApi, LineStyle } from 'lightweight-chart
 import { DexTradeData, getDexTradeList } from 'utils/option/httpRequests'
 // import { currencyId } from 'utils/currencyId'
 import { useNetwork } from 'hooks/useNetwork'
-import { NFTIndexInfoProps, useAssetsTokens, useNFTBalance, useNFTIndexInfo } from 'hooks/useIndexDetail'
+import {
+  NFTCreatorInfo,
+  NFTIndexInfoProps,
+  useAssetsTokens,
+  useNFTBalance,
+  useNFTCreatorInfo,
+  useNFTIndexInfo,
+  useNFTTransactionRecords
+} from 'hooks/useIndexDetail'
 import NumericalInput from 'components/NumericalInput'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
@@ -32,7 +40,10 @@ import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useWeb3React } from '@web3-react/core'
 import { useAmountOutMins, useIndexSellCall } from 'hooks/useIndexSellCallback'
 import { INDEX_NFT_ADDRESS, INDEX_NFT_BUY_FEE } from '../../constants'
-import Slippage from './Slippage'
+import SettingsTab from 'components/Settings'
+import BigNumber from 'bignumber.js'
+import { useUserSlippageTolerance } from 'state/user/hooks'
+import TransactionsTable from './TransactionsTable'
 
 const Wrapper = styled.div`
   min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
@@ -145,9 +156,9 @@ const defaultCardData = {
 
 export default function CardDetail({
   match: {
-    params: { nftid, creatorAddress }
+    params: { nftid }
   }
-}: RouteComponentProps<{ nftid?: string; creatorAddress: string }>) {
+}: RouteComponentProps<{ nftid?: string }>) {
   const { account } = useWeb3React()
   const theme = useTheme()
   const history = useHistory()
@@ -164,7 +175,10 @@ export default function CardDetail({
     setTransactionModalOpen(false)
   }
 
-  const { loading: NFTIndexLoading, data: NFTIndexInfo } = useNFTIndexInfo(nftid, creatorAddress)
+  const { loading: NFTIndexLoading, data: NFTIndexInfo } = useNFTIndexInfo(nftid)
+  const creatorInfo = useNFTCreatorInfo(NFTIndexInfo?.creator)
+  const NFTTransactionRecords = useNFTTransactionRecords(nftid)
+
   const { data: NFTbalance } = useNFTBalance(nftid)
 
   const ETHbalance = useCurrencyBalance(account ?? undefined, ETHCurrency ?? undefined)
@@ -188,7 +202,13 @@ export default function CardDetail({
   const [buyConfirmModal, setBuyConfirmModal] = useState(false)
   const [sellConfirmModal, setSellConfirmModal] = useState(false)
 
-  const slippage = 0.005
+  const userSlippage = useUserSlippageTolerance()
+  const slippage = useMemo(() => {
+    return new BigNumber(userSlippage[0])
+      .dividedBy(10000)
+      .toFixed(3)
+      .toString()
+  }, [userSlippage])
   const buyFee = useCalcBuyFee(thisNFTethAmount?.raw.toString(), buyAmount, slippage)
   const amountInMins = useAmountInMins(eths, buyAmount, slippage)
   const amountOutMins = useAmountOutMins(eths, sellAmount, slippage)
@@ -298,9 +318,9 @@ export default function CardDetail({
       color: NFTIndexInfo.color,
       address: NFTIndexInfo.creator,
       icons: _icons,
-      creator: NFTIndexInfo.creatorName
+      creator: creatorInfo ? creatorInfo.username : ''
     }
-  }, [NFTIndexInfo, tokens])
+  }, [NFTIndexInfo, tokens, creatorInfo])
 
   const { callback: toBuyCall } = useIndexBuyCall()
   const toBuy = useCallback(() => {
@@ -401,9 +421,9 @@ export default function CardDetail({
                 </StyledTabItem>
               </StyledTabs>
               {currentSubTab === SubTabType.Creater ? (
-                <CreaterInfo info={NFTIndexInfo} />
+                <CreaterInfo nftInfo={NFTIndexInfo} creatorInfo={creatorInfo} />
               ) : currentSubTab === SubTabType.Index ? (
-                <IndexInfo info={NFTIndexInfo} />
+                <IndexInfo nftInfo={NFTIndexInfo} />
               ) : (
                 <AssetsWrapper>
                   {tokens.map(({ amount, currencyToken }, index) => {
@@ -451,7 +471,10 @@ export default function CardDetail({
                           />
                         </AutoColumn>
                         <AutoColumn gap="8px" style={{ width: '100%' }}>
-                          <TYPE.black color="black">Payment Currency </TYPE.black>
+                          <RowBetween>
+                            <TYPE.black color="black">Payment Currency </TYPE.black>
+                            <SettingsTab onlySlippage={true} />
+                          </RowBetween>
                           <CurrencyETHShow />
                         </AutoColumn>
                         <ButtonBlack
@@ -488,7 +511,7 @@ export default function CardDetail({
                         <AutoColumn gap="8px" style={{ width: '100%' }}>
                           <RowBetween>
                             <TYPE.black color="black">Payment Currency </TYPE.black>
-                            <Slippage />
+                            <SettingsTab onlySlippage={true} />
                           </RowBetween>
                           <CurrencyETHShow />
                         </AutoColumn>
@@ -510,7 +533,9 @@ export default function CardDetail({
                       <span>Market price per unit</span>
                       <span>{priceState === PriceState.VALID ? thisNFTethAmount.toSignificant(6) : '--'} ETH</span>
                     </MarketPrice>
-                    <AutoColumn id="chart"></AutoColumn>
+                    <div>
+                      <TransactionsTable transactionRecords={NFTTransactionRecords} />
+                    </div>
                   </div>
                 </>
               </TradeWrapper>
@@ -550,6 +575,7 @@ export default function CardDetail({
         }}
         ethAmount={thisNFTethAmount}
         ETHbalance={ETHbalance ?? undefined}
+        slippage={slippage}
         number={sellAmount}
         assetsParameters={tokens}
         onConfirm={toSell}
@@ -558,33 +584,39 @@ export default function CardDetail({
   )
 }
 
-function CreaterInfo({ info }: { info: NFTIndexInfoProps }) {
+function CreaterInfo({
+  nftInfo,
+  creatorInfo
+}: {
+  nftInfo: NFTIndexInfoProps
+  creatorInfo: NFTCreatorInfo | undefined
+}) {
   return (
     <div>
       <RowFixed>
         <StyledAvatar>
           <img src="" alt="" />
         </StyledAvatar>
-        <Paragraph header="Creator">{info.creatorName}</Paragraph>
+        <Paragraph header="Creator">{creatorInfo?.username}</Paragraph>
       </RowFixed>
       <Hr />
-      <Paragraph header="Creator wallet Address">{info.creator}</Paragraph>
+      <Paragraph header="Creator wallet Address">{nftInfo.creator}</Paragraph>
       <Hr />
-      <Paragraph header="Creator ID">#{info.creatorId}</Paragraph>
+      <Paragraph header="Creator ID">#{nftInfo.creatorId}</Paragraph>
       <Hr />
-      <Paragraph header="Bio">{info.bio}</Paragraph>
+      <Paragraph header="Bio">{creatorInfo?.bio}</Paragraph>
     </div>
   )
 }
 
-function IndexInfo({ info }: { info: NFTIndexInfoProps }) {
+function IndexInfo({ nftInfo }: { nftInfo: NFTIndexInfoProps }) {
   return (
     <div>
       <Paragraph header="Token contract address">{INDEX_NFT_ADDRESS}</Paragraph>
       <Hr />
       {/* <Paragraph header="Current issuance">123</Paragraph>
       <Hr /> */}
-      <Paragraph header="Description">{info.description}</Paragraph>
+      <Paragraph header="Description">{nftInfo.description}</Paragraph>
     </div>
   )
 }

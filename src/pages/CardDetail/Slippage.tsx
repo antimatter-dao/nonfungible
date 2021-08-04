@@ -1,6 +1,9 @@
 import React from 'react'
 import Popover from '@material-ui/core/Popover'
 import { Settings } from 'react-feather'
+import styled from 'styled-components'
+
+const StyledSetting = styled.div``
 
 export default function SimplePopover() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null)
@@ -18,9 +21,9 @@ export default function SimplePopover() {
 
   return (
     <div>
-      <div aria-describedby={id} color="primary" onClick={handleClick}>
+      <StyledSetting aria-describedby={id} color="primary" onClick={handleClick}>
         <Settings />
-      </div>
+      </StyledSetting>
       <Popover
         id={id}
         open={open}

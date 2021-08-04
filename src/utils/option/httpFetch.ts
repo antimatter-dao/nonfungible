@@ -129,3 +129,17 @@ export function allNFTFetch(): Promise<any> {
 
   return promiseGenerator(request)
 }
+
+export function getNFTTransferRecords(nftId: string): Promise<any> {
+  const param = {
+    indexName: '',
+    address: '',
+    nftId
+  }
+  const request = new Request(`${domain}/app/transferRecord`, {
+    method: 'POST',
+    body: JSON.stringify(param),
+    headers: headers
+  })
+  return promiseGenerator(request)
+}
