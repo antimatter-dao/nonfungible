@@ -251,7 +251,10 @@ export default function User({ isOpen, onDismiss }: { isOpen: boolean; onDismiss
                           key={indexId}
                           creator={creator}
                           name={name}
-                          onClick={() => history.push(`/spot_detail/${indexId}`)}
+                          onClick={() => {
+                            history.push(`/spot_detail/${indexId}`)
+                            onDismiss()
+                          }}
                         />
                       )
                     })
