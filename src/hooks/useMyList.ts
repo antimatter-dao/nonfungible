@@ -1,4 +1,5 @@
 import { useWeb3React } from '@web3-react/core'
+import { NFTCardProps } from 'components/NFTCard'
 import { useEffect, useMemo, useState, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { useSingleContractMultipleData } from 'state/multicall/hooks'
@@ -17,6 +18,7 @@ interface MyListItem {
 }
 
 export function usePositionList(userInfo: UserInfo | undefined) {
+  const [positionDataList, setPositionDataList] = useState<any[]>([])
   const [positionIdList, setPositionIdList] = useState<string[][]>([])
   const tokens = useAllTokens()
 
@@ -26,6 +28,7 @@ export function usePositionList(userInfo: UserInfo | undefined) {
         const positionList = await positionListFetch(userInfo?.token, userInfo?.account)
         const list = (positionList as any)?.list.map(({ indexId }: MyListItem) => [indexId])
         list && setPositionIdList(list)
+        positionList && setPositionDataList((positionList as any) ?? [])
       } catch (error) {
         console.error('fetch positionList', error)
       }
@@ -36,10 +39,13 @@ export function usePositionList(userInfo: UserInfo | undefined) {
   const positionListRes = useSingleContractMultipleData(contract, 'getIndex', positionIdList)
 
   const res = useMemo(() => {
-    return positionListRes.map(({ result }, idx) =>
-      formatNFTCardDetail(positionIdList[idx][0], result ? result[0] : undefined, tokens)
-    )
-  }, [positionIdList, positionListRes, tokens])
+    return positionListRes.map(({ result }, idx) => {
+      return {
+        ...formatNFTCardDetail(positionIdList[idx][0], result ? result[0] : undefined, tokens),
+        creator: positionDataList[idx]?.creatorName ?? ''
+      } as NFTCardProps
+    })
+  }, [positionDataList, positionIdList, positionListRes, tokens])
 
   return res
 }
@@ -68,7 +74,6 @@ export function useUserInfoUpdate(userInfo: UserInfo | undefined) {
     async (params: UserInfoQuery) => {
       const res: any = await userInfoFetch(userInfo?.token, params)
       if (res && userInfo && chainId && account) {
-        console.log(res)
         dispatch(
           saveUserInfo({
             chainId,
