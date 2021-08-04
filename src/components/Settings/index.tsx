@@ -89,7 +89,7 @@ const EmojiWrapper = styled.div`
 // `
 
 const Overlay = styled.div`
-  z-index: ;
+  z-index: 3;
   position: absolute;
   width: 100vw;
   height: 100vh;
@@ -110,7 +110,7 @@ width: 100vw;
 height: 100vh;
 top: 0
 left: 0
-z-index: 2;
+z-index: 3;
 `
 
 const MenuFlyout = styled.span`
