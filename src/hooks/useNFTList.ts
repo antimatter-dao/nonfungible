@@ -78,11 +78,11 @@ export default function useNFTList(
         const nft = res.result[0]
         if (nft.creator === ZERO_ADDRESS) return undefined
         const metadata = JSON.parse(nft.metadata)
-        const assetsParameters: AssetsParameter[] = nft.underlyingTokens.map(
+        const assetsParameters: AssetsParameter[] = nft.underlyingAmounts.map(
           (val: string, index: number): AssetsParameter => {
             let _currencyToken = undefined
             if (tokens) {
-              _currencyToken = tokens[val] as WrappedTokenInfo
+              _currencyToken = tokens[nft.underlyingTokens[index]] as WrappedTokenInfo
               // if (!_currencyToken) _currencyToken = tokens[Object.keys(tokens)[0]] as WrappedTokenInfo
             }
 
