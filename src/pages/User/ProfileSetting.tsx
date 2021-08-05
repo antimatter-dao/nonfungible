@@ -96,12 +96,20 @@ export default function ProfileSetting({
               User Profile
             </TYPE.black>
 
-            <TextInput label="Username" placeholder="Please enter the username" name="username" />
+            <TextInput
+              label="Username"
+              placeholder="Please enter the username"
+              name="username"
+              maxLength={20}
+              hint="Maximum 20 characters"
+            />
             <TextInput
               label="Bio"
               hint="Maximum 200 characters"
-              placeholder="Please explain why this index is meaningful"
+              placeholder="Please introduce yourself              "
               name="description"
+              maxLength={200}
+              textarea
             />
 
             {/* <AutoRow gap="16px">

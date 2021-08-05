@@ -18,8 +18,8 @@ import SportIndex from './SportIndex'
 import GovernanceDetail from './NFTGovernance/NFTGovernanceDetail'
 // import Locker from './Locker'
 import CardDetail from './CardDetail'
-import { UserProvider } from 'context/UserContext'
 import UserLogin from '../pages/User/Login'
+import User from './User'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -87,40 +87,40 @@ export default function App() {
       <Route component={GoogleAnalyticsReporter} />
       <Route component={DarkModeQueryParamReader} />
       <Route component={UserLogin} />
-      <UserProvider>
-        <AppWrapper id="app">
-          {/* <URLWarning /> */}
+      <AppWrapper id="app">
+        {/* <URLWarning /> */}
 
-          <ContentWrapper>
-            <HeaderWrapper id="header">
-              <Header />
-            </HeaderWrapper>
-            <BodyWrapper id="body">
-              <Popups />
-              <Polling />
-              {/* <WarningModal /> */}
-              {/* <TopLevelModals /> */}
-              <Web3ReactManager>
-                <Switch>
-                  <Route exact strict path="/" component={SportIndex} />
-                  <Route exact strict path="/spot_index" component={SportIndex} />
-                  <Route exact strict path="/spot_detail/:nftid" component={CardDetail} />
-                  <Route exact strict path="/future_index" component={ComingSoon} />
-                  {/* <Route exact strict path="/locker" component={Locker} /> */}
-                  <Route exact strict path="/locker" component={ComingSoon} />
-                  {/* <Route exact strict path="/governance" component={Governance} /> */}
-                  <Route exact strict path="/governance" component={ComingSoon} />
-                  <Route exact strict path="/governance/:governanceIndex" component={GovernanceDetail} />
-                  <Route exact strict path="/info" component={Info} />
-                  <Route exact strict path="/faq" component={FAQ} />
-                  <Route component={RedirectPathToSwapOnly} />
-                </Switch>
-              </Web3ReactManager>
-              {/* <Marginer /> */}
-            </BodyWrapper>
-          </ContentWrapper>
-        </AppWrapper>
-      </UserProvider>
+        <ContentWrapper>
+          <HeaderWrapper id="header">
+            <Header />
+          </HeaderWrapper>
+          <BodyWrapper id="body">
+            <Popups />
+            <Polling />
+            {/* <WarningModal /> */}
+            {/* <TopLevelModals /> */}
+            <Web3ReactManager>
+              <Switch>
+                <Route exact strict path="/" component={SportIndex} />
+                <Route exact strict path="/spot_index" component={SportIndex} />
+                <Route exact strict path="/spot_detail/:nftid" component={CardDetail} />
+                <Route exact strict path="/future_index" component={ComingSoon} />
+                {/* <Route exact strict path="/locker" component={Locker} /> */}
+                <Route exact strict path="/locker" component={ComingSoon} />
+                {/* <Route exact strict path="/governance" component={Governance} /> */}
+                <Route exact strict path="/governance" component={ComingSoon} />
+                <Route exact strict path="/governance/:governanceIndex" component={GovernanceDetail} />
+                <Route exact strict path="/info" component={Info} />
+                <Route strict path="/profile/:tab" component={User} />
+                <Route strict path="/profile" component={User} />
+                <Route exact strict path="/faq" component={FAQ} />
+                <Route component={RedirectPathToSwapOnly} />
+              </Switch>
+            </Web3ReactManager>
+            {/* <Marginer /> */}
+          </BodyWrapper>
+        </ContentWrapper>
+      </AppWrapper>
     </Suspense>
   )
 }

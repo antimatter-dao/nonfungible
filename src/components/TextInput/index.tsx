@@ -28,7 +28,7 @@ export const CustomTextArea = styled.textarea<{ error?: boolean; fontSize?: stri
   font-size: 16px;
   outline: none;
   border: none;
-  padding: .5rem 1rem;
+  padding: 20px 1rem;
   border-radius: 14px;
   border: 1px solid ${({ theme, error }) => (error ? theme.red1 : theme.text3)};
   background-color: ${({ disabled }) => (disabled ? 'rgba(0, 0, 0, 0.1)' : '#ffffff')};
@@ -37,7 +37,7 @@ export const CustomTextArea = styled.textarea<{ error?: boolean; fontSize?: stri
     -webkit-appearance: none;
   }
   ::placeholder {
-    color: ${({ theme }) => theme.bg3};
+    color: ${({ theme }) => theme.text3};
   } 
   resize: none;
 `

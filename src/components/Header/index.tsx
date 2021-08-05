@@ -1,6 +1,6 @@
 import { TokenAmount } from '@uniswap/sdk'
 import React, { useCallback } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
 // import { useTranslation } from 'react-i18next'
 import { CountUp } from 'use-count-up'
@@ -14,10 +14,12 @@ import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import ToggleMenu from './ToggleMenu'
 import { ButtonOutlinedPrimary } from 'components/Button'
 import { ReactComponent as AntimatterIcon } from 'assets/svg/antimatter_icon.svg'
-import useUserPanel from 'hooks/useUserPanel'
 import { useToggleCreationModal } from 'state/application/hooks'
 import CreationNFTModal from 'components/Creation'
-import { useCurrentUserInfo, useLogin } from 'state/userInfo/hooks'
+import { useCurrentUserInfo, useLogin, useLogOut } from 'state/userInfo/hooks'
+import { shortenAddress } from 'utils'
+import { AutoColumn } from 'components/Column'
+import Copy from 'components/AccountDetails/Copy'
 
 const activeClassName = 'ACTIVE'
 
@@ -106,7 +108,6 @@ const AccountElement = styled.div<{ active: boolean }>`
   background-color: #ffffff;
   border-radius: 32px;
   white-space: nowrap;
-  cursor: pointer;
   padding: ${({ active }) => (active ? '14px 16px' : 'unset')};
   padding-right: 0;
   height: 44px;
@@ -219,10 +220,30 @@ const StyledNavLink = styled(NavLink).attrs({
     color: ${({ theme }) => theme.text1};
   }
 `
+const UserButtonWrap = styled.div`
+  position: relative;
+  :hover {
+    #userButton {
+      :hover,
+      :focus {
+        background: linear-gradient(360deg, #fffa8b 0%, rgba(207, 209, 86, 0) 50%),
+          linear-gradient(259.57deg, #b2f355 1.58%, #66d7fa 92.54%);
+      }
+    }
+    div {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+  div {
+    opacity: 0;
+    visibility: hidden;
+  }
+`
 
-const UserButton = styled(ButtonText)<{ isOpen: boolean }>`
-  height: 44px;
-  width: 44px;
+const UserButton = styled(ButtonText)<{ isOpen: boolean; size?: string }>`
+  height: ${({ size }) => size ?? '44px'};
+  width: ${({ size }) => size ?? '44px'};
   border-radius: 50%;
   background: ${({ isOpen }) =>
     isOpen
@@ -236,10 +257,52 @@ const UserButton = styled(ButtonText)<{ isOpen: boolean }>`
   justify-content: center;
   align-items: center;
   transition: 0.4s;
-  :hover,
-  :focus {
+  :disabled {
+    cursor: auto;
+  }
+  :hover {
     background: linear-gradient(360deg, #fffa8b 0%, rgba(207, 209, 86, 0) 50%),
       linear-gradient(259.57deg, #b2f355 1.58%, #66d7fa 92.54%);
+  }
+`
+
+const UserMenuWrapper = styled.div`
+  position: absolute;
+  top: 60px;
+  right: 0;
+  z-index: 2000;
+  min-width: 15rem;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  overflow: hidden;
+  border-radius: 16px;
+  transition-duration: 0.3s;
+  transition-property: visibility, opacity;
+  display: flex;
+  border: 1px solid #ededed;
+  flex-direction: column;
+  & > div:first-child {
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ededed;
+    width: 100%;
+  }
+  & > button:last-child {
+    padding: 16px 24px;
+    border-top: 1px solid #ededed;
+  }
+`
+
+const UserMenuItem = styled.button`
+  padding: 12px 24px;
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  text-align: left;
+  font-size: 16px;
+  :hover {
+    background-color: #ededed;
   }
 `
 
@@ -247,7 +310,7 @@ export default function Header() {
   const { account } = useActiveWeb3React()
   const userInfo = useCurrentUserInfo()
   const { login } = useLogin()
-  const { showUserPanel, isUserPanelOpen } = useUserPanel()
+  const match = useRouteMatch('/profile')
   const toggleCreationModal = useToggleCreationModal()
   const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
@@ -260,9 +323,9 @@ export default function Header() {
   }, [userInfo, login, toggleCreationModal])
 
   const toShowUserPanel = useCallback(() => {
-    if (userInfo && userInfo.token) showUserPanel()
+    if (userInfo && userInfo.token) return
     else login()
-  }, [userInfo, showUserPanel, login])
+  }, [userInfo, login])
 
   return (
     <HeaderFrame>
@@ -310,9 +373,18 @@ export default function Header() {
                 </UNIWrapper>
               )}
               <Web3Status />
-              <UserButton onClick={toShowUserPanel} isOpen={isUserPanelOpen}>
-                <AntimatterIcon />
-              </UserButton>
+              {userInfo && userInfo.token ? (
+                <UserButtonWrap>
+                  <UserButton id="userButton" onClick={toShowUserPanel} isOpen={!!match}>
+                    <AntimatterIcon />
+                  </UserButton>
+                  <UserMenu account={account} />
+                </UserButtonWrap>
+              ) : (
+                <UserButton onClick={toShowUserPanel} isOpen={!!match}>
+                  <AntimatterIcon />
+                </UserButton>
+              )}
             </AccountElement>
           </HeaderControls>
         </div>
@@ -328,5 +400,28 @@ export default function Header() {
 
       <CreationNFTModal />
     </HeaderFrame>
+  )
+}
+
+function UserMenu({ account }: { account?: string | null }) {
+  const history = useHistory()
+  const logout = useLogOut()
+  return (
+    <UserMenuWrapper>
+      <div>
+        <UserButton isOpen={true} disabled size="28px">
+          <AntimatterIcon />
+        </UserButton>
+        <TYPE.darkGray style={{ marginLeft: 15 }}>{account && shortenAddress(account)}</TYPE.darkGray>
+        {account && <Copy toCopy={account} fixedSize />}
+      </div>
+      <div>
+        <AutoColumn style={{ width: '100%' }}>
+          <UserMenuItem onClick={() => history.push('/profile/my_position')}>My position</UserMenuItem>
+          <UserMenuItem onClick={() => history.push('/profile/my_index')}>My index</UserMenuItem>
+        </AutoColumn>
+      </div>
+      <UserMenuItem onClick={logout}>Logout</UserMenuItem>
+    </UserMenuWrapper>
   )
 }

@@ -8,6 +8,7 @@ import CurrencyLogosOverlay from './CurrencyLogosOverlay'
 import CurvedText from './CurvedText'
 import { RowBetween } from 'components/Row'
 import { Capsule, TimerCapsule } from './Capsule'
+import { ellipsis } from 'polished'
 
 export enum CardColor {
   RED = 'pastelRed',
@@ -75,7 +76,6 @@ const CardWrapper = styled.div<{ color: CardColor }>`
     height: 184px;
     left: 40%px;
     top: -100px;
-    opacity: 0.5;
     background: ${({ theme, color }) => theme[color]};
     filter: blur(100px);
     border-radius: 120px;
@@ -142,7 +142,7 @@ export default function NFTCard({
   return (
     <NFTCardBase color={color} address={address} onClick={onClick}>
       <CurrencyLogosOverlay icons={icons} />
-      <TYPE.black fontWeight={700} fontSize={28} color="#000000">
+      <TYPE.black fontWeight={700} fontSize={28} color="#000000" style={{ ...ellipsis('100%') }}>
         {name}
       </TYPE.black>
       <AutoColumn gap="4px">
