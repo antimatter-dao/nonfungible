@@ -4,9 +4,6 @@ import { ReactComponent as Arrow } from '../../assets/svg/arrow_down.svg'
 import { ReactComponent as Cross } from '../../assets/svg/cross.svg'
 import { ReactComponent as CheckCircleIcon } from '../../assets/svg/check_circle.svg'
 import { ReactComponent as CrossCircleIcon } from '../../assets/svg/cross_circle.svg'
-import { ReactComponent as CallType } from '../../assets/svg/call_type.svg'
-import { ReactComponent as PutType } from '../../assets/svg/put_type.svg'
-import { Type } from 'pages/OptionTrade'
 
 export const Wrapper = styled.div<{ clickable: boolean; color?: string; size?: string }>`
   ${({ clickable }) =>
@@ -24,25 +21,6 @@ export const Wrapper = styled.div<{ clickable: boolean; color?: string; size?: s
   > svg {
     height: ${({ size }) => size ?? '20px'};
     width: ${({ size }) => size ?? '20px'};
-  }
-`
-
-const OptionIconWrapper = styled.div<{ size?: string }>`
-  position: relative;
-  height: ${({ size }) => size ?? '24px'};
-  width: ${({ size }) => size ?? '24px'};
-  > svg {
-    height: ${({ size }) => size ?? '24px'};
-    width: ${({ size }) => size ?? '24px'};
-  }
-  .optionType {
-    height: 33%;
-    width: 33%
-    min-height: 12px;
-    min-width: 12px;
-    position: absolute;
-    bottom: 0;
-    right: 0;
   }
 `
 
@@ -92,20 +70,5 @@ export function CrossCircle({ size, onClick, color }: { size?: string; onClick?:
     <IconWrapper size={size} onClick={onClick} color={color}>
       <CrossCircleIcon />
     </IconWrapper>
-  )
-}
-
-export function OptionIcon({ size, tokenIcon, type }: { size?: string; tokenIcon: JSX.Element; type?: Type }) {
-  return (
-    <>
-      {type ? (
-        <OptionIconWrapper size={size}>
-          {tokenIcon}
-          {type === 'call' ? <CallType className="optionType" /> : <PutType className="optionType" />}
-        </OptionIconWrapper>
-      ) : (
-        <IconWrapper size={size}>{tokenIcon}</IconWrapper>
-      )}
-    </>
   )
 }

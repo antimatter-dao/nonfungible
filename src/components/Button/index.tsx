@@ -89,34 +89,6 @@ export const ButtonBlack = styled(Base)`
   }
 `
 
-export const ButtonLight = styled(Base)`
-  background-color: ${({ theme }) => theme.primary5};
-  color: ${({ theme }) => theme.primaryText1};
-  font-size: 16px;
-  font-weight: 500;
-  &:focus {
-    box-shadow: 0 0 0 1pt ${({ theme, disabled }) => !disabled && darken(0.03, theme.bg4)};
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.03, theme.primary5)};
-  }
-  &:hover {
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.03, theme.primary5)};
-  }
-  &:active {
-    box-shadow: 0 0 0 1pt ${({ theme, disabled }) => !disabled && darken(0.05, theme.bg4)};
-    background-color: ${({ theme, disabled }) => !disabled && darken(0.05, theme.primary5)};
-  }
-  :disabled {
-    opacity: 0.4;
-    :hover {
-      cursor: auto;
-      background-color: ${({ theme }) => theme.primary5};
-      box-shadow: none;
-      border: 1px solid transparent;
-      outline: none;
-    }
-  }
-`
-
 export const ButtonGray = styled(Base)`
   background-color: ${({ theme }) => theme.bg1};
   color: ${({ theme }) => theme.text1};
@@ -161,48 +133,6 @@ export const ButtonSecondary = styled(Base)`
   }
   a:hover {
     text-decoration: none;
-  }
-`
-
-export const ButtonPink = styled(Base)`
-  background-color: ${({ theme }) => theme.primary1};
-  color: white;
-
-  &:focus {
-    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.primary1)};
-    background-color: ${({ theme }) => darken(0.05, theme.primary1)};
-  }
-  &:hover {
-    background-color: ${({ theme }) => darken(0.05, theme.primary1)};
-  }
-  &:active {
-    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.1, theme.primary1)};
-    background-color: ${({ theme }) => darken(0.1, theme.primary1)};
-  }
-  &:disabled {
-    background-color: ${({ theme }) => theme.primary1};
-    opacity: 50%;
-    cursor: auto;
-  }
-`
-
-export const ButtonUNIGradient = styled(ButtonPrimary)`
-  color: white;
-  padding: 4px 8px;
-  height: 36px;
-  font-weight: 500;
-  background-color: ${({ theme }) => theme.bg3};
-  background: radial-gradient(174.47% 188.91% at 1.84% 0%, #ff007a 0%, #2172e5 100%), #edeef2;
-  width: fit-content;
-  position: relative;
-  cursor: pointer;
-  border: none;
-  white-space: no-wrap;
-  :hover {
-    opacity: 0.8;
-  }
-  :active {
-    opacity: 0.9;
   }
 `
 
@@ -421,29 +351,6 @@ export function ButtonDropdownGrey({
       </RowBetween>
     </ButtonGray>
   )
-}
-
-export function ButtonDropdownLight({
-  disabled = false,
-  children,
-  ...rest
-}: { disabled?: boolean } & ButtonProps & StyleProp) {
-  return (
-    <ButtonOutlined {...rest} disabled={disabled} borderRadius="14px">
-      <RowBetween>
-        <div style={{ display: 'flex', alignItems: 'center' }}>{children}</div>
-        <ChevronDown size={14} />
-      </RowBetween>
-    </ButtonOutlined>
-  )
-}
-
-export function ButtonRadio({ active, ...rest }: { active?: boolean } & ButtonProps & StyleProp) {
-  if (!active) {
-    return <ButtonWhite {...rest} />
-  } else {
-    return <ButtonPrimary {...rest} />
-  }
 }
 
 export function ArrowLeftButton({ onClick }: { onClick: () => void }) {

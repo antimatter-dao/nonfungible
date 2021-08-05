@@ -10,11 +10,9 @@ import Web3ReactManager from '../components/Web3ReactManager'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import ComingSoon from './ComingSoon'
 
-import { RedirectPathToSwapOnly } from './Swap/redirects'
-import Info from './Info'
-import FAQ from './FAQ'
+import { RedirectPathToSwapOnly } from './SpotIndex/redirects'
 // import Governance from './NFTGovernance'
-import SportIndex from './SportIndex'
+import SpotIndex from './SpotIndex'
 import GovernanceDetail from './NFTGovernance/NFTGovernanceDetail'
 // import Locker from './Locker'
 import CardDetail from './CardDetail'
@@ -102,8 +100,8 @@ export default function App() {
               {/* <TopLevelModals /> */}
               <Web3ReactManager>
                 <Switch>
-                  <Route exact strict path="/" component={SportIndex} />
-                  <Route exact strict path="/spot_index" component={SportIndex} />
+                  <Route exact strict path="/" component={SpotIndex} />
+                  <Route exact strict path="/spot_index" component={SpotIndex} />
                   <Route exact strict path="/spot_detail/:nftid" component={CardDetail} />
                   <Route exact strict path="/future_index" component={ComingSoon} />
                   {/* <Route exact strict path="/locker" component={Locker} /> */}
@@ -111,8 +109,6 @@ export default function App() {
                   {/* <Route exact strict path="/governance" component={Governance} /> */}
                   <Route exact strict path="/governance" component={ComingSoon} />
                   <Route exact strict path="/governance/:governanceIndex" component={GovernanceDetail} />
-                  <Route exact strict path="/info" component={Info} />
-                  <Route exact strict path="/faq" component={FAQ} />
                   <Route component={RedirectPathToSwapOnly} />
                 </Switch>
               </Web3ReactManager>
