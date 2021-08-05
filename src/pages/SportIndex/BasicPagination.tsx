@@ -27,17 +27,19 @@ interface PaginationProps {
 export default function BasicPagination({ count, page, onChange, setPage }: PaginationProps) {
   return (
     <MaterialThemeProvider theme={materialTheme}>
-      <StyledPagination>
-        <Pagination
-          count={count}
-          page={page}
-          onChange={(event, page) => {
-            onChange && onChange(event, page)
-            setPage(page)
-          }}
-          size="large"
-        />
-      </StyledPagination>
+      {count && (
+        <StyledPagination>
+          <Pagination
+            count={count}
+            page={page}
+            onChange={(event, page) => {
+              onChange && onChange(event, page)
+              setPage(page)
+            }}
+            size="large"
+          />
+        </StyledPagination>
+      )}
     </MaterialThemeProvider>
   )
 }

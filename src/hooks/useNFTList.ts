@@ -2,7 +2,7 @@ import { AssetsParameter } from '../components/Creation'
 import { useEffect, useState, useMemo } from 'react'
 import { WrappedTokenInfo } from '../state/lists/hooks'
 import { useSingleContractMultipleData } from '../state/multicall/hooks'
-import { allNFTFetch } from '../utils/option/httpFetch'
+import { allNFTFetch, SportIndexSearchProps } from '../utils/option/httpFetch'
 import { useAllTokens } from './Tokens'
 import { useIndexNFTContract } from './useContract'
 import { toNumber } from './useIndexDetail'
@@ -24,7 +24,9 @@ interface NFTSpotListProps {
   assetsParameters: AssetsParameter[]
 }
 
-export default function useNFTList(): {
+export default function useNFTList(
+  searchParams: SportIndexSearchProps
+): {
   loading: boolean
   page: {
     countPages: number
@@ -44,7 +46,7 @@ export default function useNFTList(): {
     ;(async () => {
       try {
         setReqLoading(true)
-        const positionList = await allNFTFetch(currentPage)
+        const positionList = await allNFTFetch(currentPage, searchParams)
         setReqLoading(false)
         setCountPages(positionList.pages ?? 0)
         const idList: string[][] | undefined = positionList?.list?.map(({ indexId }: { indexId: string }) => [indexId])
@@ -62,7 +64,7 @@ export default function useNFTList(): {
         console.error('fetch NFT List', error)
       }
     })()
-  }, [currentPage])
+  }, [currentPage, searchParams])
 
   const contract = useIndexNFTContract()
   const nftRes = useSingleContractMultipleData(contract, 'getIndex', nftIdList)
