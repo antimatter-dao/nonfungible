@@ -22,7 +22,14 @@ export function Paragraph({ header, children }: { header: string; children: any 
     <StyledParagraph>
       <AutoColumn>
         <TYPE.subHeader color={theme.text4}>{header}</TYPE.subHeader>
-        <TYPE.smallHeader color={theme.black}>{children}</TYPE.smallHeader>
+        <TYPE.smallHeader
+          style={{
+            wordBreak: 'break-all'
+          }}
+          color={theme.black}
+        >
+          {children}
+        </TYPE.smallHeader>
       </AutoColumn>
     </StyledParagraph>
   )
