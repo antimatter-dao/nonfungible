@@ -6,12 +6,13 @@ import { RowFixed } from 'components/Row'
 import NFTButtonSelect from 'components/Button/NFTButtonSelect'
 import { ButtonOutlinedPrimary, ButtonPrimary } from 'components/Button'
 import { ReactComponent as SearchIcon } from '../../assets/svg/search.svg'
-import TextInput from 'components/TextInput'
+import { TextValueInput } from 'components/TextInput'
 import useNFTList from 'hooks/useNFTList'
 import CurrencyLogo from 'components/CurrencyLogo'
 import BasicPagination from './BasicPagination'
-import { AnimatedImg, AnimatedWrapper } from 'theme'
+import { AnimatedImg, AnimatedWrapper, TYPE } from 'theme'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
+import { SportIndexSearchProps } from 'utils/option/httpFetch'
 
 const SearchParams = [
   {
@@ -21,22 +22,34 @@ const SearchParams = [
   {
     id: 'indexId',
     option: 'Index ID'
-  },
-  {
-    id: 'creatorName',
-    option: 'Creator Name'
-  },
-  {
-    id: 'creatorAddress',
-    option: 'Creator Address'
   }
+  // {
+  //   id: 'creatorName',
+  //   option: 'Creator Name'
+  // },
+  // {
+  //   id: 'creatorAddress',
+  //   option: 'Creator Address'
+  // }
 ]
 
 const Wrapper = styled.div`
   width: 100%;
   margin-bottom: auto;
 `
-
+const EmptyList = styled.div`
+  transform: translateY(30px);
+  border: 1px solid ${({ theme }) => theme.text4};
+  color: ${({ theme }) => theme.text4};
+  padding: 16px 12px;
+  border-radius: 12px;
+  display: flex;
+  max-width: 760px;
+  margin: auto;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`
 const ContentWrapper = styled.div`
   position: relative;
   max-width: 1280px;
@@ -100,11 +113,15 @@ const defaultCardData = {
 
 export default function SportIndex() {
   const history = useHistory()
+  const [searchParam, setSearchParam] = useState<SportIndexSearchProps>({
+    searchParam: '',
+    searchBy: ''
+  })
   const {
     page: { countPages, currentPage, setCurrentPage },
     loading,
     data: NFTListData
-  } = useNFTList()
+  } = useNFTList(searchParam)
 
   const NFTListCardData = useMemo((): NFTCardProps[] => {
     return NFTListData.map(NFTIndexInfo => {
@@ -124,9 +141,16 @@ export default function SportIndex() {
     })
   }, [NFTListData])
 
-  const handleSearch = useCallback((searchParam: string, searchBy: string) => {
-    console.log(searchParam, searchBy)
-  }, [])
+  const handleSearch = useCallback(
+    (searchParam: string, searchBy: string) => {
+      setSearchParam({
+        searchParam,
+        searchBy
+      })
+      setCurrentPage(1)
+    },
+    [setCurrentPage, setSearchParam]
+  )
 
   return (
     <Wrapper>
@@ -139,6 +163,14 @@ export default function SportIndex() {
         </AnimatedWrapper>
       ) : (
         <>
+          {NFTListCardData?.length === 0 && (
+            <EmptyList>
+              <TYPE.body style={{ marginBottom: '8px' }}>No NFT found.</TYPE.body>
+              <TYPE.subHeader>
+                <i>You can create or change search criteria.</i>
+              </TYPE.subHeader>
+            </EmptyList>
+          )}
           <ContentWrapper>
             {NFTListCardData.map(({ color, address, icons, indexId, creator, name, id }, idx) => (
               <NFTCard
@@ -172,21 +204,32 @@ export function Search({ onSearch }: { onSearch: (searchParam: string, searchBy:
   const handleClear = useCallback(() => {
     setSearchParam('')
     setSearchBy('')
-  }, [])
+    onSearch('', '')
+  }, [onSearch])
 
   return (
     <>
       <WrapperSearch>
         <StyledSearch>
           <NFTButtonSelect
-            onSelection={() => {}}
+            onSelection={id => {
+              setSearchParam(id)
+            }}
             width="280px"
             options={SearchParams}
             selectedId={searchParam}
             placeholder="Select search parameter"
             marginRight="10px"
           />
-          <TextInput placeholder="Search by" maxWidth="552px" height="3rem" />
+          <TextValueInput
+            value={searchBy}
+            onUserInput={val => {
+              setSearchBy(val)
+            }}
+            placeholder="Search by"
+            maxWidth="552px"
+            height="3rem"
+          />
           <ButtonWrapper>
             <ButtonPrimary width="152px" onClick={handleSearch}>
               <SearchIcon style={{ marginRight: 10 }} />

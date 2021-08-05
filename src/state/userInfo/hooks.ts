@@ -102,7 +102,7 @@ export function useLogin(): {
 }
 
 export function useLogOut() {
-  const { account, chainId } = useWeb3ReactCore()
+  const { account, chainId, deactivate } = useWeb3ReactCore()
   const dispatch = useDispatch()
 
   return useCallback(async () => {
@@ -112,5 +112,6 @@ export function useLogOut() {
     if (userInfo && userInfo.token) {
       dispatch(removeUserInfo({ address: account }))
     }
-  }, [account, chainId, dispatch])
+    deactivate()
+  }, [account, chainId, deactivate, dispatch])
 }

@@ -9,6 +9,10 @@ interface LoginRes {
   description: string | null
   id?: string
 }
+export interface SportIndexSearchProps {
+  searchParam: string
+  searchBy: string
+}
 
 export interface UserInfoQuery {
   createTime?: string
@@ -126,10 +130,10 @@ export function indexListFetch(token: string | undefined, address: string | unde
   return promiseGenerator(request)
 }
 
-export function allNFTFetch(curPage: number): Promise<any> {
+export function allNFTFetch(curPage: number, { searchBy, searchParam }: SportIndexSearchProps): Promise<any> {
   const param = {
-    indexName: '',
-    nftId: '',
+    indexName: searchParam === 'indexName' ? searchBy : '',
+    nftId: searchParam === 'indexId' ? searchBy : '',
     curPage,
     pageSize: '8'
   }
