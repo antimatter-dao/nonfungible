@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from 'react'
+import React, { useCallback, useState, useMemo, useEffect } from 'react'
 import styled from 'styled-components'
 import { AutoColumn } from 'components/Column'
 import AppBody from 'pages/AppBody'
@@ -18,18 +18,18 @@ import { ReactComponent as LogOut } from 'assets/svg/log_out.svg'
 import ProfileSetting from './ProfileSetting'
 import { useCurrentUserInfo, useLogOut } from 'state/userInfo/hooks'
 import { usePositionList, useIndexList } from 'hooks/useMyList'
-import { useHistory, useParams } from 'react-router-dom'
+import { useHistory, useParams, useLocation } from 'react-router-dom'
 
-enum Tabs {
-  POSITION = 'My Position',
-  INDEX = 'My Index'
+export enum UserInfoTabs {
+  POSITION = 'my_position',
+  INDEX = 'my_index'
   // LOCKER = 'My Locker',
   // ACTIVITY = 'Activity'
 }
 
-const TabRoute = {
-  ['my_position']: Tabs.POSITION,
-  ['my_index']: Tabs.INDEX
+export const UserInfoTabRoute = {
+  [UserInfoTabs.POSITION]: 'My Position',
+  [UserInfoTabs.INDEX]: 'My Index'
 }
 
 // enum Actions {
@@ -161,8 +161,9 @@ const Tab = styled.button<{ selected: boolean }>`
 // ]
 export default function User() {
   const history = useHistory()
-  const { tab } = useParams()
-  const [currentTab, setCurrentTab] = useState(tab ? TabRoute[tab as keyof typeof TabRoute] : Tabs.POSITION)
+  const { tab } = useParams<{ tab: string }>()
+  const location = useLocation()
+  const [currentTab, setCurrentTab] = useState(UserInfoTabs.POSITION)
   const [showSetting, setShowSetting] = useState(false)
   const userInfo = useCurrentUserInfo()
   const positionCardList = usePositionList(userInfo)
@@ -171,8 +172,9 @@ export default function User() {
   const handleTabClick = useCallback(
     tab => () => {
       setCurrentTab(tab)
+      history.push('/profile/' + tab)
     },
-    []
+    [history]
   )
   const handleHideSetting = useCallback(() => {
     setShowSetting(false)
@@ -196,6 +198,10 @@ export default function User() {
       ]),
     [indexList]
   )
+
+  useEffect(() => {
+    tab && UserInfoTabRoute[tab as keyof typeof UserInfoTabRoute] && setCurrentTab(tab as UserInfoTabs)
+  }, [location, tab])
 
   return (
     <>
@@ -232,7 +238,7 @@ export default function User() {
               <Synopsis>{userInfo?.bio}</Synopsis>
             </AutoColumn>
             <SwitchTab onTabClick={handleTabClick} currentTab={currentTab} />
-            {currentTab === Tabs.POSITION /*|| currentTab === Tabs.LOCKER*/ && (
+            {currentTab === UserInfoTabs.POSITION /*|| currentTab === Tabs.LOCKER*/ && (
               <ContentWrapper>
                 {positionCardList.length === 0 ? (
                   <span>You have no NFT at the moment</span>
@@ -259,7 +265,7 @@ export default function User() {
                 )}
               </ContentWrapper>
             )}
-            {currentTab === Tabs.INDEX && (
+            {currentTab === UserInfoTabs.INDEX && (
               <Table
                 header={['Index Id', 'Index Name', 'Current Issurance', 'Fees Earned', '']}
                 rows={indexData}
@@ -280,13 +286,19 @@ export default function User() {
   )
 }
 
-function SwitchTab({ currentTab, onTabClick }: { currentTab: Tabs; onTabClick: (tab: Tabs) => () => void }) {
+function SwitchTab({
+  currentTab,
+  onTabClick
+}: {
+  currentTab: UserInfoTabs
+  onTabClick: (tab: UserInfoTabs) => () => void
+}) {
   return (
     <SwitchTabWrapper>
-      {Object.keys(Tabs).map(tab => {
-        const tabName = Tabs[tab as keyof typeof Tabs]
+      {Object.keys(UserInfoTabRoute).map(tab => {
+        const tabName = UserInfoTabRoute[tab as keyof typeof UserInfoTabRoute]
         return (
-          <Tab key={tab} onClick={onTabClick(tabName)} selected={currentTab === tabName}>
+          <Tab key={tab} onClick={onTabClick(tab as UserInfoTabs)} selected={currentTab === tab}>
             {tabName}
           </Tab>
         )

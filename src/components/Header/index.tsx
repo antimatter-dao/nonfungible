@@ -20,6 +20,7 @@ import { useCurrentUserInfo, useLogin, useLogOut } from 'state/userInfo/hooks'
 import { shortenAddress } from 'utils'
 import { AutoColumn } from 'components/Column'
 import Copy from 'components/AccountDetails/Copy'
+import { UserInfoTabRoute, UserInfoTabs } from 'pages/User'
 
 const activeClassName = 'ACTIVE'
 
@@ -417,8 +418,12 @@ function UserMenu({ account }: { account?: string | null }) {
       </div>
       <div>
         <AutoColumn style={{ width: '100%' }}>
-          <UserMenuItem onClick={() => history.push('/profile/my_position')}>My position</UserMenuItem>
-          <UserMenuItem onClick={() => history.push('/profile/my_index')}>My index</UserMenuItem>
+          <UserMenuItem onClick={() => history.push('/profile/' + UserInfoTabs.POSITION)}>
+            {UserInfoTabRoute[UserInfoTabs.POSITION]}
+          </UserMenuItem>
+          <UserMenuItem onClick={() => history.push('/profile/' + UserInfoTabs.INDEX)}>
+            {UserInfoTabRoute[UserInfoTabs.INDEX]}
+          </UserMenuItem>
         </AutoColumn>
       </div>
       <UserMenuItem onClick={logout}>Logout</UserMenuItem>
