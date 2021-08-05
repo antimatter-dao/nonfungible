@@ -267,7 +267,7 @@ export default function User() {
             )}
             {currentTab === UserInfoTabs.INDEX && (
               <Table
-                header={['Index Id', 'Index Name', 'Current Issurance', 'Fees Earned', '']}
+                header={['Index ID', 'Index Name', 'Current Issurance', 'Fees Earned', '']}
                 rows={indexData}
                 isHeaderGray
               />
