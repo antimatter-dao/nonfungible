@@ -111,7 +111,7 @@ const defaultCardData = {
   creator: ''
 }
 
-export default function SportIndex() {
+export default function SpotIndex() {
   const history = useHistory()
   const [searchParam, setSearchParam] = useState<SportIndexSearchProps>({
     searchParam: '',

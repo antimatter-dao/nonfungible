@@ -440,6 +440,11 @@ export default function CardDetail({
                     </MarketPrice>
                     <div>
                       <TransactionsTable transactionRecords={NFTTransactionRecords} />
+                      {!NFTTransactionRecords?.length && (
+                        <TYPE.darkGray textAlign="center" padding="10px">
+                          No transaction record
+                        </TYPE.darkGray>
+                      )}
                     </div>
                   </div>
                 </>
@@ -505,7 +510,7 @@ function CreaterInfo({
         <Paragraph header="Creator">{creatorInfo?.username}</Paragraph>
       </RowFixed>
       <Hr />
-      <Paragraph header="Creator wallet Address">{nftInfo.creator}</Paragraph>
+      <Paragraph header="Creator Wallet Address">{nftInfo.creator}</Paragraph>
       <Hr />
       <Paragraph header="Creator ID">#{nftInfo.creatorId}</Paragraph>
       <Hr />
