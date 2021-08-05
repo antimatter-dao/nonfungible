@@ -204,7 +204,8 @@ export function Search({ onSearch }: { onSearch: (searchParam: string, searchBy:
   const handleClear = useCallback(() => {
     setSearchParam('')
     setSearchBy('')
-  }, [])
+    onSearch('', '')
+  }, [onSearch])
 
   return (
     <>
