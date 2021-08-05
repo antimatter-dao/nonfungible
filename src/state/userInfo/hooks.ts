@@ -8,77 +8,97 @@ import { useDispatch } from 'react-redux'
 import store from '../index'
 import { UserInfo } from './actions'
 
-export function getCurrentUserInfoSync(chainId?: number, account?: string): UserInfo | undefined {
-  const allUserinfo = store.getState().userInfo
-  if (!chainId || !account) {
-    const { account, chainId } = store.getState().currentAccount
-    if (!account || !chainId) return undefined
-    if (!allUserinfo.tokens[chainId] || !allUserinfo.tokens[chainId][account]) return undefined
-    return allUserinfo.tokens[chainId][account]
+export function getCurrentUserInfoSync(account?: string): UserInfo | undefined {
+  const allUserInfo = store.getState().userInfo
+  if (!account) {
+    const { account } = store.getState().currentAccount
+    if (!account) return undefined
+    if (!allUserInfo.tokens[account]) return undefined
+    return allUserInfo.tokens[account]
   } else {
-    if (!allUserinfo.tokens[chainId] || !allUserinfo.tokens[chainId][account]) return undefined
-    return allUserinfo.tokens[chainId][account]
+    if (!allUserInfo.tokens[account]) return undefined
+    return allUserInfo.tokens[account]
   }
 }
 
 export function useCurrentUserInfo(): UserInfo | undefined {
   const allUserInfo = useSelector((store: { userInfo: any }) => store.userInfo)
   const [userInfo, setUserinfo] = useState<UserInfo | undefined>()
-  const { account, chainId } = useWeb3ReactCore()
+  const { account } = useWeb3ReactCore()
 
   useEffect(() => {
-    if (!account || !chainId) {
+    if (!account) {
       setUserinfo(undefined)
       return
     }
-    if (
-      !allUserInfo.tokens[chainId] ||
-      !allUserInfo.tokens[chainId][account] ||
-      !allUserInfo.tokens[chainId][account].token
-    ) {
+    if (!allUserInfo.tokens[account] || !allUserInfo.tokens[account].token) {
       setUserinfo(undefined)
       return
     }
-    setUserinfo(allUserInfo.tokens[chainId][account])
-  }, [allUserInfo, account, chainId])
+    setUserinfo(allUserInfo.tokens[account])
+  }, [allUserInfo, account])
 
   return userInfo
 }
 
-export function useLogin() {
+enum loginNoticeState {
+  Close,
+  Logging,
+  LoginSuccess,
+  LoginFail
+}
+
+export function useLogin(): {
+  login: () => void
+  loginState: [loginNoticeState, () => void]
+} {
   const { library, account, chainId } = useWeb3ReactCore()
   const signStr = 'Welcome come Antimatter'
   const dispatch = useDispatch()
+  const [loginState, setLoginState] = useState(loginNoticeState.Close)
+  const resetLoginState = useCallback(() => {
+    setLoginState(loginNoticeState.Close)
+  }, [setLoginState])
 
-  return useCallback(async () => {
+  const login = useCallback(async () => {
     if (!account || !library || !chainId) return
     if (chainId !== 1 && chainId !== 3) return
-    const userInfo = getCurrentUserInfoSync(chainId, account)
+    const userInfo = getCurrentUserInfoSync(account)
     if (userInfo && userInfo.token && userInfo) return
 
     const web3 = new Web3(library.provider)
     try {
       const signRes = await web3.eth.personal.sign(signStr, account, '')
-      const loginRes = await appLogin(account, signRes, signStr)
-      if (loginRes) {
-        dispatch(
-          saveUserInfo({
-            chainId,
-            address: account,
-            userInfo: {
-              token: loginRes.token ?? '',
-              username: loginRes.username ?? '',
-              bio: loginRes.description ?? '',
-              id: loginRes.id ?? '',
-              account: account
-            }
-          })
-        )
-      }
+      setLoginState(loginNoticeState.Logging)
+      appLogin(account, signRes, signStr)
+        .then(loginRes => {
+          setLoginState(loginNoticeState.LoginSuccess)
+          dispatch(
+            saveUserInfo({
+              address: account,
+              userInfo: {
+                token: loginRes.token ?? '',
+                username: loginRes.username ?? '',
+                bio: loginRes.description ?? '',
+                id: loginRes.id ?? '',
+                account: account
+              }
+            })
+          )
+        })
+        .catch(error => {
+          console.error('login', error)
+          setLoginState(loginNoticeState.LoginFail)
+        })
     } catch (error) {
       console.error('login', error)
     }
   }, [account, library, chainId, dispatch])
+
+  return {
+    login,
+    loginState: [loginState, resetLoginState]
+  }
 }
 
 export function useLogOut() {
@@ -88,9 +108,9 @@ export function useLogOut() {
   return useCallback(async () => {
     if (!account || !chainId) return
     if (chainId !== 1 && chainId !== 3) return
-    const userInfo = getCurrentUserInfoSync(chainId, account)
+    const userInfo = getCurrentUserInfoSync(account)
     if (userInfo && userInfo.token) {
-      dispatch(removeUserInfo({ chainId, address: account }))
+      dispatch(removeUserInfo({ address: account }))
     }
   }, [account, chainId, dispatch])
 }

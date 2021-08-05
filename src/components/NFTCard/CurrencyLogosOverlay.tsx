@@ -30,7 +30,10 @@ const LogoWrapper = styled.div<{ size: number; top: number; left: number }>`
 `
 
 export default function CurrencyLogosOverlay({ icons }: { icons: React.ReactNode[] }) {
-  const constructIcons = useCallback((icons: React.ReactNode[]) => {
+  const constructIcons = useCallback((icons: React.ReactNode[] | undefined) => {
+    if (!icons) {
+      return []
+    }
     switch (icons.length) {
       case 0:
         return null

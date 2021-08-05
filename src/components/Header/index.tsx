@@ -246,7 +246,7 @@ const UserButton = styled(ButtonText)<{ isOpen: boolean }>`
 export default function Header() {
   const { account } = useActiveWeb3React()
   const userInfo = useCurrentUserInfo()
-  const login = useLogin()
+  const { login } = useLogin()
   const { showUserPanel, isUserPanelOpen } = useUserPanel()
   const toggleCreationModal = useToggleCreationModal()
   const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()

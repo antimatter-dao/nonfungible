@@ -67,15 +67,14 @@ export function useIndexList(userInfo: UserInfo | undefined) {
 }
 
 export function useUserInfoUpdate(userInfo: UserInfo | undefined) {
-  const { account, chainId } = useWeb3React()
+  const { account } = useWeb3React()
   const dispatch = useDispatch()
   const callback = useCallback(
     async (params: UserInfoQuery) => {
       const res: any = await userInfoFetch(userInfo?.token, params)
-      if (res && userInfo && chainId && account) {
+      if (res && userInfo && account) {
         dispatch(
           saveUserInfo({
-            chainId,
             address: account,
             userInfo: {
               ...userInfo,
@@ -86,7 +85,7 @@ export function useUserInfoUpdate(userInfo: UserInfo | undefined) {
         )
       }
     },
-    [account, chainId, dispatch, userInfo]
+    [account, dispatch, userInfo]
   )
 
   return useMemo(() => {
