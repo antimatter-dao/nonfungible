@@ -116,8 +116,7 @@ z-index: 3;
 const MenuFlyout = styled.span`
   position: relative;
   min-width: 500px;
-  background: ${({ theme }) => theme.gradient2};
-  background: #000000 linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.1) 100%);
+  background: ${({ theme }) => theme.white};
   border-radius: 42px;
   display: flex;
   flex-direction: column;
