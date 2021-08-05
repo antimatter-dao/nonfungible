@@ -15,6 +15,7 @@ import { WrappedTokenInfo } from 'state/lists/hooks'
 import { useAssetsTokens } from 'hooks/useIndexDetail'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { Currency } from '@uniswap/sdk'
+import { useCurrentUserInfo } from 'state/userInfo/hooks'
 
 export const IndexIcon = styled.div<{ current?: boolean }>`
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -109,6 +110,7 @@ export default function SpotIndex({
   onConfirm: () => void
 }) {
   const [assetParams, setAssetParams] = useState<AssetsParameter[]>(data.assetsParameters)
+  const userInfo = useCurrentUserInfo()
 
   const handleParameterInput = useCallback(
     (index: number, value: AssetsParameter) => {
@@ -164,13 +166,13 @@ export default function SpotIndex({
     return {
       id: '',
       name: data.name,
-      indexId: '',
+      indexId: data.creatorId,
       color: data.color,
       address: '',
       icons: _icons,
-      creator: 'Jack'
+      creator: userInfo ? userInfo.username : ''
     }
-  }, [data, selectTokens])
+  }, [data, selectTokens, userInfo])
 
   const handleGenerate = useCallback(() => {
     setData('color', currentCard.color)

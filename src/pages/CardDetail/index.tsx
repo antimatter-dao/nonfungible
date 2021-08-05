@@ -21,6 +21,7 @@ import {
 import NumericalInput from 'components/NumericalInput'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
+import AntimatterLogo from 'assets/svg/logo.svg'
 import { WrappedTokenInfo } from 'state/lists/hooks'
 import { useAmountInMins, useCalcBuyFee, useIndexBuyCall } from '../../hooks/useIndexBuyCallback'
 import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
@@ -499,7 +500,7 @@ function CreaterInfo({
     <div>
       <RowFixed>
         <StyledAvatar>
-          <img src="" alt="" />
+          <img src={AntimatterLogo} alt="" />
         </StyledAvatar>
         <Paragraph header="Creator">{creatorInfo?.username}</Paragraph>
       </RowFixed>

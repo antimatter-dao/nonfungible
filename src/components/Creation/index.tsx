@@ -146,7 +146,7 @@ export const defaultSpotData: CreateSpotData = {
     }
   ],
   color: CardColor.PURPLE,
-  creatorId: '-'
+  creatorId: '__'
 }
 
 export const defaultLockerData: CreateLockerData = {

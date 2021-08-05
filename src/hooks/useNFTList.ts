@@ -76,12 +76,12 @@ export default function useNFTList(): {
         const nft = res.result[0]
         if (nft.creator === ZERO_ADDRESS) return undefined
         const metadata = JSON.parse(nft.metadata)
-        const assetsParameters: AssetsParameter[] = nft.underlyingAmounts.map(
-          (val: any, index: number): AssetsParameter => {
+        const assetsParameters: AssetsParameter[] = nft.underlyingTokens.map(
+          (val: string, index: number): AssetsParameter => {
             let _currencyToken = undefined
             if (tokens) {
-              _currencyToken = tokens[val.currency] as WrappedTokenInfo
-              if (!_currencyToken) _currencyToken = tokens[Object.keys(tokens)[0]] as WrappedTokenInfo
+              _currencyToken = tokens[val] as WrappedTokenInfo
+              // if (!_currencyToken) _currencyToken = tokens[Object.keys(tokens)[0]] as WrappedTokenInfo
             }
 
             return {
@@ -96,8 +96,8 @@ export default function useNFTList(): {
           description: metadata.description,
           color: metadata.color,
           creator: nft.creator,
-          indexId: recordList ? recordList[idx].id : '',
-          creatorName: recordList ? recordList[idx].creatorName : '',
+          indexId: recordList ? recordList[idx]?.id : '',
+          creatorName: recordList ? recordList[idx]?.creatorName : '',
           assetsParameters
         }
       })

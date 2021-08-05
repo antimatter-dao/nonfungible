@@ -67,12 +67,12 @@ export function useNFTIndexInfo(
       }
     const nft = nftIndexRes.result[0]
     const metadata = JSON.parse(nft.metadata)
-    const assetsParameters = nft.underlyingAmounts.map(
+    const assetsParameters = nft.underlyingTokens.map(
       (val: any, index: number): AssetsParameter => {
         let _currencyToken = undefined
         if (tokens) {
           _currencyToken = tokens[val.currency] as WrappedTokenInfo
-          if (!_currencyToken) _currencyToken = tokens[Object.keys(tokens)[0]] as WrappedTokenInfo
+          // if (!_currencyToken) _currencyToken = tokens[Object.keys(tokens)[0]] as WrappedTokenInfo
         }
 
         return {
