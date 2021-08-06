@@ -318,9 +318,11 @@ export function NFTCardPanel({
         </AutoRow>
       </AutoColumn>
       <AutoColumn style={{ width: 200, height: 300 }} gap="12px">
-        <TYPE.black fontSize={14}>Preview</TYPE.black>
+        <TYPE.black fontSize={14} style={{ maxWidth: 100 }}>
+          Preview
+        </TYPE.black>
         <StyledCard>
-          <NFTCard {...cardData} />
+          <NFTCard noBorderArea={true} {...cardData} />
         </StyledCard>
       </AutoColumn>
     </AutoRow>

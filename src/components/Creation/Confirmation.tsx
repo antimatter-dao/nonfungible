@@ -8,6 +8,7 @@ import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { useWeb3React } from '@web3-react/core'
 import { useCurrentUserInfo } from 'state/userInfo/hooks'
+import { shortenAddress } from 'utils'
 
 const Wrapper = styled(AutoColumn)`
   padding: 24px 28px 0;
@@ -18,7 +19,7 @@ const Wrapper = styled(AutoColumn)`
 `
 const RightText = styled(TYPE.small)`
   color: ${({ theme }) => theme.text6};
-  max-width: 152px;
+  max-width: 160px;
   text-align: right;
   align-self: flex-start;
   word-break: break-all;
@@ -41,7 +42,9 @@ export function SpotConfirmation({
         <TYPE.largeHeader fontSize={30} color="black">
           Confirmation
         </TYPE.largeHeader>
-        <TYPE.small fontSize={12}>Please review the following information </TYPE.small>
+        <TYPE.small fontSize={12} color="text4">
+          Please review the following information{' '}
+        </TYPE.small>
       </div>
 
       <Wrapper gap="20px">
@@ -55,9 +58,9 @@ export function SpotConfirmation({
             <TYPE.smallGray>IndexName</TYPE.smallGray>
             <RightText>{name}</RightText>
           </RowBetween>
-          <RowBetween>
+          <RowBetween align="flex-start">
             <TYPE.smallGray>Creator wallet address</TYPE.smallGray>
-            <RightText>{account}</RightText>
+            <RightText>{shortenAddress(account ?? '')}</RightText>
           </RowBetween>
           <RowBetween>
             <TYPE.smallGray>Creator ID</TYPE.smallGray>
@@ -108,7 +111,9 @@ export function LockerConfirmation({ children }: { children?: string | JSX.Eleme
         <TYPE.largeHeader fontSize={30} color="black">
           Confirmation
         </TYPE.largeHeader>
-        <TYPE.small fontSize={12}>Please review the following information </TYPE.small>
+        <TYPE.small fontSize={12} color="text4">
+          Please review the following information{' '}
+        </TYPE.small>
       </div>
 
       <Wrapper gap="20px">
