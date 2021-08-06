@@ -1,4 +1,4 @@
-import { getCurrentUserInfoSync } from 'state/userInfo/hooks'
+import { getCurrentUserInfoSync, clearLoginStoreSync } from 'state/userInfo/hooks'
 
 const domain = 'https://nftapi.antimatter.finance'
 const headers = { 'content-type': 'application/json', accept: 'application/json' }
@@ -34,6 +34,13 @@ const promiseGenerator = (request: Request) => {
         return response.json()
       })
       .then(response => {
+        if (response.code === 401) {
+          clearLoginStoreSync()
+          reject('Unauthorized')
+        }
+        if (response.code === 403 || response.code === 404) {
+          reject('error')
+        }
         resolve(response.data)
       })
       .catch(error => {
@@ -62,21 +69,7 @@ export function appLogin(publicAddress: string, signature: string, message: stri
     headers: _headers
   })
 
-  return new Promise((resolve, reject) => {
-    fetch(request)
-      .then(response => {
-        if (response.status !== 200) {
-          reject('server error')
-        }
-        return response.json()
-      })
-      .then(response => {
-        resolve(response.data)
-      })
-      .catch(error => {
-        reject(error)
-      })
-  })
+  return promiseGenerator(request) as Promise<LoginRes>
 }
 
 export function getAccountInfo(address: string): Promise<LoginRes> {
@@ -86,21 +79,7 @@ export function getAccountInfo(address: string): Promise<LoginRes> {
     headers: headers
   })
 
-  return new Promise((resolve, reject) => {
-    fetch(request)
-      .then(response => {
-        if (response.status !== 200) {
-          reject('server error')
-        }
-        return response.json()
-      })
-      .then(response => {
-        resolve(response.data)
-      })
-      .catch(error => {
-        reject(error)
-      })
-  })
+  return promiseGenerator(request) as Promise<LoginRes>
 }
 
 export function positionListFetch(token: string | undefined, address: string | undefined) {
