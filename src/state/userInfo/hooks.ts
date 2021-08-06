@@ -7,9 +7,11 @@ import { removeUserInfo, saveUserInfo } from './actions'
 import { useDispatch } from 'react-redux'
 import store from '../index'
 import { UserInfo } from './actions'
+import { useHistory } from 'react-router-dom'
 
 export function getCurrentUserInfoSync(account?: string): UserInfo | undefined {
-  const allUserInfo = store.getState().userInfo
+  const allUserInfo = store.getState()?.userInfo
+  if (!allUserInfo) return undefined
   if (!account) {
     const { account } = store.getState().currentAccount
     if (!account) return undefined
@@ -19,6 +21,15 @@ export function getCurrentUserInfoSync(account?: string): UserInfo | undefined {
     if (!allUserInfo.tokens[account]) return undefined
     return allUserInfo.tokens[account]
   }
+}
+
+export function clearLoginStoreSync() {
+  const userInfo = getCurrentUserInfoSync()
+  store.dispatch({
+    type: 'userInfo/removeUserInfo',
+    payload: { address: userInfo && userInfo.account ? userInfo.account : '' }
+  })
+  window.location.href = '#/'
 }
 
 export function useCurrentUserInfo(): UserInfo | undefined {
@@ -104,6 +115,7 @@ export function useLogin(): {
 export function useLogOut() {
   const { account, chainId, deactivate } = useWeb3ReactCore()
   const dispatch = useDispatch()
+  const history = useHistory()
 
   return useCallback(async () => {
     if (!account || !chainId) return
@@ -113,5 +125,8 @@ export function useLogOut() {
       dispatch(removeUserInfo({ address: account }))
     }
     deactivate()
-  }, [account, chainId, deactivate, dispatch])
+    if (history && history.location.pathname.indexOf('/profile') === 0) {
+      history.replace('/')
+    }
+  }, [account, chainId, deactivate, dispatch, history])
 }
