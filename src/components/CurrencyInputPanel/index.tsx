@@ -347,6 +347,7 @@ export default function CurrencyInputPanel({
           onDismiss={handleDismissSearch}
           onCurrencySelect={onCurrencySelect}
           selectedCurrency={currency}
+          hasManage={false}
           otherSelectedCurrency={otherCurrency}
           showCommonBases={showCommonBases}
         />
@@ -482,6 +483,7 @@ export function CurrencyNFTInputPanel({
           onDismiss={handleDismissSearch}
           onCurrencySelect={onCurrencySelect}
           selectedCurrency={currency}
+          hasManage={false}
           otherSelectedCurrency={otherCurrency}
           showCommonBases={showCommonBases}
           disabledCurrencys={disabledCurrencys}
