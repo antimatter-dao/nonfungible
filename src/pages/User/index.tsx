@@ -218,7 +218,7 @@ export default function User() {
                       <TYPE.black fontSize={28}>{userInfo?.username}</TYPE.black>
                       <Capsule>#{userInfo?.id}</Capsule>
                     </RowFixed>
-                    <TYPE.darkGray>
+                    <TYPE.darkGray fontWeight={400}>
                       <AutoRow>
                         {userInfo?.account} <CopyHelper toCopy={userInfo?.account ?? ''} />
                       </AutoRow>
@@ -239,31 +239,33 @@ export default function User() {
             </AutoColumn>
             <SwitchTab onTabClick={handleTabClick} currentTab={currentTab} />
             {currentTab === UserInfoTabs.POSITION /*|| currentTab === Tabs.LOCKER*/ && (
-              <ContentWrapper>
+              <>
                 {positionCardList.length === 0 ? (
                   <span>You have no NFT at the moment</span>
                 ) : (
-                  positionCardList.map(item => {
-                    if (!item) return null
-                    const { color, address, icons, indexId, creator, name, id } = item
-                    return (
-                      <NFTCard
-                        id={id}
-                        color={color}
-                        address={address}
-                        icons={icons}
-                        indexId={indexId}
-                        key={indexId + id}
-                        creator={creator}
-                        name={name}
-                        onClick={() => {
-                          history.push(`/spot_detail/${indexId}`)
-                        }}
-                      />
-                    )
-                  })
+                  <ContentWrapper>
+                    {positionCardList.map(item => {
+                      if (!item) return null
+                      const { color, address, icons, indexId, creator, name, id } = item
+                      return (
+                        <NFTCard
+                          id={id}
+                          color={color}
+                          address={address}
+                          icons={icons}
+                          indexId={indexId}
+                          key={indexId + id}
+                          creator={creator}
+                          name={name}
+                          onClick={() => {
+                            history.push(`/spot_detail/${indexId}`)
+                          }}
+                        />
+                      )
+                    })}
+                  </ContentWrapper>
                 )}
-              </ContentWrapper>
+              </>
             )}
             {currentTab === UserInfoTabs.INDEX && (
               <Table

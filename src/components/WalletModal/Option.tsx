@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { ExternalLink } from '../../theme'
+import Chevron from 'assets/svg/chevron_right.svg'
 
 const InfoCard = styled.button<{ active?: boolean }>`
   background-color: transparent;
@@ -17,11 +18,22 @@ const InfoCard = styled.button<{ active?: boolean }>`
 
 const OptionCard = styled(InfoCard as any)`
   display: flex;
+  z-index: 1;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   margin-top: 2rem;
-  padding: 14px;
+  padding: 18px 30px;
+  position: relative;
+  background-color: #ffffff;
+  :after {
+    content: '';
+    width: 8px;
+    height: 16px;
+    background: url(${Chevron}) 100% 100% no-repeat;
+    right: 30px
+    position:absolute;
+  }
 `
 
 const OptionCardLeft = styled.div`
@@ -79,7 +91,7 @@ const IconWrapper = styled.div<{ size?: number | null }>`
   justify-content: center;
   & > img,
   span {
-    height: ${({ size }) => (size ? size + 'px' : '24px')};
+    height: auto;
     width: ${({ size }) => (size ? size + 'px' : '24px')};
   }
   ${({ theme }) => theme.mediaWidth.upToMedium`

@@ -25,8 +25,10 @@ const Web3StatusGeneric = styled(ButtonOutlined)`
   border-radius: 4px;
   cursor: pointer;
   user-select: none;
+  :hover,
   :focus {
     outline: none;
+    box-shadow: none;
   }
 `
 const Web3StatusError = styled(Web3StatusGeneric)`

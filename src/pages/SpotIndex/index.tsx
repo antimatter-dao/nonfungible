@@ -222,6 +222,7 @@ export function Search({ onSearch }: { onSearch: (searchParam: string, searchBy:
             marginRight="10px"
           />
           <TextValueInput
+            borderColor="#ffffff"
             value={searchBy}
             onUserInput={val => {
               setSearchBy(val)

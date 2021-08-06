@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
 import { useAggregateUniBalance } from '../../state/wallet/hooks'
-import { ButtonText, TYPE } from '../../theme'
+import { ButtonText, ExternalLink, TYPE } from '../../theme'
 import Row, { RowFixed, RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
 import usePrevious from '../../hooks/usePrevious'
@@ -38,8 +38,8 @@ interface Tab extends TabContent {
 export const tabs: Tab[] = [
   { title: 'Spot Index', route: 'spot_index' },
   { title: 'Future Index', route: 'future_index' },
-  { title: 'Locker', route: 'locker' },
-  { title: 'Governance', route: 'governance' }
+  { title: 'Locker', route: 'locker' }
+  // { title: 'Governance', route: 'https://governance.antimatter.finance/' }
 ]
 
 export const headerHeightDisplacement = '32px'
@@ -54,7 +54,7 @@ const HeaderFrame = styled.div`
   position: relative;
   border-bottom: 1px solid ${({ theme }) => theme.text5};
   padding: 21px 0 0;
-  z-index: 5;
+  z-index: 6;
   background-color:${({ theme }) => theme.bg1}
   ${({ theme }) => theme.mediaWidth.upToLarge`
     grid-template-columns: 1fr;
@@ -204,7 +204,7 @@ const StyledNavLink = styled(NavLink).attrs({
   outline: none;
   cursor: pointer;
   text-decoration: none;
-  color: ${({ theme }) => theme.text2};
+  color: ${({ theme }) => theme.text4};
   width: fit-content;
   margin: 0 20px;
   font-weight: 400;
@@ -221,6 +221,30 @@ const StyledNavLink = styled(NavLink).attrs({
     color: ${({ theme }) => theme.text1};
   }
 `
+const StyledExternalLink = styled(ExternalLink)`
+  ${({ theme }) => theme.flexRowNoWrap}
+  align-items: left;
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: ${({ theme }) => theme.text4};
+  width: fit-content;
+  margin: 0 20px;
+  font-weight: 400;
+  padding: 10px 0 31px;
+  white-space: nowrap;
+  transition: 0.5s;
+  border-bottom: 1px solid transparent;
+  &.${activeClassName} {
+    color: ${({ theme }) => theme.text1};
+    border-bottom: 1px solid ${({ theme }) => theme.text1};
+  }
+  :hover,
+  :focus {
+    color: ${({ theme }) => theme.text1};
+  }
+`
+
 const UserButtonWrap = styled.div`
   position: relative;
   :hover {
@@ -340,6 +364,7 @@ export default function Header() {
               {title}
             </StyledNavLink>
           ))}
+          <StyledExternalLink href="https://governance.antimatter.finance/">Governance</StyledExternalLink>
         </HeaderLinks>
         <div style={{ paddingLeft: 8, display: 'flex', alignItems: 'center', marginLeft: 'auto', marginRight: '2rem' }}>
           <HeaderControls>
@@ -382,9 +407,11 @@ export default function Header() {
                   <UserMenu account={account} />
                 </UserButtonWrap>
               ) : (
-                <UserButton onClick={toShowUserPanel} isOpen={!!match}>
-                  <AntimatterIcon />
-                </UserButton>
+                account && (
+                  <UserButton onClick={toShowUserPanel} isOpen={!!match}>
+                    <AntimatterIcon />
+                  </UserButton>
+                )
               )}
             </AccountElement>
           </HeaderControls>
@@ -413,7 +440,9 @@ function UserMenu({ account }: { account?: string | null }) {
         <UserButton isOpen={true} disabled size="28px">
           <AntimatterIcon />
         </UserButton>
-        <TYPE.darkGray style={{ marginLeft: 15 }}>{account && shortenAddress(account)}</TYPE.darkGray>
+        <TYPE.darkGray fontWeight={400} style={{ marginLeft: 15 }}>
+          {account && shortenAddress(account)}
+        </TYPE.darkGray>
         {account && <Copy toCopy={account} fixedSize />}
       </div>
       <div>

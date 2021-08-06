@@ -7,6 +7,7 @@ import '@reach/dialog/styles.css'
 import { useGesture } from 'react-use-gesture'
 import { transparentize } from 'polished'
 import { Marginer } from '../../pages/App'
+import gradient from 'assets/svg/overlay_gradient.svg'
 // import { headerHeightDisplacement } from '../Header'
 
 const AnimatedDialogOverlay = animated(DialogOverlay)
@@ -20,17 +21,18 @@ export const StyledDialogOverlay = styled(AnimatedDialogOverlay)<{
   &[data-reach-dialog-overlay] {
     z-index: ${({ zindex }) => zindex ?? 2};
     overflow: ${({ overflow }) => overflow ?? 'hidden'};
-    /* padding-top: ${({ theme }) => theme.headerHeight} */
 
     display: flex;
     align-items: ${({ alignitems }) => alignitems ?? 'center'};
     justify-content: center;
 
-    background-color: ${({ theme, color }) => color ?? theme.modalBG};
+    background: #000000 url(${gradient}) no-repeat left bottom;
+
+    height: calc(100vh - ${({ theme }) => theme.headerHeight});
+    top: ${({ theme }) => theme.headerHeight};
     ${({ theme }) => theme.mediaWidth.upToSmall`
     height: calc(100% - ${theme.headerHeight});
     justify-content: flex-end;
-    // padding-top: ${theme.mobileHeaderHeight}
     `}
   }
 `

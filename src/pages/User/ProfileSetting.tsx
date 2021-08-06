@@ -88,7 +88,7 @@ export default function ProfileSetting({
   )
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss} maxWidth={600} zIndex={6}>
-      <AppBody maxWidth="100%" style={{ position: 'relative', padding: 0 }}>
+      <AppBody maxWidth="100%" style={{ position: 'relative', padding: 0, border: 'none', boxShadow: 'none' }}>
         <Close onClick={onDismiss} />
         <form onSubmit={handleSubmit} name="userInfo">
           <AutoColumn gap="40px" style={{ padding: '52px' }}>
