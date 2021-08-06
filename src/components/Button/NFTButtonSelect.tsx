@@ -26,11 +26,12 @@ export const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; wi
   height: 3rem;
   background-color: ${({ theme }) => theme.text1};
   color: ${({ selected, theme }) => (selected ? theme.bg1 : theme.bg5)};
-  border-radius: 14px;
+  border-radius: 10px;
   border: unset;
   padding: 0 10px 0 15px;
   border: 1px solid transparent;
-
+  display: flex;
+  align-items: center;
   :focus,
   :active {
     border: 1px solid ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.primary1))};

@@ -4,7 +4,13 @@ import { StyledInput } from 'components/NumericalInput'
 import { AutoRow } from 'components/Row'
 import { TYPE } from 'theme'
 
-const CustomInput = styled(StyledInput)<{ disabled?: boolean; error?: boolean; padding: string; height?: string }>`
+const CustomInput = styled(StyledInput)<{
+  disabled?: boolean
+  error?: boolean
+  padding: string
+  height?: string
+  borderColor?: string
+}>`
   width: 100%;
   font-size: 16px;
   font-weight: 400;
@@ -13,15 +19,20 @@ const CustomInput = styled(StyledInput)<{ disabled?: boolean; error?: boolean; p
   padding: ${({ padding }) => padding + ' 20px'};
   width: 100%;
   background-color: ${({ disabled }) => (disabled ? 'rgba(0, 0, 0, 0.1)' : '#ffffff')};
-  border-radius: 14px;
+  border-radius: 10px;
   height:${({ height }) => height ?? 'auto'}
-  border: 1px solid ${({ theme, error }) => (error ? theme.red1 : theme.text3)};
+  border: 1px solid ${({ theme, error, borderColor }) => (error ? theme.red1 : borderColor ?? theme.text3)};
   ::placeholder {
     color: ${({ theme }) => theme.text3};
   } 
 `
 
-export const CustomTextArea = styled.textarea<{ error?: boolean; fontSize?: string; align?: string }>`
+export const CustomTextArea = styled.textarea<{
+  error?: boolean
+  fontSize?: string
+  align?: string
+  borderColor?: string
+}>`
   color: ${({ theme, disabled }) => (disabled ? theme.text3 : theme.bg1)};
   width: 100%
   position: relative;
@@ -30,7 +41,7 @@ export const CustomTextArea = styled.textarea<{ error?: boolean; fontSize?: stri
   border: none;
   padding: 20px 1rem;
   border-radius: 14px;
-  border: 1px solid ${({ theme, error }) => (error ? theme.red1 : theme.text3)};
+  border: 1px solid ${({ theme, error, borderColor }) => (error ? theme.red1 : borderColor ?? theme.text3)};
   background-color: ${({ disabled }) => (disabled ? 'rgba(0, 0, 0, 0.1)' : '#ffffff')};
   text-align: ${({ align }) => align && align};
   ::-webkit-search-decoration {
@@ -71,6 +82,7 @@ export const TextInput = React.memo(function InnerInput({
   maxWidth,
   hint,
   height,
+  borderColor,
   padding = '20px',
   ...rest
 }: {
@@ -84,6 +96,7 @@ export const TextInput = React.memo(function InnerInput({
   hint?: string
   padding?: string
   height?: string
+  borderColor?: string
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
   return (
     <Container width={width} maxWidth={maxWidth}>
@@ -108,6 +121,7 @@ export const TextInput = React.memo(function InnerInput({
           disabled={disabled}
           name={name}
           error={error}
+          borderColor={borderColor}
         />
       ) : (
         <CustomInput
@@ -120,6 +134,7 @@ export const TextInput = React.memo(function InnerInput({
           spellCheck="true"
           disabled={disabled}
           error={error}
+          borderColor={borderColor}
         />
       )}
       {hint && (
@@ -146,6 +161,7 @@ export const TextValueInput = React.memo(function InnerInput({
   padding = '20px',
   value,
   onUserInput,
+  borderColor,
   ...rest
 }: {
   error?: boolean
@@ -160,6 +176,7 @@ export const TextValueInput = React.memo(function InnerInput({
   height?: string
   maxLength?: number
   value: string | number
+  borderColor?: string
   onUserInput: (input: string) => void
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
   return (
@@ -189,6 +206,7 @@ export const TextValueInput = React.memo(function InnerInput({
           disabled={disabled}
           name={name}
           error={error}
+          borderColor={borderColor}
         />
       ) : (
         <CustomInput
@@ -206,6 +224,7 @@ export const TextValueInput = React.memo(function InnerInput({
           maxLength={maxLength}
           disabled={disabled}
           error={error}
+          borderColor={borderColor}
         />
       )}
       {hint && (

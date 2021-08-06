@@ -52,11 +52,10 @@ const Wrapper = styled.div`
     position: absolute;
     width: 800px;
     height: 180px;
-    left: 50%;
-    bottom: 0;
-    transform: translateY(60%) translateX(-50%);
-    background: rgba(178, 243, 85, 0.7);
-    filter: blur(160px);
+    left: -50px;
+    top: 500px;
+    background: rgba(178, 243, 85, 0.5);
+    filter: blur(120px);
     border-radius: 120px;
   }
 `
@@ -86,19 +85,6 @@ const UpperSection = styled.div`
   padding-top: 52px
   background: ${({ theme }) => theme.text1};
   overflow: hidden;
-  :after {
-    content:'';
-    position: absolute;
-    width: 800px;
-    height: 180px;
-    left: 50%;
-    bottom:0;
-    z-index:0;
-    transform: translateY(60%) translateX(-50%);
-    background: rgba(178, 243, 85, 0.7);
-    filter: blur(160px);
-    border-radius: 120px;
-  }
 
   h5 {
     margin: 0;
@@ -133,7 +119,7 @@ const OptionGrid = styled.div`
   display: grid;
   grid-gap: 10px;
   width: 360px;
-  margin: 0 3rem;
+  margin: 0 auto;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;
     grid-gap: 10px;
@@ -320,7 +306,7 @@ export default function WalletModal({
             header={option.name}
             subheader={null} //use OptionCard.descriptio to bring back multi-line
             icon={require('../../assets/images/' + option.iconName)}
-            size={21}
+            size={24}
           />
         )
       )
@@ -403,8 +389,8 @@ export default function WalletModal({
       onDismiss={toggleWalletModal}
       minHeight={false}
       maxHeight={90}
-      maxWidth={700}
-      width="fit-content"
+      maxWidth={640}
+      width="100%"
       zIndex={5}
     >
       <Wrapper>{getModalContent()}</Wrapper>

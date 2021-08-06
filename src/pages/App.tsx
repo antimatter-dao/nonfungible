@@ -24,6 +24,7 @@ const AppWrapper = styled.div`
   align-items: flex-start;
   overflow-x: hidden;
   background-color: ${({ theme }) => theme.bg1};
+  min-height: 100vh;
   ${({ theme }) => theme.mediaWidth.upToSmall`
   flex-direction: column;
   height: 100vh;
@@ -34,6 +35,9 @@ const ContentWrapper = styled.div`
   max-height: 100vh;
   overflow: auto;
   align-items: center;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    overflow-x:hidden;
+  `}
 `
 
 const HeaderWrapper = styled.div`
@@ -62,10 +66,21 @@ const BodyWrapper = styled.div`
   margin-bottom: ${({ theme }) => theme.headerHeight}
   `}
   ${({ theme }) => theme.mediaWidth.upToLarge`
-  margin-bottom: ${({ theme }) => theme.headerHeight}
+  margin-bottom: ${({ theme }) => theme.headerHeight};
+  display: none
   `}
   ${({ theme }) => theme.mediaWidth.upToSmall`
   margin-top: ${({ theme }) => theme.mobileHeaderHeight}
+  `};
+`
+
+const MobileHint = styled.div`
+  display: none;
+  color: #ffffff;
+  margin: 100px auto auto;
+  width: 300px
+    ${({ theme }) => theme.mediaWidth.upToLarge`
+  display: block
   `};
 `
 
@@ -92,6 +107,9 @@ export default function App() {
           <HeaderWrapper id="header">
             <Header />
           </HeaderWrapper>
+          <MobileHint>
+            Sorry, this app is currently unavailable on mobile. Please visit our desktop website to use the service.
+          </MobileHint>
           <BodyWrapper id="body">
             <Popups />
             <Polling />
