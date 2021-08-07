@@ -70,13 +70,13 @@ const BodyWrapper = styled.div`
   overflow-x: hidden;
   position: relative;
   ${({ theme }) => theme.mediaWidth.upToMedium`
+  display: none;
   margin-bottom: ${({ theme }) => theme.headerHeight};
   `}
   ${({ theme }) => theme.mediaWidth.upToLarge`
   margin-bottom: ${({ theme }) => theme.headerHeight};
   `}
   ${({ theme }) => theme.mediaWidth.upToSmall`
-  display: none
   margin-top: ${({ theme }) => theme.mobileHeaderHeight};
   `};
 `
@@ -86,7 +86,7 @@ const MobileHint = styled.div`
   color: #ffffff;
   margin: 100px auto auto;
   width: 300px;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
   display: block;
   `};
 `
