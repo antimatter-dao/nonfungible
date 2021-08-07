@@ -37,9 +37,14 @@ const InfoWrapper = styled(AutoColumn)`
 const StyledErrorLine = styled.div`
   word-wrap: break-word;
   display: flex;
-  align-items: center;
-  > * {
+  align-items: flex-start;
+  margin: -5px 0 5px 5px;
+  > svg {
+    width: 16px;
+    height: 16px;
     margin-right: 5px;
+    flex-shrink: 0;
+    stroke: ${({ theme }) => theme.red3};
   }
 `
 

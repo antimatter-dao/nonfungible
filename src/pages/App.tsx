@@ -46,12 +46,12 @@ const HeaderWrapper = styled.div`
   z-index: 10;
   justify-content: space-between;
   flex-direction: column;
-  ${({ theme }) => theme.flexRowNoWrap}
+  ${({ theme }) => theme.flexRowNoWrap};
   ${({ theme }) => theme.mediaWidth.upToSmall`
   height:0;
   overflow: hidden
   `}
-  position: fixed
+  position: fixed;
 `
 
 const HeaderFiller = styled.div`
@@ -70,14 +70,14 @@ const BodyWrapper = styled.div`
   overflow-x: hidden;
   position: relative;
   ${({ theme }) => theme.mediaWidth.upToMedium`
-  margin-bottom: ${({ theme }) => theme.headerHeight}
+  margin-bottom: ${({ theme }) => theme.headerHeight};
   `}
   ${({ theme }) => theme.mediaWidth.upToLarge`
   margin-bottom: ${({ theme }) => theme.headerHeight};
-  display: none
   `}
   ${({ theme }) => theme.mediaWidth.upToSmall`
-  margin-top: ${({ theme }) => theme.mobileHeaderHeight}
+  display: none
+  margin-top: ${({ theme }) => theme.mobileHeaderHeight};
   `};
 `
 
@@ -85,14 +85,14 @@ const MobileHint = styled.div`
   display: none;
   color: #ffffff;
   margin: 100px auto auto;
-  width: 300px
-    ${({ theme }) => theme.mediaWidth.upToLarge`
-  display: block
+  width: 300px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  display: block;
   `};
 `
 
 export const Marginer = styled.div`
-  ${({ theme }) => theme.desktop}
+  ${({ theme }) => theme.desktop};
 `
 
 // function TopLevelModals() {

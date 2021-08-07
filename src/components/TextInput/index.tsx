@@ -83,6 +83,7 @@ export const TextInput = React.memo(function InnerInput({
   hint,
   height,
   borderColor,
+  defaultTextAreaValue,
   padding = '20px',
   ...rest
 }: {
@@ -97,6 +98,7 @@ export const TextInput = React.memo(function InnerInput({
   padding?: string
   height?: string
   borderColor?: string
+  defaultTextAreaValue?: string
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
   return (
     <Container width={width} maxWidth={maxWidth}>
@@ -122,7 +124,9 @@ export const TextInput = React.memo(function InnerInput({
           name={name}
           error={error}
           borderColor={borderColor}
-        />
+        >
+          {defaultTextAreaValue}
+        </CustomTextArea>
       ) : (
         <CustomInput
           {...rest}
