@@ -115,9 +115,7 @@ export default function App() {
             <Header />
           </HeaderWrapper>
           <HeaderFiller />
-          <MobileHint>
-            Sorry, this app is currently unavailable on mobile. Please visit our desktop website to use the service.
-          </MobileHint>
+          <MobileHint>Mobile version is coming soon! Please use desktop version for now~</MobileHint>
           <BodyWrapper id="body">
             <Popups />
             <Polling />

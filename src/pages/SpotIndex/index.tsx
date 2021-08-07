@@ -25,7 +25,7 @@ const SearchParams = [
   },
   {
     id: 'createName',
-    option: 'create Name'
+    option: 'creator'
   }
   // {
   //   id: 'creatorName',
