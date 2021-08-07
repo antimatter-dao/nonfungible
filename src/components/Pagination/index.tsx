@@ -1,5 +1,5 @@
 import React from 'react'
-import Pagination from '@material-ui/lab/Pagination'
+import MuiPagination from '@material-ui/lab/Pagination'
 import styled from 'styled-components'
 import { ThemeProvider as MaterialThemeProvider } from '@material-ui/core/styles'
 import { createTheme } from '@material-ui/core/styles'
@@ -7,6 +7,12 @@ import { createTheme } from '@material-ui/core/styles'
 const materialTheme = createTheme({
   palette: {
     type: 'dark'
+  }
+})
+
+const materialThemeLight = createTheme({
+  palette: {
+    type: 'light'
   }
 })
 
@@ -23,13 +29,14 @@ interface PaginationProps {
   page: number
   setPage: (page: number) => void
   onChange?: (event: object, page: number) => void
+  isLightBg?: boolean
 }
-export default function BasicPagination({ count, page, onChange, setPage }: PaginationProps) {
+export default function Pagination({ count, page, onChange, setPage, isLightBg }: PaginationProps) {
   return (
-    <MaterialThemeProvider theme={materialTheme}>
+    <MaterialThemeProvider theme={isLightBg ? materialThemeLight : materialTheme}>
       {count && (
         <StyledPagination>
-          <Pagination
+          <MuiPagination
             count={count}
             page={page}
             onChange={(event, page) => {

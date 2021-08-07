@@ -82,20 +82,30 @@ export function getAccountInfo(address: string): Promise<LoginRes> {
   return promiseGenerator(request) as Promise<LoginRes>
 }
 
-export function positionListFetch(token: string | undefined, address: string | undefined) {
+export function positionListFetch(
+  token: string | undefined,
+  address: string | undefined,
+  currentPage: number,
+  pageSize: number
+) {
   if (!token || !address) {
     return
   }
   const request = new Request(`${domain}/app/getPositionList`, {
     method: 'POST',
     headers: { ...headers, token },
-    body: JSON.stringify({ address })
+    body: JSON.stringify({ address, curPage: currentPage, pageSize })
   })
 
   return promiseGenerator(request)
 }
 
-export function indexListFetch(token: string | undefined, address: string | undefined) {
+export function indexListFetch(
+  token: string | undefined,
+  address: string | undefined,
+  currentPage: number,
+  pageSize: number
+) {
   if (!token || !address) {
     return
   }
@@ -103,7 +113,7 @@ export function indexListFetch(token: string | undefined, address: string | unde
   const request = new Request(`${domain}/app/getIndexList`, {
     method: 'POST',
     headers: { ...headers, token },
-    body: JSON.stringify({ address })
+    body: JSON.stringify({ address, curPage: currentPage, pageSize })
   })
 
   return promiseGenerator(request)

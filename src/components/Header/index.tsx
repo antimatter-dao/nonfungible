@@ -37,9 +37,9 @@ interface Tab extends TabContent {
 
 export const tabs: Tab[] = [
   { title: 'Spot Index', route: 'spot_index' },
-  { title: 'Future Index', route: 'future_index' },
-  { title: 'Locker', route: 'locker' }
-  // { title: 'Governance', route: 'https://governance.antimatter.finance/' }
+  { title: 'Locker', route: 'locker' },
+  { title: 'Collectables', route: 'collectables' },
+  { title: 'Governance', link: 'https://governance.antimatter.finance/' }
 ]
 
 export const headerHeightDisplacement = '32px'
@@ -326,6 +326,7 @@ const UserMenuItem = styled.button`
   background-color: transparent;
   text-align: left;
   font-size: 16px;
+  cursor: pointer;
   :hover {
     background-color: #ededed;
   }
@@ -359,12 +360,19 @@ export default function Header() {
           <StyledLogo />
         </Link>
         <HeaderLinks>
-          {tabs.map(({ title, route }) => (
-            <StyledNavLink to={'/' + route} key={route}>
-              {title}
-            </StyledNavLink>
-          ))}
-          <StyledExternalLink href="https://governance.antimatter.finance/">Governance</StyledExternalLink>
+          {tabs.map(({ title, route, link }) => {
+            if (route) {
+              return (
+                <StyledNavLink to={'/' + route} key={route}>
+                  {title}
+                </StyledNavLink>
+              )
+            }
+            if (link) {
+              return <StyledExternalLink href={link}>{title}</StyledExternalLink>
+            }
+            return null
+          })}
         </HeaderLinks>
         <div style={{ paddingLeft: 8, display: 'flex', alignItems: 'center', marginLeft: 'auto', marginRight: '2rem' }}>
           <HeaderControls>
@@ -453,6 +461,7 @@ function UserMenu({ account }: { account?: string | null }) {
           <UserMenuItem onClick={() => history.push('/profile/' + UserInfoTabs.INDEX)}>
             {UserInfoTabRoute[UserInfoTabs.INDEX]}
           </UserMenuItem>
+          <UserMenuItem onClick={() => history.push('/profile/settings')}>Settings</UserMenuItem>
         </AutoColumn>
       </div>
       <UserMenuItem onClick={logout}>Logout</UserMenuItem>

@@ -9,7 +9,7 @@ import { ReactComponent as SearchIcon } from '../../assets/svg/search.svg'
 import { TextValueInput } from 'components/TextInput'
 import useNFTList from 'hooks/useNFTList'
 import CurrencyLogo from 'components/CurrencyLogo'
-import BasicPagination from './BasicPagination'
+import Pagination from 'components/Pagination'
 import { AnimatedImg, AnimatedWrapper, TYPE } from 'theme'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
 import { SportIndexSearchProps } from 'utils/option/httpFetch'
@@ -186,7 +186,7 @@ export default function SpotIndex() {
               />
             ))}
           </ContentWrapper>
-          <BasicPagination page={currentPage} count={countPages} setPage={setCurrentPage} />
+          <Pagination page={currentPage} count={countPages} setPage={setCurrentPage} />
         </>
       )}
     </Wrapper>

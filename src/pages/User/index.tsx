@@ -1,10 +1,11 @@
 import React, { useCallback, useState, useMemo, useEffect } from 'react'
 import styled from 'styled-components'
+import { useHistory, useParams, useLocation } from 'react-router-dom'
 import { AutoColumn } from 'components/Column'
 import AppBody from 'pages/AppBody'
 import { AutoRow, RowBetween, RowFixed } from 'components/Row'
 import { ButtonOutlinedBlack } from 'components/Button'
-import { TYPE } from 'theme'
+import { AnimatedImg, AnimatedWrapper, TYPE } from 'theme'
 import CopyHelper from 'components/AccountDetails/Copy'
 import ProfileFallback from 'assets/images/profile-fallback.png'
 import NFTCard from 'components/NFTCard'
@@ -18,7 +19,8 @@ import { ReactComponent as LogOut } from 'assets/svg/log_out.svg'
 import ProfileSetting from './ProfileSetting'
 import { useCurrentUserInfo, useLogOut } from 'state/userInfo/hooks'
 import { usePositionList, useIndexList } from 'hooks/useMyList'
-import { useHistory, useParams, useLocation } from 'react-router-dom'
+import Pagination from 'components/Pagination'
+import Loader from 'assets/svg/antimatter_background_logo_dark.svg'
 
 export enum UserInfoTabs {
   POSITION = 'my_position',
@@ -166,9 +168,10 @@ export default function User() {
   const [currentTab, setCurrentTab] = useState(UserInfoTabs.POSITION)
   const [showSetting, setShowSetting] = useState(false)
   const userInfo = useCurrentUserInfo()
-  const positionCardList = usePositionList(userInfo)
-  const indexList = useIndexList(userInfo)
+  const { data: positionCardList, page: positionPage, loading: positionIsLoading } = usePositionList(userInfo)
+  const { data: indexList, page: indexPage, loading: indexIsLoading } = useIndexList(userInfo)
   const logout = useLogOut()
+
   const handleTabClick = useCallback(
     tab => () => {
       setCurrentTab(tab)
@@ -176,12 +179,16 @@ export default function User() {
     },
     [history]
   )
+
   const handleHideSetting = useCallback(() => {
     setShowSetting(false)
-  }, [])
+    history.push('/profile/' + currentTab)
+  }, [currentTab, history])
+
   const handleShowSetting = useCallback(() => {
     setShowSetting(true)
-  }, [])
+    history.push('/profile/settings')
+  }, [history])
 
   const handleLogOut = useCallback(() => {
     logout()
@@ -200,8 +207,12 @@ export default function User() {
   )
 
   useEffect(() => {
-    tab && UserInfoTabRoute[tab as keyof typeof UserInfoTabRoute] && setCurrentTab(tab as UserInfoTabs)
-  }, [location, tab])
+    if (tab && UserInfoTabRoute[tab as keyof typeof UserInfoTabRoute]) {
+      setCurrentTab(tab as UserInfoTabs)
+      setShowSetting(false)
+    }
+    tab && tab === 'settings' && handleShowSetting()
+  }, [handleShowSetting, location, tab])
 
   return (
     <>
@@ -238,42 +249,71 @@ export default function User() {
               <Synopsis>{userInfo?.bio}</Synopsis>
             </AutoColumn>
             <SwitchTab onTabClick={handleTabClick} currentTab={currentTab} />
-            {currentTab === UserInfoTabs.POSITION /*|| currentTab === Tabs.LOCKER*/ && (
+            {((currentTab === UserInfoTabs.INDEX && indexIsLoading) ||
+              (currentTab === UserInfoTabs.POSITION && positionIsLoading)) && (
+              <AnimatedWrapper style={{ marginTop: 40 }}>
+                <AnimatedImg>
+                  <img src={Loader} alt="loading-icon" />
+                </AnimatedImg>
+              </AnimatedWrapper>
+            )}
+            {!positionIsLoading && currentTab === UserInfoTabs.POSITION /*|| currentTab === Tabs.LOCKER*/ && (
               <>
                 {positionCardList.length === 0 ? (
                   <span>You have no NFT at the moment</span>
                 ) : (
-                  <ContentWrapper>
-                    {positionCardList.map(item => {
-                      if (!item) return null
-                      const { color, address, icons, indexId, creator, name, id } = item
-                      return (
-                        <NFTCard
-                          id={id}
-                          color={color}
-                          address={address}
-                          icons={icons}
-                          indexId={indexId}
-                          key={indexId + id}
-                          creator={creator}
-                          name={name}
-                          onClick={() => {
-                            history.push(`/spot_detail/${indexId}`)
-                          }}
-                        />
-                      )
-                    })}
-                  </ContentWrapper>
+                  <>
+                    <ContentWrapper>
+                      {positionCardList.map(item => {
+                        if (!item) return null
+                        const { color, address, icons, indexId, creator, name, id } = item
+                        return (
+                          <NFTCard
+                            id={id}
+                            color={color}
+                            address={address}
+                            icons={icons}
+                            indexId={indexId}
+                            key={indexId + id}
+                            creator={creator}
+                            name={name}
+                            onClick={() => {
+                              history.push(`/spot_detail/${indexId}`)
+                            }}
+                          />
+                        )
+                      })}
+                    </ContentWrapper>
+                    {positionPage.totalPages !== 0 && (
+                      <Pagination
+                        page={positionPage.currentPage}
+                        count={positionPage.totalPages}
+                        setPage={positionPage.setCurrentPage}
+                        isLightBg
+                      />
+                    )}
+                  </>
                 )}
               </>
             )}
-            {currentTab === UserInfoTabs.INDEX && (
-              <Table
-                header={['Index ID', 'Index Name', 'Current Issurance', 'Fees Earned', '']}
-                rows={indexData}
-                isHeaderGray
-              />
+            {!indexIsLoading && currentTab === UserInfoTabs.INDEX && (
+              <>
+                <Table
+                  header={['Index ID', 'Index Name', 'Current Issurance', 'Fees Earned', '']}
+                  rows={indexData}
+                  isHeaderGray
+                />
+                {indexPage.totalPages !== 0 && (
+                  <Pagination
+                    page={indexPage.currentPage}
+                    count={indexPage.totalPages}
+                    setPage={indexPage.setCurrentPage}
+                    isLightBg
+                  />
+                )}
+              </>
             )}
+
             {/* {currentTab === Tabs.ACTIVITY && (
                 <Table
                   header={['Catagory', 'IndexId', 'Action', 'Owner', 'Date']}

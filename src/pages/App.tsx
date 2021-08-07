@@ -42,6 +42,7 @@ const ContentWrapper = styled.div`
 
 const HeaderWrapper = styled.div`
   width: 100%;
+  z-index: 10;
   justify-content: space-between;
   flex-direction: column;
   ${({ theme }) => theme.flexRowNoWrap}
@@ -49,6 +50,11 @@ const HeaderWrapper = styled.div`
   height:0;
   overflow: hidden
   `}
+  position: fixed
+`
+
+const HeaderFiller = styled.div`
+  height: ${({ theme }) => theme.headerHeight};
 `
 
 const BodyWrapper = styled.div`
@@ -107,6 +113,7 @@ export default function App() {
           <HeaderWrapper id="header">
             <Header />
           </HeaderWrapper>
+          <HeaderFiller />
           <MobileHint>
             Sorry, this app is currently unavailable on mobile. Please visit our desktop website to use the service.
           </MobileHint>
@@ -120,7 +127,7 @@ export default function App() {
                 <Route exact strict path="/" component={SpotIndex} />
                 <Route exact strict path="/spot_index" component={SpotIndex} />
                 <Route exact strict path="/spot_detail/:nftid" component={CardDetail} />
-                <Route exact strict path="/future_index" component={ComingSoon} />
+                <Route exact strict path="/collectables" component={ComingSoon} />
                 {/* <Route exact strict path="/locker" component={Locker} /> */}
                 <Route exact strict path="/locker" component={ComingSoon} />
                 {/* <Route exact strict path="/governance" component={Governance} /> */}

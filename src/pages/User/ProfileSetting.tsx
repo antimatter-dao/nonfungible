@@ -98,7 +98,7 @@ export default function ProfileSetting({
 
             <TextInput
               label="Username"
-              placeholder="Please enter the username"
+              placeholder={userInfo?.username ?? 'Please enter the username'}
               name="username"
               maxLength={20}
               hint="Maximum 20 characters"
@@ -106,7 +106,7 @@ export default function ProfileSetting({
             <TextInput
               label="Bio"
               hint="Maximum 200 characters"
-              placeholder="Please introduce yourself              "
+              placeholder={userInfo?.bio ?? 'Please introduce yourself'}
               name="description"
               maxLength={200}
               textarea
