@@ -46,14 +46,8 @@ export const Base = styled(RebassButton)<{
 export const ButtonPrimary = styled(Base)`
   background-color: ${({ theme }) => theme.primary1};
   color: ${({ theme }) => theme.bg1};
-  &:focus {
-    box-shadow: 0 0 0 1pt ${({ theme }) => theme.bg4};
-  }
   &:hover {
     background-color: ${({ theme }) => theme.primary4};
-  }
-  &:active {
-    box-shadow: 0 0 0 1pt ${({ theme }) => theme.bg4};
   }
   &:disabled {
     cursor: auto;

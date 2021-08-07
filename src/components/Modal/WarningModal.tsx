@@ -24,7 +24,7 @@ export default function WarningModal() {
               <X onClick={handleClose} style={{ cursor: 'pointer' }} />
             </RowBetween>
 
-            <TYPE.body>
+            <TYPE.black fontWeight={400}>
               Please note.The dapp is only open to non-U.S. persons and entities. All registrants must meet eligibility
               requirements to participate.
               <br />
@@ -34,7 +34,7 @@ export default function WarningModal() {
               time to time, including Cuba, Crimea region of Ukrain, Democratic people’s Republic of Korea, Iran, Syria,
               any person found on the OFAC specially designated nationals, blocked persons list, any other consolidated
               prohibited persons list as determined by any applicable governmental authority.
-            </TYPE.body>
+            </TYPE.black>
             <ButtonPrimary onClick={handleClose}>Understand</ButtonPrimary>
           </AutoColumn>
         </Modal>

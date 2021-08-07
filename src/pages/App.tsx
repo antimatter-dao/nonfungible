@@ -18,6 +18,7 @@ import GovernanceDetail from './NFTGovernance/NFTGovernanceDetail'
 import CardDetail from './CardDetail'
 import UserLogin from '../pages/User/Login'
 import User from './User'
+import WarningModal from 'components/Modal/WarningModal'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -120,7 +121,7 @@ export default function App() {
           <BodyWrapper id="body">
             <Popups />
             <Polling />
-            {/* <WarningModal /> */}
+            <WarningModal />
             {/* <TopLevelModals /> */}
             <Web3ReactManager>
               <Switch>
