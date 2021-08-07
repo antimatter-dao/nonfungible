@@ -26,6 +26,7 @@ export interface NFTCardProps {
   color: CardColor
   address: string
   id: string | number
+  noBorderArea?: boolean
 }
 
 export interface NFTGovernanceCardProps {
@@ -47,14 +48,14 @@ const formatSynposis = (synopsis: string) => {
   return synopsis
 }
 
-const CardWrapper = styled.div<{ color: CardColor }>`
+const CardWrapper = styled.div<{ color: CardColor; padding?: string | number }>`
   background: #ffffff;
   border-radius: 30px;
   height: 380px;
   width: 280px;
   position: relative;
   overflow: hidden;
-  padding: 20px;
+  padding: ${({ padding }) => padding ?? '20px'};
   cursor: pointer;
   :before {
     content: '';
@@ -94,11 +95,11 @@ const CardWrapper = styled.div<{ color: CardColor }>`
   }
 `
 
-const OutlineCard = styled.div`
+const OutlineCard = styled.div<{ borderRadius?: string }>`
   border: 1px solid ${({ theme }) => theme.text2};
   height: 100%;
   z-index: 2;
-  border-radius: 20px;
+  border-radius: ${({ borderRadius }) => borderRadius ?? '20px'};
   width: 100%;
   height: 100%;
   display: flex;
@@ -114,18 +115,24 @@ function NFTCardBase({
   children,
   color,
   address,
+  noBorderArea,
   onClick
 }: {
   children: React.ReactNode
   color: CardColor
   address: string
+  noBorderArea?: boolean
   onClick?: () => void
 }) {
   return (
-    <CardWrapper color={color} onClick={onClick}>
-      <CurvedText text={address} />
-      <CurvedText text={address} inverted />
-      <OutlineCard>{children}</OutlineCard>
+    <CardWrapper padding={noBorderArea ? 0 : '20px'} color={color} onClick={onClick}>
+      {!noBorderArea && (
+        <>
+          <CurvedText text={address} />
+          <CurvedText text={address} inverted />
+        </>
+      )}
+      <OutlineCard borderRadius={noBorderArea ? '30px' : '20px'}>{children}</OutlineCard>
     </CardWrapper>
   )
 }
@@ -137,10 +144,11 @@ export default function NFTCard({
   name,
   color,
   address,
+  noBorderArea,
   onClick
 }: NFTCardProps & { onClick?: () => void }) {
   return (
-    <NFTCardBase color={color} address={address} onClick={onClick}>
+    <NFTCardBase noBorderArea={noBorderArea} color={color} address={address} onClick={onClick}>
       <CurrencyLogosOverlay icons={icons} />
       <TYPE.black fontWeight={700} fontSize={28} color="#000000" style={{ ...ellipsis('100%') }}>
         {name}

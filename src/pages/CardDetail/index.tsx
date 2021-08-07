@@ -70,10 +70,10 @@ const StyledNFTCard = styled.div`
 const StyledAvatar = styled.div<{ wh?: string }>`
   width: ${({ wh }) => (wh ? wh : '36px')};
   height: ${({ wh }) => (wh ? wh : '36px')};
-  flex-shrink: 1;
+  flex-shrink: 0;
   margin-right: 12px;
   > * {
-    background-color: #eee;
+    border-radius: 50%;
     width: 100%;
     height: 100%;
   }
@@ -113,6 +113,8 @@ const MarketPrice = styled(RowBetween)`
 const TokenWrapper = styled.div`
   width: 320px;
   padding: 22px 0;
+  display: flex;
+  align-items: center;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `
 const AssetsWrapper = styled.div`

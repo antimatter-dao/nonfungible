@@ -82,7 +82,7 @@ const CurrencyNFTSelect = styled.button<{ selected: boolean; halfWidth?: boolean
   background-color: ${({ theme }) => theme.bg2};
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text3)};
   border-radius: 14px;
-  box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
+  /* box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')}; */
   outline: none;
   cursor: pointer;
   user-select: none;

@@ -26,11 +26,11 @@ import { /*Filler,*/ Wrapper } from '../Modal'
 import { Marginer } from 'pages/App'
 
 const StyledMenuIcon = styled(Settings)`
-  height: 20px;
-  width: 20px;
+  height: 16px;
+  width: 16px;
 
   > * {
-    stroke: ${({ theme }) => theme.text2};
+    stroke: ${({ theme }) => theme.black};
   }
 
   :hover {
