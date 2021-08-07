@@ -8,6 +8,7 @@ import { useIndexNFTContract } from './useContract'
 import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
 import { useWeb3React } from '@web3-react/core'
 import { getAccountInfo, getNFTTransferRecords } from 'utils/option/httpFetch'
+import BigNumber from 'bignumber.js'
 
 export interface NFTIndexInfoProps {
   name: string
@@ -103,6 +104,9 @@ export function useAssetsTokens(assetsParameters: AssetsParameter[] | undefined)
   return useMemo(() => {
     if (!tokens || !assetsParameters) return []
     return assetsParameters.map(item => {
+      if (item.currencyToken) {
+        return { ...item }
+      }
       // if (!Object.keys(tokens).includes(item.currency)) return []
       item.currencyToken = tokens[item.currency] as WrappedTokenInfo
       // if (!item.currencyToken) item.currencyToken = tokens[Object.keys(tokens)[0]] as WrappedTokenInfo
@@ -126,7 +130,8 @@ export function useNFTBalance(nftid: string | undefined) {
 export function useCheckBuyButton(
   ethAmount: CurrencyAmount | undefined,
   ETHbalance: CurrencyAmount | undefined,
-  number: string | undefined
+  number: string | undefined,
+  tokenFluiditys: (TokenAmount | null)[]
 ): BuyButtonProps {
   return useMemo(() => {
     const ret: BuyButtonProps = {
@@ -137,13 +142,53 @@ export function useCheckBuyButton(
       ret.disabled = true
       return ret
     }
+    if (!tokenFluiditys) {
+      ret.disabled = true
+      ret.text = 'Insufficient liquidity'
+      return ret
+    }
+    const Insufficients = tokenFluiditys.filter((item: TokenAmount | null) => {
+      return !item || new BigNumber(item.toSignificant()).isLessThan(0.5)
+    })
+    if (Insufficients.length) {
+      ret.disabled = true
+      ret.text = 'Insufficient liquidity'
+      return ret
+    }
     if (ETHbalance.lessThan(ethAmount.multiply(JSBI.BigInt(number)))) {
       ret.disabled = true
       ret.text = 'Insufficient ETH balance'
       return ret
     }
     return ret
-  }, [number, ethAmount, ETHbalance])
+  }, [number, ethAmount, ETHbalance, tokenFluiditys])
+}
+
+export function useCheckSellButton(number: string | undefined, tokenFluiditys: (TokenAmount | null)[]): BuyButtonProps {
+  return useMemo(() => {
+    const ret: BuyButtonProps = {
+      text: 'Confirm',
+      disabled: false
+    }
+    if (!number) {
+      ret.disabled = true
+      return ret
+    }
+    if (!tokenFluiditys) {
+      ret.disabled = true
+      ret.text = 'Insufficient liquidity'
+      return ret
+    }
+    const Insufficients = tokenFluiditys.filter((item: TokenAmount | null) => {
+      return !item || new BigNumber(item.toSignificant()).isLessThan(0.5)
+    })
+    if (Insufficients.length) {
+      ret.disabled = true
+      ret.text = 'Insufficient liquidity'
+      return ret
+    }
+    return ret
+  }, [number, tokenFluiditys])
 }
 
 export function useIsApprovedForAll(account: string | undefined, spender: string): boolean {

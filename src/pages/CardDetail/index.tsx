@@ -32,7 +32,7 @@ import { NumberNFTInputPanel } from 'components/NumberInputPanel'
 import { BuyComfirmModel, SellComfirmModel } from '../../components/NFTSpotDetail/ComfirmModel'
 import { AssetsParameter } from '../../components/Creation'
 import { PriceState, useNFTETHPrice } from '../../data/Reserves'
-import { CurrencyAmount, JSBI } from '@uniswap/sdk'
+import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useWeb3React } from '@web3-react/core'
 import { useAmountOutMins, useIndexSellCall } from 'hooks/useIndexSellCallback'
@@ -188,6 +188,10 @@ export default function CardDetail({
     ethAmount: [priceState, price],
     eths
   } = useNFTETHPrice(tokens)
+
+  const tokenFluiditys: (TokenAmount | null)[] = useMemo(() => {
+    return eths.map(val => val[3])
+  }, [eths])
 
   const thisNFTethAmount = CurrencyAmount.ether(JSBI.BigInt(price ?? '0'))
   // console.log('priceState', priceState)
@@ -473,6 +477,7 @@ export default function CardDetail({
         }}
         fee={INDEX_NFT_BUY_FEE}
         slippage={slippage}
+        tokenFluiditys={tokenFluiditys}
         ethAmount={thisNFTethAmount}
         ETHbalance={ETHbalance ?? undefined}
         number={buyAmount}
@@ -485,6 +490,7 @@ export default function CardDetail({
         onDismiss={() => {
           setSellConfirmModal(false)
         }}
+        tokenFluiditys={tokenFluiditys}
         ethAmount={thisNFTethAmount}
         ETHbalance={ETHbalance ?? undefined}
         slippage={slippage}
