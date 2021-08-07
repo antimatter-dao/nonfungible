@@ -35,7 +35,6 @@ export function SpotConfirmation({
   const { creatorId, description, name, assetsParameters } = dataInfo
   const { account } = useWeb3React()
   const userInfo = useCurrentUserInfo()
-  console.log('🚀 ~ file: Confirmation.tsx ~ line 36 ~ userInfo', userInfo)
   return (
     <AutoColumn gap="40px">
       <div>

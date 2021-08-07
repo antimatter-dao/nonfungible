@@ -16,6 +16,20 @@ import { useAssetsTokens } from 'hooks/useIndexDetail'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { Currency } from '@uniswap/sdk'
 import { useCurrentUserInfo } from 'state/userInfo/hooks'
+import { X } from 'react-feather'
+
+const StyledCurrencyInputPanel = styled.div<{ lessTwo: boolean }>`
+  padding-right: ${({ lessTwo }) => (lessTwo ? '0' : '40px')};
+  position: relative;
+  .del-input {
+    display: ${({ lessTwo }) => (lessTwo ? 'none' : 'black')};
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+`
 
 export const IndexIcon = styled.div<{ current?: boolean }>`
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -132,6 +146,17 @@ export default function SpotIndex({
     setAssetParams([...assetParams, { amount: '', currency: '' }])
   }, [assetParams, setAssetParams])
 
+  const delAssetsItem = useCallback(
+    index => {
+      if (assetParams.length < 3) return
+      const _assetParams = assetParams.filter((item, idx) => {
+        return item && idx !== index
+      })
+      setAssetParams(_assetParams)
+    },
+    [assetParams, setAssetParams]
+  )
+
   const assetsBtnDIsabled = useMemo(() => {
     return (
       assetParams.filter(val => {
@@ -229,7 +254,7 @@ export default function SpotIndex({
           <AutoColumn gap="10px">
             {assetParams.map((item: AssetsParameter, index: number) => {
               return (
-                <React.Fragment key={index}>
+                <StyledCurrencyInputPanel key={index} lessTwo={!!(assetParams.length < 3)}>
                   <CurrencyNFTInputPanel
                     hiddenLabel={true}
                     value={item.amount}
@@ -253,7 +278,13 @@ export default function SpotIndex({
                     id="stake-liquidity-token"
                     hideSelect={false}
                   />
-                </React.Fragment>
+                  <X
+                    className="del-input"
+                    onClick={() => {
+                      delAssetsItem(index)
+                    }}
+                  />
+                </StyledCurrencyInputPanel>
               )
             })}
           </AutoColumn>

@@ -8,11 +8,13 @@ import { RowBetween, RowFixed } from 'components/Row'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { AssetsParameter } from 'components/Creation'
 import { BigNumber } from 'bignumber.js'
-import { CurrencyAmount, JSBI } from '@uniswap/sdk'
-import { useCheckBuyButton } from 'hooks/useIndexDetail'
+import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
+import { useCheckBuyButton, useCheckSellButton } from 'hooks/useIndexDetail'
 import { useNFTApproveCallback, ApprovalState } from 'hooks/useNFTApproveCallback'
 import { INDEX_NFT_ADDRESS } from '../../constants'
 import { Dots } from 'components/swap/styleds'
+import IconClose from 'components/Icons/IconClose'
+import { AlertCircle } from 'react-feather'
 
 export const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -32,6 +34,15 @@ const InfoWrapper = styled(AutoColumn)`
   overflow-y: auto;
 `
 
+const StyledErrorLine = styled.div`
+  word-wrap: break-word;
+  display: flex;
+  align-items: center;
+  > * {
+    margin-right: 5px;
+  }
+`
+
 const RightText = styled(TYPE.small)`
   color: ${({ theme }) => theme.text6};
   max-width: 152px;
@@ -39,12 +50,26 @@ const RightText = styled(TYPE.small)`
   /* align-self: flex-start; */
 `
 
+function ErrorLine({ tokenFluidity }: { tokenFluidity: TokenAmount | null }) {
+  if (!tokenFluidity) return null
+  if (new BigNumber(tokenFluidity.toSignificant()).isGreaterThanOrEqualTo(0.5)) return null
+  return (
+    <StyledErrorLine>
+      <AlertCircle />
+      <TYPE.small color="text4">
+        Warning: the token has insufficient liquidity on dex, please trade carefully
+      </TYPE.small>
+    </StyledErrorLine>
+  )
+}
+
 export function BuyComfirmModel({
   isOpen,
   onDismiss,
   onConfirm,
   assetsParameters,
   number,
+  tokenFluiditys,
   ethAmount,
   fee,
   slippage,
@@ -59,33 +84,38 @@ export function BuyComfirmModel({
   ETHbalance: CurrencyAmount | undefined
   fee: string
   slippage: string | number
+  tokenFluiditys: (TokenAmount | null)[]
 }) {
-  const btn = useCheckBuyButton(ethAmount, ETHbalance, number)
+  const btn = useCheckBuyButton(ethAmount, ETHbalance, number, tokenFluiditys)
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss} minHeight={30} maxHeight={85} width="480px" maxWidth={480}>
       <Wrapper>
+        <IconClose onEvent={onDismiss} style={{ top: 28, right: 28 }} />
         <AutoColumn gap="15px">
           <div>
             <TYPE.largeHeader fontSize={30} color="black">
               Confirmation
             </TYPE.largeHeader>
-            <TYPE.small fontSize={12}>Please review the following information </TYPE.small>
+            <TYPE.darkGray fontSize={12}>Please review the following information </TYPE.darkGray>
           </div>
           <InfoWrapper gap="10px">
             <TYPE.smallGray>You will receive :</TYPE.smallGray>
             {assetsParameters
               .filter(v => v.currencyToken)
-              .map(({ amount, currencyToken }) => (
-                <RowBetween key={currencyToken?.address}>
-                  <RowFixed>
-                    <CurrencyLogo currency={currencyToken} style={{ marginRight: 10 }} />
-                    <TYPE.smallGray>{currencyToken?.symbol}</TYPE.smallGray>
-                  </RowFixed>
-                  <RightText>
-                    {amount} * {number} = {new BigNumber(amount).multipliedBy(number).toString()}
-                  </RightText>
-                </RowBetween>
+              .map(({ amount, currencyToken }, index) => (
+                <>
+                  <RowBetween key={currencyToken?.address}>
+                    <RowFixed>
+                      <CurrencyLogo currency={currencyToken} style={{ marginRight: 10 }} />
+                      <TYPE.smallGray>{currencyToken?.symbol}</TYPE.smallGray>
+                    </RowFixed>
+                    <RightText>
+                      {amount} * {number} = {new BigNumber(amount).multipliedBy(number).toString()}
+                    </RightText>
+                  </RowBetween>
+                  <ErrorLine tokenFluidity={tokenFluiditys[index]} />
+                </>
               ))}
             <RowBetween style={{ marginTop: 10 }}>
               <TYPE.smallGray>You will pay :</TYPE.smallGray>
@@ -123,6 +153,7 @@ export function SellComfirmModel({
   number,
   ethAmount,
   slippage,
+  tokenFluiditys,
   ETHbalance
 }: {
   isOpen: boolean
@@ -133,13 +164,15 @@ export function SellComfirmModel({
   number: string
   ethAmount: CurrencyAmount | undefined
   ETHbalance: CurrencyAmount | undefined
+  tokenFluiditys: (TokenAmount | null)[]
 }) {
-  const btn = useCheckBuyButton(ethAmount, ETHbalance, number)
+  const btn = useCheckSellButton(number, tokenFluiditys)
   const [approvalState, approveCallback] = useNFTApproveCallback(INDEX_NFT_ADDRESS)
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss} minHeight={30} maxHeight={85} width="480px" maxWidth={480}>
       <Wrapper>
+        <IconClose onEvent={onDismiss} style={{ top: 28, right: 28 }} />
         <AutoColumn gap="15px">
           <div>
             <TYPE.largeHeader fontSize={30} color="black">
@@ -151,16 +184,19 @@ export function SellComfirmModel({
             <TYPE.smallGray>You will sell :</TYPE.smallGray>
             {assetsParameters
               .filter(v => v.currencyToken)
-              .map(({ amount, currencyToken }) => (
-                <RowBetween key={currencyToken?.address}>
-                  <RowFixed>
-                    <CurrencyLogo currency={currencyToken} style={{ marginRight: 10 }} />
-                    <TYPE.smallGray>{currencyToken?.symbol}</TYPE.smallGray>
-                  </RowFixed>
-                  <RightText>
-                    {amount} * {number} = {new BigNumber(amount).multipliedBy(number).toString()}
-                  </RightText>
-                </RowBetween>
+              .map(({ amount, currencyToken }, index) => (
+                <>
+                  <RowBetween key={currencyToken?.address}>
+                    <RowFixed>
+                      <CurrencyLogo currency={currencyToken} style={{ marginRight: 10 }} />
+                      <TYPE.smallGray>{currencyToken?.symbol}</TYPE.smallGray>
+                    </RowFixed>
+                    <RightText>
+                      {amount} * {number} = {new BigNumber(amount).multipliedBy(number).toString()}
+                    </RightText>
+                  </RowBetween>
+                  <ErrorLine tokenFluidity={tokenFluiditys[index]} />
+                </>
               ))}
             <RowBetween style={{ marginTop: 10 }}>
               <TYPE.smallGray>You will receive :</TYPE.smallGray>

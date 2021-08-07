@@ -71,7 +71,7 @@ export function usePair(tokenA?: Currency, tokenB?: Currency): [PairState, Pair 
 
 export interface NFTETHPriceProp {
   ethAmount: [PriceState, string | null]
-  eths: [PriceState, string | null, CurrencyAmount | null][]
+  eths: [PriceState, string | null, CurrencyAmount | null, TokenAmount | null][]
 }
 
 export function useNFTETHPrice(assets: AssetsParameter[]): NFTETHPriceProp {
@@ -87,11 +87,11 @@ export function useNFTETHPrice(assets: AssetsParameter[]): NFTETHPriceProp {
   const results = useMultipleContractSingleData(pairAddresses, PAIR_INTERFACE, 'getReserves')
 
   return useMemo(() => {
-    const eths: [PriceState, string | null, CurrencyAmount | null][] = results.map((result, i) => {
+    const eths: [PriceState, string | null, CurrencyAmount | null, TokenAmount | null][] = results.map((result, i) => {
       const { result: reserves, loading } = result
       const token = assets[i]
-      if (loading) return [PriceState.LOADING, null, null]
-      if (!chainId || !token.currencyToken || !reserves) return [PriceState.INVALID, null, null]
+      if (loading) return [PriceState.LOADING, null, null, null]
+      if (!chainId || !token.currencyToken || !reserves) return [PriceState.INVALID, null, null, null]
       const { reserve0, reserve1 } = reserves
       // console.log(
       //   'reserve0',
@@ -115,8 +115,13 @@ export function useNFTETHPrice(assets: AssetsParameter[]): NFTETHPriceProp {
         new BigNumber(ethPrice).multipliedBy(token.amount).toString(),
         WETH[chainId]
       )
-      if (!ethAmount) return [PriceState.INVALID, null, null]
-      return [PriceState.VALID, ethAmount.raw.toString(), ethAmount]
+      if (!ethAmount) return [PriceState.INVALID, null, null, null]
+      return [
+        PriceState.VALID,
+        ethAmount.raw.toString(),
+        ethAmount,
+        new TokenAmount(token.currencyToken, reserve1.toString())
+      ]
     })
 
     const ret: [PriceState, string | null] =
