@@ -113,6 +113,7 @@ export function allNFTFetch(curPage: number, { searchBy, searchParam }: SportInd
   const param = {
     indexName: searchParam === 'indexName' ? searchBy : '',
     nftId: searchParam === 'indexId' ? searchBy : '',
+    createName: searchParam === 'createName' ? searchBy : '',
     curPage,
     pageSize: '8'
   }
