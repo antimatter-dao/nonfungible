@@ -17,6 +17,9 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { Currency } from '@uniswap/sdk'
 import { useCurrentUserInfo } from 'state/userInfo/hooks'
 import { X } from 'react-feather'
+import { useNFTETHPrice } from 'data/Reserves'
+import { TokenAmount } from '@uniswap/sdk'
+import { useCheckSpotCreateButton } from 'hooks/useIndexCreateCallback'
 
 const StyledCurrencyInputPanel = styled.div<{ lessTwo: boolean }>`
   padding-right: ${({ lessTwo }) => (lessTwo ? '0' : '40px')};
@@ -209,6 +212,13 @@ export default function SpotIndex({
     [assetParams]
   )
 
+  const { eths } = useNFTETHPrice(data.assetsParameters)
+  const tokenFluiditys: (TokenAmount | null)[] = useMemo(() => {
+    return eths.map(val => val[3])
+  }, [eths])
+
+  const spotCreateButton = useCheckSpotCreateButton(tokenFluiditys)
+
   return (
     <>
       {current === 1 && (
@@ -316,9 +326,9 @@ export default function SpotIndex({
       )}
 
       {current === 4 && (
-        <SpotConfirmation dataInfo={data}>
-          <ButtonBlack onClick={onConfirm} height={60}>
-            Confirm
+        <SpotConfirmation dataInfo={data} tokenFluiditys={tokenFluiditys}>
+          <ButtonBlack onClick={onConfirm} disabled={spotCreateButton.disabled} height={60}>
+            {spotCreateButton.text}
           </ButtonBlack>
         </SpotConfirmation>
       )}

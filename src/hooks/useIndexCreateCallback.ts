@@ -2,6 +2,10 @@ import { useTransactionAdder } from '../state/transactions/hooks'
 import { useIndexNFTContract } from './useContract'
 import { calculateGasMargin } from '../utils'
 import { TransactionResponse } from '@ethersproject/providers'
+import { useMemo } from 'react'
+import { TokenAmount } from '@uniswap/sdk'
+import { TOKEN_FLUIDITY_LIMIT } from '../constants'
+import BigNumber from 'bignumber.js'
 
 export enum IndexCreateCallbackState {
   INVALID,
@@ -38,4 +42,31 @@ export function useIndexCreateCall(): {
     },
     error: ''
   }
+}
+
+interface SpotCreateButtonProps {
+  text: string
+  disabled: boolean
+}
+export function useCheckSpotCreateButton(tokenFluiditys: (TokenAmount | null)[]): SpotCreateButtonProps {
+  return useMemo(() => {
+    const ret: SpotCreateButtonProps = {
+      text: 'Confirm',
+      disabled: false
+    }
+    if (!tokenFluiditys) {
+      ret.disabled = true
+      ret.text = 'Insufficient liquidity'
+      return ret
+    }
+    const Insufficients = tokenFluiditys.filter((item: TokenAmount | null) => {
+      return !item || new BigNumber(item.toSignificant()).isLessThan(TOKEN_FLUIDITY_LIMIT)
+    })
+    if (Insufficients.length) {
+      ret.disabled = true
+      ret.text = 'Insufficient liquidity'
+      return ret
+    }
+    return ret
+  }, [tokenFluiditys])
 }
