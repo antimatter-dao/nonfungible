@@ -88,7 +88,7 @@ export function SpotConfirmation({
           {assetsParameters
             .filter(v => v.currencyToken)
             .map(({ amount, currencyToken }, index) => (
-              <>
+              <div key={index}>
                 <RowBetween>
                   <RowFixed>
                     <CurrencyLogo currency={currencyToken} style={{ marginRight: 10 }} />
@@ -97,7 +97,7 @@ export function SpotConfirmation({
                   <RightText>{amount}</RightText>
                 </RowBetween>
                 <TokenFluidityErrorLine tokenFluidity={tokenFluiditys[index]} />
-              </>
+              </div>
             ))}
         </AutoColumn>
 

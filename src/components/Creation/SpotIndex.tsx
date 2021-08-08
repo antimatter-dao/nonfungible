@@ -14,12 +14,13 @@ import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
 import { WrappedTokenInfo } from 'state/lists/hooks'
 import { useAssetsTokens } from 'hooks/useIndexDetail'
 import CurrencyLogo from 'components/CurrencyLogo'
-import { Currency } from '@uniswap/sdk'
+import { Currency, Token } from '@uniswap/sdk'
 import { useCurrentUserInfo } from 'state/userInfo/hooks'
 import { X } from 'react-feather'
 import { useNFTETHPrice } from 'data/Reserves'
 import { TokenAmount } from '@uniswap/sdk'
 import { useCheckSpotCreateButton } from 'hooks/useIndexCreateCallback'
+import { TokenInfo } from '@uniswap/token-lists'
 
 const StyledCurrencyInputPanel = styled.div<{ lessTwo: boolean }>`
   padding-right: ${({ lessTwo }) => (lessTwo ? '0' : '40px')};
@@ -280,6 +281,17 @@ export default function SpotIndex({
                     onCurrencySelect={currency => {
                       if (currency instanceof WrappedTokenInfo) {
                         const newData = { ...item, currency: currency.address, currencyToken: currency }
+                        handleParameterInput(index, newData)
+                      } else if (currency instanceof Token) {
+                        const tokenInfo: TokenInfo = {
+                          chainId: currency.chainId,
+                          address: currency.address,
+                          name: currency.name ?? '',
+                          decimals: currency.decimals,
+                          symbol: currency.symbol ?? ''
+                        }
+                        const _currency = new WrappedTokenInfo(tokenInfo, [])
+                        const newData = { ...item, currency: currency.address, currencyToken: _currency }
                         handleParameterInput(index, newData)
                       }
                     }}

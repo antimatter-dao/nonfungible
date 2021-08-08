@@ -369,7 +369,11 @@ export default function Header() {
               )
             }
             if (link) {
-              return <StyledExternalLink href={link}>{title}</StyledExternalLink>
+              return (
+                <StyledExternalLink href={link} key={link}>
+                  {title}
+                </StyledExternalLink>
+              )
             }
             return null
           })}
