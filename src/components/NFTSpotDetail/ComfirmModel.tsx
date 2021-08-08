@@ -11,7 +11,7 @@ import { BigNumber } from 'bignumber.js'
 import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
 import { useCheckBuyButton, useCheckSellButton } from 'hooks/useIndexDetail'
 import { useNFTApproveCallback, ApprovalState } from 'hooks/useNFTApproveCallback'
-import { INDEX_NFT_ADDRESS } from '../../constants'
+import { INDEX_NFT_ADDRESS, TOKEN_FLUIDITY_LIMIT } from '../../constants'
 import { Dots } from 'components/swap/styleds'
 import IconClose from 'components/Icons/IconClose'
 import { AlertCircle } from 'react-feather'
@@ -55,9 +55,10 @@ const RightText = styled(TYPE.small)`
   /* align-self: flex-start; */
 `
 
-function ErrorLine({ tokenFluidity }: { tokenFluidity: TokenAmount | null }) {
-  if (!tokenFluidity) return null
-  if (new BigNumber(tokenFluidity.toSignificant()).isGreaterThanOrEqualTo(0.5)) return null
+export function TokenFluidityErrorLine({ tokenFluidity }: { tokenFluidity: TokenAmount | null }) {
+  // if (!tokenFluidity) return null
+  if (tokenFluidity && new BigNumber(tokenFluidity.toSignificant()).isGreaterThanOrEqualTo(TOKEN_FLUIDITY_LIMIT))
+    return null
   return (
     <StyledErrorLine>
       <AlertCircle />
@@ -119,7 +120,7 @@ export function BuyComfirmModel({
                       {amount} * {number} = {new BigNumber(amount).multipliedBy(number).toString()}
                     </RightText>
                   </RowBetween>
-                  <ErrorLine tokenFluidity={tokenFluiditys[index]} />
+                  <TokenFluidityErrorLine tokenFluidity={tokenFluiditys[index]} />
                 </>
               ))}
             <RowBetween style={{ marginTop: 10 }}>
@@ -200,7 +201,7 @@ export function SellComfirmModel({
                       {amount} * {number} = {new BigNumber(amount).multipliedBy(number).toString()}
                     </RightText>
                   </RowBetween>
-                  <ErrorLine tokenFluidity={tokenFluiditys[index]} />
+                  <TokenFluidityErrorLine tokenFluidity={tokenFluiditys[index]} />
                 </>
               ))}
             <RowBetween style={{ marginTop: 10 }}>

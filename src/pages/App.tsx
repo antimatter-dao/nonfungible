@@ -19,6 +19,7 @@ import CardDetail from './CardDetail'
 import UserLogin from '../pages/User/Login'
 import User from './User'
 import WarningModal from 'components/Modal/WarningModal'
+import { ButtonWhite } from 'components/Button'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -86,9 +87,16 @@ const MobileHint = styled.div`
   color: #ffffff;
   margin: 100px auto auto;
   width: 300px;
+  text-align: center;
   ${({ theme }) => theme.mediaWidth.upToMedium`
   display: block;
   `};
+  > a {
+    text-decoration: none;
+    > button {
+      margin: 40px auto;
+    }
+  }
 `
 
 export const Marginer = styled.div`
@@ -115,7 +123,14 @@ export default function App() {
             <Header />
           </HeaderWrapper>
           <HeaderFiller />
-          <MobileHint>Mobile version is coming soon! Please use desktop version for now~</MobileHint>
+          <MobileHint>
+            <div>Mobile version is coming soon! Please use desktop version for now~</div>
+            <a href="https://antimatter.finance/">
+              <ButtonWhite width="240px" height={60}>
+                Go to homepage
+              </ButtonWhite>
+            </a>
+          </MobileHint>
           <BodyWrapper id="body">
             <Popups />
             <Polling />

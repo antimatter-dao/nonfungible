@@ -9,6 +9,8 @@ import CurrencyLogo from 'components/CurrencyLogo'
 import { useWeb3React } from '@web3-react/core'
 import { useCurrentUserInfo } from 'state/userInfo/hooks'
 import { shortenAddress } from 'utils'
+import { TokenAmount } from '@uniswap/sdk'
+import { TokenFluidityErrorLine } from 'components/NFTSpotDetail/ComfirmModel'
 
 const Wrapper = styled(AutoColumn)`
   padding: 24px 28px 0;
@@ -27,10 +29,12 @@ const RightText = styled(TYPE.small)`
 
 export function SpotConfirmation({
   children,
-  dataInfo
+  dataInfo,
+  tokenFluiditys
 }: {
   children?: string | JSX.Element
   dataInfo: CreateSpotData
+  tokenFluiditys: (TokenAmount | null)[]
 }) {
   const { creatorId, description, name, assetsParameters } = dataInfo
   const { account } = useWeb3React()
@@ -83,7 +87,7 @@ export function SpotConfirmation({
           <TYPE.smallHeader color="text6">Underlying Asset</TYPE.smallHeader>
           {assetsParameters
             .filter(v => v.currencyToken)
-            .map(({ amount, currencyToken }) => (
+            .map(({ amount, currencyToken }, index) => (
               <>
                 <RowBetween>
                   <RowFixed>
@@ -92,6 +96,7 @@ export function SpotConfirmation({
                   </RowFixed>
                   <RightText>{amount}</RightText>
                 </RowBetween>
+                <TokenFluidityErrorLine tokenFluidity={tokenFluiditys[index]} />
               </>
             ))}
         </AutoColumn>
