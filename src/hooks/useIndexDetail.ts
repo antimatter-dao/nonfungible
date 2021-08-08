@@ -77,7 +77,8 @@ export function useNFTIndexInfo(
         }
 
         return {
-          amount: toNumber(val.toString(), _currencyToken),
+          amount: _currencyToken ? toNumber(val.toString(), _currencyToken) : '0',
+          amountRaw: _currencyToken ? undefined : val.toString(),
           currency: nft.underlyingTokens[index],
           currencyToken: _currencyToken
         }
@@ -107,6 +108,8 @@ export function useAssetsTokens(assetsParameters: AssetsParameter[] | undefined)
     if (!tokens) return assetsParameters
     return assetsParameters?.map((item, index) => {
       if (tokens[index]) item.currencyToken = tokens[index]
+      if (item.currencyToken && item.amountRaw)
+        item.amount = new TokenAmount(item.currencyToken, JSBI.BigInt(item.amountRaw)).toSignificant()
       return item
     })
   }, [assetsParameters, tokens])

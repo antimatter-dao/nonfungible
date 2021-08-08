@@ -110,6 +110,7 @@ export interface UnlockData {
 export interface AssetsParameter {
   currency: string
   amount: string
+  amountRaw?: string
   currencyToken?: WrappedTokenInfo
 }
 export interface CreateSpotData {
