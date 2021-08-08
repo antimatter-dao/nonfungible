@@ -131,7 +131,6 @@ export default function LockerIndex({
 
   const currentCard = useMemo((): NFTCardProps => {
     const _icons = data.assetsParameters.map((val, idx) => {
-      console.log('🚀 ~ file: SpotIndex.tsx ~ line 168 ~ useEffect ~ val', val)
       return <ETH key={idx} />
     })
     return {

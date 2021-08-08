@@ -19,6 +19,8 @@ import TransactionUpdater from './state/transactions/updater'
 import UserUpdater from './state/user/updater'
 import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from './theme'
 import getLibrary from './utils/getLibrary'
+import BigNumber from 'bignumber.js'
+BigNumber.config({ EXPONENTIAL_AT: [-7, 40] })
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 

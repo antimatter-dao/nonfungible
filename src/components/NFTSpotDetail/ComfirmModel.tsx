@@ -38,7 +38,7 @@ const StyledErrorLine = styled.div`
   word-wrap: break-word;
   display: flex;
   align-items: flex-start;
-  margin: -5px 0 5px 5px;
+  margin: 0 0 5px 5px;
   > svg {
     width: 16px;
     height: 16px;
@@ -57,8 +57,7 @@ const RightText = styled(TYPE.small)`
 
 export function TokenFluidityErrorLine({ tokenFluidity }: { tokenFluidity: TokenAmount | null }) {
   // if (!tokenFluidity) return null
-  if (tokenFluidity && new BigNumber(tokenFluidity.toSignificant()).isGreaterThanOrEqualTo(TOKEN_FLUIDITY_LIMIT))
-    return null
+  if (tokenFluidity && tokenFluidity.greaterThan(JSBI.BigInt(TOKEN_FLUIDITY_LIMIT))) return null
   return (
     <StyledErrorLine>
       <AlertCircle />

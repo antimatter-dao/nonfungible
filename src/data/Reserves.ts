@@ -120,7 +120,7 @@ export function useNFTETHPrice(assets: AssetsParameter[]): NFTETHPriceProp {
         PriceState.VALID,
         ethAmount.raw.toString(),
         ethAmount,
-        new TokenAmount(token.currencyToken, reserve1.toString())
+        new TokenAmount(WETH[chainId], reserve1.toString())
       ]
     })
 
