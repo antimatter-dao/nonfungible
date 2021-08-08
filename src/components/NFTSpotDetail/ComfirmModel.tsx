@@ -151,6 +151,27 @@ export function BuyComfirmModel({
   )
 }
 
+export function BuyComfirmNoticeModel({ isOpen, onDismiss }: { isOpen: boolean; onDismiss: () => void }) {
+  return (
+    <Modal isOpen={isOpen} onDismiss={onDismiss} minHeight={20} maxHeight={85} width="480px" maxWidth={480}>
+      <Wrapper>
+        <IconClose onEvent={onDismiss} style={{ top: 28, right: 28 }} />
+        <AutoColumn gap="15px">
+          <div>
+            <TYPE.largeHeader fontSize={30} color="black">
+              Risk Alert:
+            </TYPE.largeHeader>
+          </div>
+          <div>I confirm I have checked the underlying assets and take my own responsibility for the trade.</div>
+          <ButtonBlack onClick={onDismiss} height={60}>
+            I confirm
+          </ButtonBlack>
+        </AutoColumn>
+      </Wrapper>
+    </Modal>
+  )
+}
+
 export function SellComfirmModel({
   isOpen,
   onDismiss,
