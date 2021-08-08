@@ -317,7 +317,7 @@ export default function CreationNFTModal() {
                 onClick={toCreateNext}
                 disabled={currentCreation !== Step.SpotIndex}
               >
-                {currentCreation === Step.SpotIndex ? 'Confirm' : 'Comming soon'}
+                {currentCreation === Step.SpotIndex ? 'Confirm' : 'Coming soon'}
               </ButtonBlack>
             </AutoColumn>
           )}
