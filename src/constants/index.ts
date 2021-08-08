@@ -23,7 +23,7 @@ type ChainTokenList = {
   readonly [chainId in ChainId]: Token[]
 }
 
-const UNI_ADDRESS = '0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F'
+const UNI_ADDRESS = '0x9b99cca871be05119b2012fd4474731dd653febe'
 
 export const Matter = new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'MATTER', 'Antimatter.Finance Governance Token')
 export const DAI = new Token(ChainId.MAINNET, '0x6B175474E89094C44Da98b954EedeAC495271d0F', 18, 'DAI', 'Dai Stablecoin')
