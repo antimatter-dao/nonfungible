@@ -109,8 +109,8 @@ export function BuyComfirmModel({
             {assetsParameters
               .filter(v => v.currencyToken)
               .map(({ amount, currencyToken }, index) => (
-                <>
-                  <RowBetween key={currencyToken?.address}>
+                <div key={currencyToken?.address}>
+                  <RowBetween>
                     <RowFixed>
                       <CurrencyLogo currency={currencyToken} style={{ marginRight: 10 }} />
                       <TYPE.smallGray>{currencyToken?.symbol}</TYPE.smallGray>
@@ -120,7 +120,7 @@ export function BuyComfirmModel({
                     </RightText>
                   </RowBetween>
                   <TokenFluidityErrorLine tokenFluidity={tokenFluiditys[index]} />
-                </>
+                </div>
               ))}
             <RowBetween style={{ marginTop: 10 }}>
               <TYPE.smallGray>You will pay :</TYPE.smallGray>
@@ -211,8 +211,8 @@ export function SellComfirmModel({
             {assetsParameters
               .filter(v => v.currencyToken)
               .map(({ amount, currencyToken }, index) => (
-                <>
-                  <RowBetween key={currencyToken?.address}>
+                <div key={currencyToken?.address}>
+                  <RowBetween>
                     <RowFixed>
                       <CurrencyLogo currency={currencyToken} style={{ marginRight: 10 }} />
                       <TYPE.smallGray>{currencyToken?.symbol}</TYPE.smallGray>
@@ -222,7 +222,7 @@ export function SellComfirmModel({
                     </RightText>
                   </RowBetween>
                   <TokenFluidityErrorLine tokenFluidity={tokenFluiditys[index]} />
-                </>
+                </div>
               ))}
             <RowBetween style={{ marginTop: 10 }}>
               <TYPE.smallGray>You will receive :</TYPE.smallGray>

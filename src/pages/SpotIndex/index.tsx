@@ -13,6 +13,7 @@ import Pagination from 'components/Pagination'
 import { AnimatedImg, AnimatedWrapper, TYPE } from 'theme'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
 import { SportIndexSearchProps } from 'utils/option/httpFetch'
+import { useToken } from 'hooks/Tokens'
 
 const SearchParams = [
   {
@@ -115,6 +116,11 @@ const defaultCardData = {
   creator: ''
 }
 
+function ShowCurrencyLogo({ address }: { address: string }) {
+  const currency = useToken(address)
+  return <CurrencyLogo currency={currency ?? undefined} key={address} />
+}
+
 export default function SpotIndex() {
   const history = useHistory()
   const [searchParam, setSearchParam] = useState<SportIndexSearchProps>({
@@ -131,7 +137,11 @@ export default function SpotIndex() {
     return NFTListData.map(NFTIndexInfo => {
       if (!NFTIndexInfo) return defaultCardData
       const _icons = NFTIndexInfo.assetsParameters.map((val, idx) => {
-        return <CurrencyLogo currency={val.currencyToken} key={idx} />
+        return val.currencyToken ? (
+          <CurrencyLogo currency={val.currencyToken} key={idx} />
+        ) : (
+          <ShowCurrencyLogo address={val.currency} />
+        )
       })
       return {
         id: NFTIndexInfo.indexId,

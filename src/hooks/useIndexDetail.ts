@@ -3,7 +3,7 @@ import { CardColor } from 'components/NFTCard'
 import { useEffect, useMemo, useState } from 'react'
 import { WrappedTokenInfo } from 'state/lists/hooks'
 import { useSingleCallResult } from '../state/multicall/hooks'
-import { useAllTokens, useCurrency } from './Tokens'
+import { useAllTokens, useCurrency, useWrappedTokenInfos } from './Tokens'
 import { useIndexNFTContract } from './useContract'
 import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
 import { useWeb3React } from '@web3-react/core'
@@ -99,20 +99,17 @@ export function useNFTIndexInfo(
 }
 
 export function useAssetsTokens(assetsParameters: AssetsParameter[] | undefined): AssetsParameter[] {
-  const tokens = useAllTokens()
+  const address = assetsParameters?.map(({ currency }) => currency)
+  const tokens = useWrappedTokenInfos(address ?? [])
 
   return useMemo(() => {
-    if (!tokens || !assetsParameters) return []
-    return assetsParameters.map(item => {
-      if (item.currencyToken) {
-        return { ...item }
-      }
-      // if (!Object.keys(tokens).includes(item.currency)) return []
-      item.currencyToken = tokens[item.currency] as WrappedTokenInfo
-      // if (!item.currencyToken) item.currencyToken = tokens[Object.keys(tokens)[0]] as WrappedTokenInfo
-      return { ...item }
+    if (!assetsParameters) return []
+    if (!tokens) return assetsParameters
+    return assetsParameters?.map((item, index) => {
+      if (tokens[index]) item.currencyToken = tokens[index]
+      return item
     })
-  }, [tokens, assetsParameters])
+  }, [assetsParameters, tokens])
 }
 
 export function useNFTBalance(nftid: string | undefined) {
