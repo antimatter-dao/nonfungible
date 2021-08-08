@@ -95,6 +95,18 @@ export function useNFTETHPrice(assets: AssetsParameter[]): NFTETHPriceProp {
       const { reserve0, reserve1 } = reserves
       // console.log(
       //   'reserve0',
+      //   token.currencyToken.symbol,
+      //   // new TokenAmount(WETH[chainId], reserve0.toString()).toSignificant()
+      //   new TokenAmount(token.currencyToken, reserve0.toString()).toSignificant(),
+      //   new TokenAmount(WETH[chainId], reserve0.toString()).toSignificant()
+      // )
+      // console.log(
+      //   'reserve1',
+      //   token.currencyToken.symbol,
+      //   new TokenAmount(WETH[chainId], reserve1.toString()).toSignificant()
+      // )
+      // console.log(
+      //   'reserve0',
       //   new Pair(
       //     new TokenAmount(WETH[chainId], reserve0.toString()),
       //     new TokenAmount(token.currencyToken, reserve1.toString())
@@ -104,10 +116,10 @@ export function useNFTETHPrice(assets: AssetsParameter[]): NFTETHPriceProp {
       //     .toString()
       // )
       const ethPrice: string = new Pair(
-        new TokenAmount(WETH[chainId], reserve0.toString()),
-        new TokenAmount(token.currencyToken, reserve1.toString())
+        new TokenAmount(token.currencyToken, reserve0.toString()),
+        new TokenAmount(WETH[chainId], reserve1.toString())
       )
-        .priceOf(WETH[chainId])
+        .priceOf(token.currencyToken)
         .toSignificant()
         .toString()
 
@@ -115,7 +127,7 @@ export function useNFTETHPrice(assets: AssetsParameter[]): NFTETHPriceProp {
         new BigNumber(ethPrice).multipliedBy(token.amount).toString(),
         WETH[chainId]
       )
-      if (!ethAmount) return [PriceState.INVALID, null, null, null]
+      if (!ethAmount) return [PriceState.INVALID, null, null, new TokenAmount(WETH[chainId], reserve1.toString())]
       return [
         PriceState.VALID,
         ethAmount.raw.toString(),
