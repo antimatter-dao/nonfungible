@@ -29,7 +29,7 @@ import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
 import { useCurrency } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { NumberNFTInputPanel } from 'components/NumberInputPanel'
-import { BuyComfirmModel, SellComfirmModel } from '../../components/NFTSpotDetail/ComfirmModel'
+import { BuyComfirmModel, BuyComfirmNoticeModel, SellComfirmModel } from '../../components/NFTSpotDetail/ComfirmModel'
 import { AssetsParameter } from '../../components/Creation'
 import { PriceState, useNFTETHPrice } from '../../data/Reserves'
 import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
@@ -202,6 +202,7 @@ export default function CardDetail({
   const [currentTradeTab, setCurrentTradeTab] = useState<TradeTabType>(TradeTabType.Buy)
   const [buyAmount, setBuyAmount] = useState('')
   const [sellAmount, setSellAmount] = useState('')
+  const [buyConfirmNoticeModal, setBuyConfirmNoticeModal] = useState<boolean>(false)
 
   const [buyConfirmModal, setBuyConfirmModal] = useState(false)
   const [sellConfirmModal, setSellConfirmModal] = useState(false)
@@ -391,6 +392,9 @@ export default function CardDetail({
                         <ButtonBlack
                           onClick={() => {
                             setBuyConfirmModal(true)
+                            setTimeout(() => {
+                              setBuyConfirmNoticeModal(true)
+                            }, 500)
                           }}
                           height={60}
                           disabled={!Number(buyAmount) || !thisNFTethAmount}
@@ -483,6 +487,13 @@ export default function CardDetail({
         number={buyAmount}
         assetsParameters={tokens}
         onConfirm={toBuy}
+      />
+
+      <BuyComfirmNoticeModel
+        onDismiss={() => {
+          setBuyConfirmNoticeModal(false)
+        }}
+        isOpen={buyConfirmNoticeModal}
       />
 
       <SellComfirmModel
