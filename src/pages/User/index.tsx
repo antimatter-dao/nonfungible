@@ -24,6 +24,7 @@ import Loader from 'assets/svg/antimatter_background_logo_dark.svg'
 import ClaimModal from 'components/claim/MatterClaimModal'
 import { useCreatorFee } from 'hooks/useMatterClaim'
 import { CurrencyAmount, JSBI } from '@uniswap/sdk'
+import { useWalletModalToggle } from 'state/application/hooks'
 
 export enum UserInfoTabs {
   POSITION = 'my_position',
@@ -222,6 +223,7 @@ export default function User() {
     }
     tab && tab === 'settings' && handleShowSetting()
   }, [handleShowSetting, location, tab])
+  const toggleWalletModal = useWalletModalToggle()
 
   return (
     <>
@@ -246,6 +248,9 @@ export default function User() {
                   </AutoColumn>
                 </AutoRow>
                 <RowFixed>
+                  <ButtonOutlinedBlack width="134px" marginRight="12px" onClick={toggleWalletModal}>
+                    Wallet
+                  </ButtonOutlinedBlack>
                   <ButtonOutlinedBlack width="134px" marginRight="12px" onClick={handleShowSetting}>
                     <Settings style={{ marginRight: 15 }} />
                     Settings
