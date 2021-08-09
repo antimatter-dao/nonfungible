@@ -57,7 +57,8 @@ const RightText = styled(TYPE.small)`
 
 export function TokenFluidityErrorLine({ tokenFluidity }: { tokenFluidity: TokenAmount | null }) {
   // if (!tokenFluidity) return null
-  if (tokenFluidity && tokenFluidity.greaterThan(JSBI.BigInt(TOKEN_FLUIDITY_LIMIT))) return null
+  if (tokenFluidity && new BigNumber(tokenFluidity.toSignificant()).isGreaterThanOrEqualTo(TOKEN_FLUIDITY_LIMIT))
+    return null
   return (
     <StyledErrorLine>
       <AlertCircle />

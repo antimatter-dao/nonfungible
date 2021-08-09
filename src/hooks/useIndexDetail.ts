@@ -9,6 +9,7 @@ import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
 import { useWeb3React } from '@web3-react/core'
 import { getAccountInfo, getNFTTransferRecords } from 'utils/option/httpFetch'
 import { TOKEN_FLUIDITY_LIMIT } from '../constants'
+import { BigNumber } from 'bignumber.js'
 
 export interface NFTIndexInfoProps {
   name: string
@@ -148,7 +149,7 @@ export function useCheckBuyButton(
       return ret
     }
     const Insufficients = tokenFluiditys.filter((item: TokenAmount | null) => {
-      return !item || item.lessThan(JSBI.BigInt(TOKEN_FLUIDITY_LIMIT))
+      return !item || new BigNumber(item.toSignificant()).isLessThan(TOKEN_FLUIDITY_LIMIT)
     })
     if (Insufficients.length) {
       ret.disabled = true
@@ -180,7 +181,7 @@ export function useCheckSellButton(number: string | undefined, tokenFluiditys: (
       return ret
     }
     const Insufficients = tokenFluiditys.filter((item: TokenAmount | null) => {
-      return !item || item.lessThan(JSBI.BigInt(TOKEN_FLUIDITY_LIMIT))
+      return !item || new BigNumber(item.toSignificant()).isLessThan(TOKEN_FLUIDITY_LIMIT)
     })
     if (Insufficients.length) {
       ret.disabled = true

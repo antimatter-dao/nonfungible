@@ -1,6 +1,7 @@
 import { getCurrentUserInfoSync, clearLoginStoreSync } from 'state/userInfo/hooks'
 
-const domain = 'https://nftapi.antimatter.finance'
+// const domain = 'https://nftapi.antimatter.finance'
+const domain = 'https://test-nftapi.antimatter.finance'
 const headers = { 'content-type': 'application/json', accept: 'application/json' }
 
 interface LoginRes {
@@ -41,6 +42,10 @@ const promiseGenerator = (request: Request) => {
         if (response.code === 403 || response.code === 404) {
           reject('error')
         }
+        if (response.code === 500) {
+          console.error(response.msg)
+          reject('network error')
+        }
         resolve(response.data)
       })
       .catch(error => {
@@ -56,27 +61,26 @@ export function appLogin(publicAddress: string, signature: string, message: stri
     message
   }
 
-  // After the wallet is connected, it will be available after the effect is maintained.
-  const userInfo = getCurrentUserInfoSync()
-  let _headers = headers
-  if (userInfo) {
-    _headers = Object.assign(headers, { token: userInfo.token })
-  }
-
   const request = new Request(`${domain}/app/login`, {
     method: 'POST',
     body: JSON.stringify(param),
-    headers: _headers
+    headers
   })
 
   return promiseGenerator(request) as Promise<LoginRes>
 }
 
 export function getAccountInfo(address: string): Promise<LoginRes> {
+  // After the wallet is connected, it will be available after the effect is maintained.
+  const userInfo = getCurrentUserInfoSync()
+  let _headers = headers
+  if (userInfo) {
+    _headers = Object.assign(headers, { token: userInfo.token })
+  }
   const request = new Request(`${domain}/app/getAccountInfo`, {
     method: 'POST',
     body: address,
-    headers: headers
+    headers: _headers
   })
 
   return promiseGenerator(request) as Promise<LoginRes>

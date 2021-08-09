@@ -21,7 +21,7 @@ import {
 import NumericalInput from 'components/NumericalInput'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
-import AntimatterLogo from 'assets/svg/logo.svg'
+import AntimatterLogo from 'assets/svg/antimatter_logo_nft.svg'
 import { WrappedTokenInfo } from 'state/lists/hooks'
 import { useAmountInMins, useCalcBuyFee, useIndexBuyCall } from '../../hooks/useIndexBuyCallback'
 import TransactionConfirmationModal from 'components/TransactionConfirmationModal'

@@ -1,0 +1,109 @@
+{
+  "name": "AntiMatter",
+  "logoURI": "",
+  "keywords": ["antimatter", "defi"],
+  "timestamp": "2020-09-03T12:37:57.000+00:00",
+  "tokens": [
+    {
+      "chainId": 3,
+      "address": "0xafcbc4008e8e1a7a945437be447375137dd1b6ab",
+      "name": "nft-test1",
+      "symbol": "dog1",
+      "decimals": 18,
+      "logoURI": "https://assets.coingecko.com/coins/images/13628/thumb/wluna.png?1610448334"
+    },
+    {
+      "chainId": 3,
+      "address": "0xF709f20c3557BCA8C3fCA82b7551473775a7A926",
+      "name": "aaa",
+      "symbol": "aaa",
+      "decimals": 6,
+      "logoURI": "https://assets.coingecko.com/coins/images/13628/thumb/wluna.png?1610448334"
+    },
+    {
+      "chainId": 3,
+      "address": "0xf88edd26b587f48a42425006b1b76ccda39876a4",
+      "name": "nft-test2",
+      "symbol": "dog2",
+      "decimals": 18,
+      "logoURI": "https://assets.coingecko.com/coins/images/13628/thumb/wluna.png?1610448334"
+    },
+    {
+      "chainId": 3,
+      "address": "0xdcC5290588eF0b311E0b0beB0960F7235B929B88",
+      "name": "bbb",
+      "symbol": "bbb",
+      "decimals": 8,
+      "logoURI": "https://assets.coingecko.com/coins/images/13628/thumb/wluna.png?1610448334"
+    },
+    {
+      "chainId": 3,
+      "address": "0xb7e3C6840367b23C273816d35AA7E226604166Fd",
+      "name": "ccc",
+      "symbol": "ccc",
+      "decimals": 9,
+      "logoURI": "https://assets.coingecko.com/coins/images/13628/thumb/wluna.png?1610448334"
+    },
+    {
+      "chainId": 3,
+      "address": "0xF495f5c30C510DCa6621fF8620cF2CC50Adbbc76",
+      "name": "ddd",
+      "symbol": "ddd",
+      "decimals": 10,
+      "logoURI": "https://assets.coingecko.com/coins/images/13628/thumb/wluna.png?1610448334"
+    },
+    {
+      "chainId": 3,
+      "address": "0xC2c4F8EbcD8e1DB788b03e86C373D377fDA2055B",
+      "name": "eee",
+      "symbol": "eee",
+      "decimals": 12,
+      "logoURI": "https://assets.coingecko.com/coins/images/13628/thumb/wluna.png?1610448334"
+    },
+    {
+      "chainId": 3,
+      "address": "0x4C8Ab2De7E1673cf6436c2F178fd37e7c5Bb691a",
+      "name": "fff",
+      "symbol": "fff",
+      "decimals": 14,
+      "logoURI": "https://assets.coingecko.com/coins/images/13628/thumb/wluna.png?1610448334"
+    },
+    {
+      "chainId": 3,
+      "address": "0x67537F00644bCa28dca0eC8fabb3BE4b8eB753e4",
+      "name": "ggg",
+      "symbol": "ggg",
+      "decimals": 16,
+      "logoURI": "https://assets.coingecko.com/coins/images/13628/thumb/wluna.png?1610448334"
+    },
+    {
+      "chainId": 3,
+      "address": "0x5A12Adfb6690683De3598cD7B211AD53704D697F",
+      "name": "hhh",
+      "symbol": "hhh",
+      "decimals": 18,
+      "logoURI": "https://assets.coingecko.com/coins/images/13628/thumb/wluna.png?1610448334"
+    },
+    {
+      "chainId": 3,
+      "address": "0xFa5F647D2e7623D6194a4606D343f10Bc0611db9",
+      "name": "jjj",
+      "symbol": "jjj",
+      "decimals": 2,
+      "logoURI": "https://assets.coingecko.com/coins/images/13628/thumb/wluna.png?1610448334"
+    },
+    {
+      "chainId": 3,
+      "address": "0x6154b67D5F4E8059Ed69FAe6B04c1f01812DfFe8",
+      "name": "iii",
+      "symbol": "iii",
+      "decimals": 4,
+      "logoURI": "https://assets.coingecko.com/coins/images/13628/thumb/wluna.png?1610448334"
+    }
+  ],
+  "version": {
+    "major": 0,
+    "minor": 18,
+    "patch": 0
+  }
+}

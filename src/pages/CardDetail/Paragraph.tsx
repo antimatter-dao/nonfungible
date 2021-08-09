@@ -5,7 +5,7 @@ import { AutoColumn } from '../../components/Column'
 import { TYPE } from '../../theme'
 
 export const StyledParagraph = styled.div`
-  margin: 22px 0;
+  margin: 26px 0;
 `
 
 export const Hr = styled.hr`

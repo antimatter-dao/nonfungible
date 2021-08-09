@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import Modal from '../Modal'
 import { AutoColumn, ColumnCenter } from '../Column'
 import styled from 'styled-components'
@@ -6,7 +6,6 @@ import { DataCard, CardSection, Break } from '../earn/styled'
 import { RowBetween } from '../Row'
 import { TYPE, ExternalLink, CloseIcon, CustomLightSpinner, UniTokenAnimated } from '../../theme'
 import { ButtonPrimary } from '../Button'
-import tokenLogo from '../../assets/images/token-logo.png'
 import Circle from '../../assets/images/blue-loader.svg'
 import { Text } from 'rebass'
 import { useActiveWeb3React } from '../../hooks'
@@ -14,6 +13,8 @@ import Confetti from '../Confetti'
 import { CardBGImageSmaller } from '../earn/styled'
 import { useIsTransactionPending } from '../../state/transactions/hooks'
 import { getEtherscanLink, shortenAddress } from '../../utils'
+import { useClaimMATTERCall } from 'hooks/useMatterClaim'
+import AntimatterLogo from 'assets/svg/antimatter_logo_nft.svg'
 
 const ContentWrapper = styled(AutoColumn)`
   width: 100%;
@@ -38,8 +39,16 @@ const ConfirmedIcon = styled(ColumnCenter)`
   padding: 60px 0;
 `
 
-export default function AddressClaimModal({ isOpen, onDismiss }: { isOpen: boolean; onDismiss: () => void }) {
-  const { chainId } = useActiveWeb3React()
+export default function AddressClaimModal({
+  isOpen,
+  onDismiss,
+  claimFee
+}: {
+  isOpen: boolean
+  claimFee: string
+  onDismiss: () => void
+}) {
+  const { chainId, account } = useActiveWeb3React()
 
   // used for UI loading states
   const [attempting, setAttempting] = useState<boolean>(false)
@@ -52,9 +61,20 @@ export default function AddressClaimModal({ isOpen, onDismiss }: { isOpen: boole
 
   // use the hash to monitor this txn
 
-  function onClaim() {
+  const { callback } = useClaimMATTERCall()
+
+  const onClaim = useCallback(() => {
+    if (!callback || !Number(claimFee)) return
     setAttempting(true)
-  }
+    callback()
+      .then(res => {
+        setHash(res)
+      })
+      .catch(err => {
+        setAttempting(false)
+        console.error(err)
+      })
+  }, [callback, claimFee])
 
   function wrappedOnDismiss() {
     setAttempting(false)
@@ -76,7 +96,7 @@ export default function AddressClaimModal({ isOpen, onDismiss }: { isOpen: boole
                 <CloseIcon onClick={wrappedOnDismiss} style={{ zIndex: 99 }} stroke="black" />
               </RowBetween>
               <TYPE.black fontWeight={700} fontSize={36}>
-                0.1 ETH
+                {claimFee} ETH
               </TYPE.black>
             </CardSection>
             <Break />
@@ -104,7 +124,7 @@ export default function AddressClaimModal({ isOpen, onDismiss }: { isOpen: boole
             {!claimConfirmed ? (
               <CustomLightSpinner src={Circle} alt="loader" size={'90px'} />
             ) : (
-              <UniTokenAnimated width="72px" src={tokenLogo} />
+              <UniTokenAnimated width="72px" src={AntimatterLogo} />
             )}
           </ConfirmedIcon>
           <AutoColumn gap="100px" justify={'center'}>
@@ -114,11 +134,11 @@ export default function AddressClaimModal({ isOpen, onDismiss }: { isOpen: boole
               </TYPE.largeHeader>
               {!claimConfirmed && (
                 <Text fontSize={36} color={'#ff007a'} fontWeight={800}>
-                  100 ETH
+                  {claimFee} ETH
                 </Text>
               )}
               <TYPE.largeHeader fontWeight={600} color="black">
-                for {shortenAddress('0x5718D9C95D15a766E9DdE6579D7B93Eaa88a26b8')}
+                for {shortenAddress(account ?? '')}
               </TYPE.largeHeader>
             </AutoColumn>
             {claimConfirmed && (
@@ -127,7 +147,7 @@ export default function AddressClaimModal({ isOpen, onDismiss }: { isOpen: boole
                   <span role="img" aria-label="party-hat">
                     🎉{' '}
                   </span>
-                  Welcome to team Unicorn :){' '}
+                  Thank you for using :){' '}
                   <span role="img" aria-label="party-hat">
                     🎉
                   </span>

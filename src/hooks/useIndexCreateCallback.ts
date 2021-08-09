@@ -3,8 +3,9 @@ import { useIndexNFTContract } from './useContract'
 import { calculateGasMargin } from '../utils'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useMemo } from 'react'
-import { JSBI, TokenAmount } from '@uniswap/sdk'
+import { TokenAmount } from '@uniswap/sdk'
 import { TOKEN_FLUIDITY_LIMIT } from '../constants'
+import { BigNumber } from 'bignumber.js'
 
 export enum IndexCreateCallbackState {
   INVALID,
@@ -59,7 +60,7 @@ export function useCheckSpotCreateButton(tokenFluiditys: (TokenAmount | null)[])
       return ret
     }
     const Insufficients = tokenFluiditys.filter((item: TokenAmount | null) => {
-      return !item || item.lessThan(JSBI.BigInt(TOKEN_FLUIDITY_LIMIT))
+      return !item || new BigNumber(item.toSignificant()).isLessThan(TOKEN_FLUIDITY_LIMIT)
     })
     if (Insufficients.length) {
       ret.disabled = true
