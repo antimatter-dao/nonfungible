@@ -103,8 +103,7 @@ export default function AddressClaimModal({
           </ModalUpper>
           <AutoColumn gap="md" style={{ padding: '2rem', paddingTop: '0' }} justify="center">
             <TYPE.subHeader fontWeight={500}>
-              Enter an address to trigger a UNI claim. If the address has any claimable UNI it will be sent to them on
-              submission.
+              The protocol will use fees to market purchase MATTER and send to you as reward
             </TYPE.subHeader>
             <ButtonPrimary padding="16px 16px" width="100%" borderRadius="12px" mt="1rem" onClick={onClaim}>
               Claim MATTER
