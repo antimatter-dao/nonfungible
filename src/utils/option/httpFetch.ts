@@ -1,7 +1,7 @@
 import { getCurrentUserInfoSync, clearLoginStoreSync } from 'state/userInfo/hooks'
 
-// const domain = 'https://nftapi.antimatter.finance'
-const domain = 'https://test-nftapi.antimatter.finance'
+const domain = 'https://nftapi.antimatter.finance'
+// const domain = 'https://test-nftapi.antimatter.finance'
 const headers = { 'content-type': 'application/json', accept: 'application/json' }
 
 interface LoginRes {

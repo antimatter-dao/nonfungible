@@ -1,6 +1,6 @@
 import { UNSUPPORTED_LIST_URLS } from './../../constants/lists'
-// import DEFAULT_TOKEN_LIST from '../../assets/defaultTokenList.json'
-import DEFAULT_TOKEN_LIST from '../../assets/testDefaultTokenList.json'
+import DEFAULT_TOKEN_LIST from '../../assets/defaultTokenList.json'
+// import DEFAULT_TOKEN_LIST from '../../assets/testDefaultTokenList.json'
 import { ChainId, Token } from '@uniswap/sdk'
 import { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 import { useMemo } from 'react'
