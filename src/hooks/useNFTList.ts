@@ -8,6 +8,7 @@ import { useIndexNFTContract } from './useContract'
 import { toNumber } from './useIndexDetail'
 import { ZERO_ADDRESS } from '../constants'
 import { CardColor } from 'components/NFTCard'
+import { useBlockNumber } from 'state/application/hooks'
 
 interface RecordListProps {
   creatorName: string
@@ -40,6 +41,7 @@ export default function useNFTList(
   const [reqLoading, setReqLoading] = useState<boolean>(false)
   const [countPages, setCountPages] = useState<number>(0)
   const [currentPage, setCurrentPage] = useState<number>(1)
+  const blockNumber = useBlockNumber()
   const tokens = useAllTokens()
 
   useEffect(() => {
@@ -64,7 +66,7 @@ export default function useNFTList(
         console.error('fetch NFT List', error)
       }
     })()
-  }, [currentPage, searchParams])
+  }, [currentPage, searchParams, blockNumber])
 
   const contract = useIndexNFTContract()
   const nftRes = useSingleContractMultipleData(contract, 'getIndex', nftIdList)

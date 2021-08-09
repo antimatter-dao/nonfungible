@@ -21,6 +21,8 @@ import { useCurrentUserInfo, useLogOut } from 'state/userInfo/hooks'
 import { usePositionList, useIndexList } from 'hooks/useMyList'
 import Pagination from 'components/Pagination'
 import Loader from 'assets/svg/antimatter_background_logo_dark.svg'
+import ClaimModal from 'components/claim/MatterClaimModal'
+import { useCreatorFee } from 'hooks/useMatterClaim'
 
 export enum UserInfoTabs {
   POSITION = 'my_position',
@@ -171,6 +173,8 @@ export default function User() {
   const { data: positionCardList, page: positionPage, loading: positionIsLoading } = usePositionList(userInfo)
   const { data: indexList, page: indexPage, loading: indexIsLoading } = useIndexList(userInfo)
   const logout = useLogOut()
+  const fee = useCreatorFee()
+  console.log('🚀 ~ file: index.tsx ~ line 177 ~ User ~ fee', fee)
 
   const handleTabClick = useCallback(
     tab => () => {
@@ -196,11 +200,11 @@ export default function User() {
 
   const indexData = useMemo(
     () =>
-      indexList.map(({ indexId, indexName }) => [
+      indexList.map(({ indexId, indexName, creatorFee }) => [
         indexId,
         indexName,
         '',
-        '0.05eth'
+        creatorFee
         // <ActionButton onClick={() => {}} key={indexId} />
       ]),
     [indexList]
@@ -299,7 +303,7 @@ export default function User() {
             {!indexIsLoading && currentTab === UserInfoTabs.INDEX && (
               <>
                 <Table
-                  header={['Index ID', 'Index Name', 'Current Issurance', 'Fees Earned', '']}
+                  header={['Index ID', 'Index Name', 'Current Issurance', 'Fees Earned']}
                   rows={indexData}
                   isHeaderGray
                 />
@@ -324,6 +328,7 @@ export default function User() {
           </AutoColumn>
         </AppBody>
       </Wrapper>
+      <ClaimModal isOpen={true} onDismiss={() => {}} />
     </>
   )
 }

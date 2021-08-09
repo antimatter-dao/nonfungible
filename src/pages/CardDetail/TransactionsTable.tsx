@@ -127,7 +127,7 @@ export default function TransactionsTable({
 }: {
   transactionRecords: NFTTransactionRecordsProps[] | undefined
 }) {
-  const header = ['address', 'buy/sell', 'amount', 'ETHPrice']
+  const header = ['address', 'buy/sell', 'amount', 'price']
   const rows: (string | number | JSX.Element)[][] = useMemo(() => {
     if (!transactionRecords) return []
     return transactionRecords.map(({ nftAmount, type, sender, totalSpend }) => {
