@@ -10,7 +10,7 @@ import Circle from '../../assets/images/blue-loader.svg'
 import { Text } from 'rebass'
 import { useActiveWeb3React } from '../../hooks'
 import Confetti from '../Confetti'
-import { CardBGImageSmaller } from '../earn/styled'
+// import { CardBGImageSmaller } from '../earn/styled'
 import { useIsTransactionPending } from '../../state/transactions/hooks'
 import { getEtherscanLink, shortenAddress } from '../../utils'
 import { useClaimMATTERCall } from 'hooks/useMatterClaim'
@@ -30,9 +30,9 @@ const ConfirmOrLoadingWrapper = styled.div<{ activeBG: boolean }>`
   width: 100%;
   padding: 24px;
   position: relative;
-  background: ${({ activeBG }) =>
+  /* background: ${({ activeBG }) =>
     activeBG &&
-    'radial-gradient(76.02% 75.41% at 1.84% 0%, rgba(255, 0, 122, 0.2) 0%, rgba(33, 114, 229, 0.2) 100%), #FFFFFF;'};
+    'radial-gradient(76.02% 75.41% at 1.84% 0%, rgba(255, 0, 122, 0.2) 0%, rgba(33, 114, 229, 0.2) 100%), #FFFFFF;'}; */
 `
 
 const ConfirmedIcon = styled(ColumnCenter)`
@@ -115,7 +115,7 @@ export default function AddressClaimModal({
       {(attempting || claimConfirmed) && (
         <ConfirmOrLoadingWrapper activeBG={true}>
           {/* <CardNoise /> */}
-          <CardBGImageSmaller desaturate />
+          {/* <CardBGImageSmaller desaturate /> */}
           <RowBetween>
             <div />
             <CloseIcon onClick={wrappedOnDismiss} style={{ zIndex: 99 }} stroke="black" />
@@ -141,19 +141,6 @@ export default function AddressClaimModal({
                 for {shortenAddress(account ?? '')}
               </TYPE.largeHeader>
             </AutoColumn>
-            {claimConfirmed && (
-              <>
-                <TYPE.subHeader fontWeight={500} color="black">
-                  <span role="img" aria-label="party-hat">
-                    🎉{' '}
-                  </span>
-                  Thank you for using :){' '}
-                  <span role="img" aria-label="party-hat">
-                    🎉
-                  </span>
-                </TYPE.subHeader>
-              </>
-            )}
             {attempting && !hash && (
               <TYPE.subHeader color="black">Confirm this transaction in your wallet</TYPE.subHeader>
             )}
