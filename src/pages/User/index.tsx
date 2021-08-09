@@ -205,11 +205,11 @@ export default function User() {
 
   const indexData = useMemo(
     () =>
-      indexList.map(({ indexId, indexName, totalNftAmount, creatorFeetotalCreatorFee }) => [
+      indexList.map(({ indexId, indexName, totalNftAmount, totalCreatorFee }) => [
         indexId,
         indexName,
         totalNftAmount,
-        CurrencyAmount.ether(JSBI.BigInt(creatorFeetotalCreatorFee ?? ''))
+        CurrencyAmount.ether(JSBI.BigInt(totalCreatorFee ?? '')).toSignificant(6)
         // <ActionButton onClick={() => {}} key={indexId} />
       ]),
     [indexList]
