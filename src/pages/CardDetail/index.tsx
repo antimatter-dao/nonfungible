@@ -545,7 +545,9 @@ function IndexInfo({ nftInfo }: { nftInfo: NFTIndexInfoProps }) {
       <Hr />
       {/* <Paragraph header="Current issuance">123</Paragraph>
       <Hr /> */}
-      <Paragraph header="Description">{nftInfo.description}</Paragraph>
+      <Paragraph header="Description" textWidth="387px">
+        {nftInfo.description}
+      </Paragraph>
     </div>
   )
 }
