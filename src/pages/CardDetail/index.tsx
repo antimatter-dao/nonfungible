@@ -480,7 +480,7 @@ export default function CardDetail({
           setBuyConfirmModal(false)
         }}
         fee={INDEX_NFT_BUY_FEE}
-        slippage={slippage}
+        // slippage={slippage}
         tokenFluiditys={tokenFluiditys}
         ethAmount={thisNFTethAmount}
         ETHbalance={ETHbalance ?? undefined}
@@ -503,8 +503,8 @@ export default function CardDetail({
         }}
         tokenFluiditys={tokenFluiditys}
         ethAmount={thisNFTethAmount}
-        ETHbalance={ETHbalance ?? undefined}
-        slippage={slippage}
+        // ETHbalance={ETHbalance ?? undefined}
+        // slippage={slippage}
         number={sellAmount}
         assetsParameters={tokens}
         onConfirm={toSell}

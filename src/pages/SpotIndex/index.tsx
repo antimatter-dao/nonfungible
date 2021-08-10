@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
@@ -123,6 +123,9 @@ function ShowCurrencyLogo({ address }: { address: string }) {
 
 export default function SpotIndex() {
   const history = useHistory()
+  const [showLoading, setShowLoading] = useState(true)
+  const [lastChangeLoading, setLastChangeLoading] = useState(new Date().getTime())
+
   const [searchParam, setSearchParam] = useState<SportIndexSearchProps>({
     searchParam: '',
     searchBy: ''
@@ -132,6 +135,13 @@ export default function SpotIndex() {
     loading,
     data: NFTListData
   } = useNFTList(searchParam)
+  useEffect(() => {
+    const _time = new Date().getTime()
+    if (NFTListData.length && !loading && _time - lastChangeLoading > 500) {
+      setShowLoading(false)
+      setLastChangeLoading(_time)
+    }
+  }, [NFTListData, lastChangeLoading, loading])
 
   const NFTListCardData = useMemo((): NFTCardProps[] => {
     return NFTListData.map(NFTIndexInfo => {
@@ -157,6 +167,8 @@ export default function SpotIndex() {
 
   const handleSearch = useCallback(
     (searchParam: string, searchBy: string) => {
+      setShowLoading(true)
+      setLastChangeLoading(new Date().getTime())
       setSearchParam({
         searchParam,
         searchBy
@@ -169,7 +181,7 @@ export default function SpotIndex() {
   return (
     <Wrapper>
       <Search onSearch={handleSearch} />
-      {loading ? (
+      {showLoading && loading ? (
         <AnimatedWrapper style={{ marginTop: 40 }}>
           <AnimatedImg>
             <img src={Loader} alt="loading-icon" />
