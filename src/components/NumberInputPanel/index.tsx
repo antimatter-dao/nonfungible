@@ -20,10 +20,10 @@ const InputRow = styled.div<{ disabled?: boolean }>`
 
 const InputNFTRow = styled.div<{ disabled?: boolean }>`
   align-items: center;
-  padding: 0 0.8rem 0 1rem;
+  padding: 0 20px;
   width: 100%;
   /* background-color: ${({ theme, disabled }) => (disabled ? darken(0.2, theme.black) : theme.bg2)}; */
-  border-radius: 14px;
+  border-radius: 10px;
   height: 60px;
   border: 1px solid rgba(0,0,0,0.1);
   ${({ theme }) => theme.flexRowNoWrap}
@@ -183,7 +183,7 @@ export function NumberNFTInputPanel({
   return (
     <InputPanel id={id} negativeMarginTop={negativeMarginTop}>
       <Container>
-        <LabelRow style={{ marginBottom: 8 }}>
+        <LabelRow style={{ margin: '2px 0 9px' }}>
           <AutoRow justify="space-between">
             {!hideLabel && (
               <TYPE.body color={theme.black} fontWeight={500} fontSize={16}>

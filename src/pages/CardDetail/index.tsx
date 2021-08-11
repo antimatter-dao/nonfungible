@@ -41,6 +41,7 @@ import SettingsTab from 'components/Settings'
 import BigNumber from 'bignumber.js'
 import { useUserSlippageTolerance } from 'state/user/hooks'
 import TransactionsTable from './TransactionsTable'
+import { useWalletModalToggle } from 'state/application/hooks'
 
 const Wrapper = styled.div`
   /* min-height: calc(100vh - ${({ theme }) => theme.headerHeight}); */
@@ -167,6 +168,7 @@ export default function CardDetail({
   }
 }: RouteComponentProps<{ nftid?: string }>) {
   const { account } = useWeb3React()
+  const toggleWalletModal = useWalletModalToggle()
   const theme = useTheme()
   const history = useHistory()
   const [transactionModalOpen, setTransactionModalOpen] = useState(false)
@@ -396,18 +398,29 @@ export default function CardDetail({
                           </RowBetween>
                           <CurrencyETHShow />
                         </AutoColumn>
-                        <ButtonBlack
-                          onClick={() => {
-                            setBuyConfirmModal(true)
-                            setTimeout(() => {
-                              setBuyConfirmNoticeModal(true)
-                            }, 500)
-                          }}
-                          height={60}
-                          disabled={!Number(buyAmount) || !thisNFTethAmount}
-                        >
-                          Buy
-                        </ButtonBlack>
+                        {account ? (
+                          <ButtonBlack
+                            onClick={() => {
+                              setBuyConfirmModal(true)
+                              setTimeout(() => {
+                                setBuyConfirmNoticeModal(true)
+                              }, 500)
+                            }}
+                            height={60}
+                            disabled={!Number(buyAmount) || !thisNFTethAmount}
+                          >
+                            Buy
+                          </ButtonBlack>
+                        ) : (
+                          <ButtonBlack
+                            onClick={() => {
+                              toggleWalletModal()
+                            }}
+                            height={60}
+                          >
+                            Connect Wallet
+                          </ButtonBlack>
+                        )}
                       </BuyPannel>
                     )}
 
@@ -415,6 +428,7 @@ export default function CardDetail({
                       <BuyPannel>
                         <AutoColumn gap="8px" style={{ width: '100%' }}>
                           <NumberNFTInputPanel
+                            negativeMarginTop="1px"
                             value={sellAmount}
                             onUserInput={val => {
                               setSellAmount(val)
@@ -437,15 +451,26 @@ export default function CardDetail({
                           </RowBetween>
                           <CurrencyETHShow />
                         </AutoColumn>
-                        <ButtonBlack
-                          onClick={() => {
-                            setSellConfirmModal(true)
-                          }}
-                          height={60}
-                          disabled={!Number(sellAmount) || Number(sellAmount) > Number(NFTbalance?.toString())}
-                        >
-                          Sell
-                        </ButtonBlack>
+                        {account ? (
+                          <ButtonBlack
+                            onClick={() => {
+                              setSellConfirmModal(true)
+                            }}
+                            height={60}
+                            disabled={!Number(sellAmount) || Number(sellAmount) > Number(NFTbalance?.toString())}
+                          >
+                            Sell
+                          </ButtonBlack>
+                        ) : (
+                          <ButtonBlack
+                            onClick={() => {
+                              toggleWalletModal()
+                            }}
+                            height={60}
+                          >
+                            Connect Wallet
+                          </ButtonBlack>
+                        )}
                       </BuyPannel>
                     )}
                   </div>

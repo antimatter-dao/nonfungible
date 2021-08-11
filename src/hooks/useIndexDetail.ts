@@ -202,8 +202,14 @@ export function useCheckSellButton(number: string | undefined, tokenFluiditys: (
 
 export function useIsApprovedForAll(account: string | undefined, spender: string): boolean {
   const contract = useIndexNFTContract()
-  const apprivedRes = useSingleCallResult(contract, 'isApprovedForAll', [account ?? undefined, spender])
-  return useMemo(() => (apprivedRes.result ? apprivedRes.result[0] : false), [apprivedRes])
+  const apprivedRes = useSingleCallResult(account ? contract : undefined, 'isApprovedForAll', [
+    account ?? undefined,
+    spender ?? undefined
+  ])
+  return useMemo(() => {
+    if (!account) return false
+    return apprivedRes.result ? apprivedRes.result[0] : false
+  }, [account, apprivedRes.result])
 }
 
 export interface NFTTransactionRecordsProps {
