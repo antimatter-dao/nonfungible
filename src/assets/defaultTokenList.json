@@ -162,7 +162,7 @@
       "name": "AntiMatter",
       "symbol": "MATTER",
       "decimals": 18,
-      "logoURI": "https://assets.coingecko.com/coins/images/14112/thumb/antimatter_icon.png?1614395992"
+      "logoURI": "https://raw.githubusercontent.com/antimatter-finance/antimatter-assets/main/antimatter_new.svg"
     },
     {
       "chainId": 1,
@@ -170,7 +170,7 @@
       "name": "Chainswap",
       "symbol": "ASAP",
       "decimals": 18,
-      "logoURI": "https://assets.coingecko.com/coins/images/14945/thumb/chainswap_logo.png?1619109717"
+      "logoURI": "https://raw.githubusercontent.com/chainswap/chainswap-assets/main/logo_64_black.png"
     },
     {
       "chainId": 1,
