@@ -5,7 +5,7 @@ import { AutoColumn } from '../../components/Column'
 import { TYPE } from '../../theme'
 
 export const StyledParagraph = styled.div`
-  margin: 22px 0;
+  margin: 24px 0;
 `
 
 export const Hr = styled.hr`
@@ -15,18 +15,19 @@ export const Hr = styled.hr`
   border-bottom: ${({ theme }) => `1px solid ${theme.black}`};
 `
 
-export function Paragraph({ header, children }: { header: string; children: any }) {
+export function Paragraph({ header, children, textWidth }: { header: string; children: any; textWidth?: string }) {
   const theme = useTheme()
 
   return (
     <StyledParagraph>
-      <AutoColumn>
+      <AutoColumn gap="5px">
         <TYPE.subHeader color={theme.text4}>{header}</TYPE.subHeader>
         <TYPE.small
           fontSize={16}
           fontWeight={500}
           style={{
-            wordBreak: 'break-all'
+            wordBreak: 'break-all',
+            maxWidth: textWidth ? textWidth : 'auto'
           }}
           color={theme.black}
         >

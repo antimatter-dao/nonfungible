@@ -87,7 +87,7 @@ const CurrencyNFTSelect = styled.button<{ selected: boolean; halfWidth?: boolean
   cursor: pointer;
   user-select: none;
   border: none;
-  padding: 0 10px;
+  padding: 0 20px;
   border: 1px solid transparent;
   color: ${({ theme }) => theme.black};
   border: 1px solid rgba(0, 0, 0, 0.1);

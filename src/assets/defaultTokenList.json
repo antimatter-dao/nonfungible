@@ -1,10 +1,7 @@
 {
   "name": "AntiMatter",
   "logoURI": "",
-  "keywords": [
-    "antimatter",
-    "defi"
-  ],
+  "keywords": ["antimatter", "defi"],
   "timestamp": "2020-09-03T12:37:57.000+00:00",
   "tokens": [
     {
@@ -21,7 +18,7 @@
       "name": "Uniswap",
       "symbol": "UNI",
       "decimals": 18,
-      "logoURI": "https://assets.coingecko.com/coins/images/12504/thumb/uniswap-uni.png?1600306604"
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984/logo.png"
     },
     {
       "chainId": 1,
@@ -29,7 +26,7 @@
       "name": "Chainlink",
       "symbol": "LINK",
       "decimals": 18,
-      "logoURI": "https://assets.coingecko.com/coins/images/877/thumb/chainlink-new-logo.png?1547034700"
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x514910771af9ca656af840dff83e8264ecf986ca/logo.png"
     },
     {
       "chainId": 1,
@@ -37,7 +34,7 @@
       "name": "Polygon",
       "symbol": "MATIC",
       "decimals": 18,
-      "logoURI": "https://assets.coingecko.com/coins/images/4713/thumb/matic-token-icon.png?1624446912"
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0/logo.png"
     },
     {
       "chainId": 1,
@@ -53,7 +50,7 @@
       "name": "Aave",
       "symbol": "AAVE",
       "decimals": 18,
-      "logoURI": "https://assets.coingecko.com/coins/images/12645/thumb/AAVE.png?1601374110"
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9/logo.png"
     },
     {
       "chainId": 1,
@@ -77,7 +74,7 @@
       "name": "Maker",
       "symbol": "MKR",
       "decimals": 18,
-      "logoURI": "https://assets.coingecko.com/coins/images/1364/thumb/Mark_Maker.png?1585191826"
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2/logo.png"
     },
     {
       "chainId": 1,
@@ -101,7 +98,7 @@
       "name": "Sushi",
       "symbol": "SUSHI",
       "decimals": 18,
-      "logoURI": "https://assets.coingecko.com/coins/images/12271/thumb/512x512_Logo_no_chop.png?1606986688"
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6b3595068778dd592e39a122f4f5a5cf09c90fe2/logo.png"
     },
     {
       "chainId": 1,
@@ -125,7 +122,7 @@
       "name": "1inch",
       "symbol": "1INCH",
       "decimals": 18,
-      "logoURI": "https://assets.coingecko.com/coins/images/13469/thumb/1inch-token.png?1608803028"
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x111111111117dc0aa78b770fa6a738034120c302/logo.png"
     },
     {
       "chainId": 1,
@@ -165,7 +162,7 @@
       "name": "AntiMatter",
       "symbol": "MATTER",
       "decimals": 18,
-      "logoURI": "https://assets.coingecko.com/coins/images/14112/thumb/antimatter_icon.png?1614395992"
+      "logoURI": "https://raw.githubusercontent.com/antimatter-finance/antimatter-assets/main/antimatter_new.svg"
     },
     {
       "chainId": 1,
@@ -173,7 +170,7 @@
       "name": "Chainswap",
       "symbol": "ASAP",
       "decimals": 18,
-      "logoURI": "https://assets.coingecko.com/coins/images/14945/thumb/chainswap_logo.png?1619109717"
+      "logoURI": "https://raw.githubusercontent.com/chainswap/chainswap-assets/main/logo_64_black.png"
     },
     {
       "chainId": 1,
@@ -181,7 +178,7 @@
       "name": "Umbrella Network",
       "symbol": "UMB",
       "decimals": 18,
-      "logoURI": "https://assets.coingecko.com/coins/images/13913/thumb/Umbrella_Network_Logo-Vertical_Version.png?1612836176"
+      "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6fc13eace26590b80cccab1ba5d51890577d83b2/logo.png"
     },
     {
       "chainId": 1,

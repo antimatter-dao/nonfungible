@@ -4,6 +4,7 @@ import { shortenAddress } from 'utils'
 import styled from 'styled-components'
 import Table from '@material-ui/core/Table'
 import { TableContainer, TableHead, TableCell, TableRow, TableBody, makeStyles } from '@material-ui/core'
+import { StyledLink } from '.'
 
 interface StyleProps {
   isHeaderGray?: boolean
@@ -127,11 +128,18 @@ export default function TransactionsTable({
 }: {
   transactionRecords: NFTTransactionRecordsProps[] | undefined
 }) {
-  const header = ['address', 'buy/sell', 'amount', 'ETHPrice']
+  const header = ['address', 'buy/sell', 'amount', 'price']
   const rows: (string | number | JSX.Element)[][] = useMemo(() => {
     if (!transactionRecords) return []
     return transactionRecords.map(({ nftAmount, type, sender, totalSpend }) => {
-      return [shortenAddress(sender), type, nftAmount, totalSpend]
+      return [
+        <StyledLink key={sender} href={`https://etherscan.io/address/${sender}`} target="_blank">
+          {shortenAddress(sender)}
+        </StyledLink>,
+        type,
+        nftAmount,
+        totalSpend
+      ]
     })
   }, [transactionRecords])
 

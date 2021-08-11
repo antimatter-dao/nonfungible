@@ -57,7 +57,8 @@ const RightText = styled(TYPE.small)`
 
 export function TokenFluidityErrorLine({ tokenFluidity }: { tokenFluidity: TokenAmount | null }) {
   // if (!tokenFluidity) return null
-  if (tokenFluidity && tokenFluidity.greaterThan(JSBI.BigInt(TOKEN_FLUIDITY_LIMIT))) return null
+  if (tokenFluidity && new BigNumber(tokenFluidity.toSignificant()).isGreaterThanOrEqualTo(TOKEN_FLUIDITY_LIMIT))
+    return null
   return (
     <StyledErrorLine>
       <AlertCircle />
@@ -77,7 +78,7 @@ export function BuyComfirmModel({
   tokenFluiditys,
   ethAmount,
   fee,
-  slippage,
+  // slippage,
   ETHbalance
 }: {
   isOpen: boolean
@@ -88,7 +89,7 @@ export function BuyComfirmModel({
   ethAmount: CurrencyAmount | undefined
   ETHbalance: CurrencyAmount | undefined
   fee: string
-  slippage: string | number
+  // slippage: string | number
   tokenFluiditys: (TokenAmount | null)[]
 }) {
   const btn = useCheckBuyButton(ethAmount, ETHbalance, number, tokenFluiditys)
@@ -136,10 +137,10 @@ export function BuyComfirmModel({
               <TYPE.smallGray>Fee :</TYPE.smallGray>
               <RightText>{CurrencyAmount.ether(JSBI.BigInt(fee ?? '0')).toSignificant(6)} ETH</RightText>
             </RowBetween>
-            <RowBetween>
+            {/* <RowBetween>
               <TYPE.smallGray>Slippage :</TYPE.smallGray>
               <RightText>{slippage}</RightText>
-            </RowBetween>
+            </RowBetween> */}
           </InfoWrapper>
           <ButtonBlack onClick={onConfirm} disabled={btn.disabled} height={60}>
             {btn.text}
@@ -178,18 +179,18 @@ export function SellComfirmModel({
   assetsParameters,
   number,
   ethAmount,
-  slippage,
-  tokenFluiditys,
-  ETHbalance
+  // slippage,
+  // ETHbalance,
+  tokenFluiditys
 }: {
   isOpen: boolean
   onDismiss: () => void
   onConfirm: () => void
   assetsParameters: AssetsParameter[]
-  slippage: string | number
+  // slippage: string | number
   number: string
   ethAmount: CurrencyAmount | undefined
-  ETHbalance: CurrencyAmount | undefined
+  // ETHbalance: CurrencyAmount | undefined
   tokenFluiditys: (TokenAmount | null)[]
 }) {
   const btn = useCheckSellButton(number, tokenFluiditys)
@@ -234,10 +235,10 @@ export function SellComfirmModel({
                 ETH
               </RightText>
             </RowBetween>
-            <RowBetween>
+            {/* <RowBetween>
               <TYPE.smallGray>Slippage :</TYPE.smallGray>
               <RightText>{slippage}</RightText>
-            </RowBetween>
+            </RowBetween> */}
           </InfoWrapper>
           {approvalState === ApprovalState.PENDING ? (
             <ButtonBlack disabled={true}>

@@ -29,9 +29,9 @@ const StyledMenuIcon = styled(Settings)`
   height: 16px;
   width: 16px;
 
-  > * {
+  /* > * {
     stroke: ${({ theme }) => theme.black};
-  }
+  } */
 
   :hover {
     opacity: 0.7;

@@ -84,13 +84,13 @@ const YourAccount = styled.div`
 `
 
 const LowerSection = styled.div`
-  padding: 0 1.5rem 2.5rem;
+  padding: 0 2.5rem 2.5rem;
   flex-grow: 1;
   overflow: auto;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
   display: flex;
-  width: 500px;
+  /* width: 500px; */
   ${({ theme }) => theme.mediaWidth.upToMedium`width: 100%;`}
 `
 

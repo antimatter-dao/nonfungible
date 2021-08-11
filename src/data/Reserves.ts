@@ -80,14 +80,32 @@ export function useNFTETHPrice(assets: AssetsParameter[]): NFTETHPriceProp {
   const pairAddresses = useMemo(
     () =>
       assets.map(({ currencyToken }) => {
-        return currencyToken && chainId ? Pair.getAddress(currencyToken, WETH[chainId]) : undefined
+        if (!chainId || !currencyToken) return undefined
+        if (currencyToken && currencyToken.equals(WETH[chainId])) return undefined
+        return Pair.getAddress(currencyToken, WETH[chainId])
       }),
     [assets, chainId]
   )
   const results = useMultipleContractSingleData(pairAddresses, PAIR_INTERFACE, 'getReserves')
 
   return useMemo(() => {
+    if (!chainId) {
+      return {
+        ethAmount: [PriceState.INVALID, '0'],
+        eths: []
+      }
+    }
+
     const eths: [PriceState, string | null, CurrencyAmount | null, TokenAmount | null][] = results.map((result, i) => {
+      if (assets[i].currencyToken?.equals(WETH[chainId])) {
+        const _ethAmount = new TokenAmount(WETH[chainId], '1000000000000000000')
+        return [
+          PriceState.VALID,
+          _ethAmount.raw.toString(),
+          _ethAmount,
+          new TokenAmount(WETH[chainId], '10000000000000000000000')
+        ]
+      }
       const { result: reserves, loading } = result
       const token = assets[i]
       if (loading) return [PriceState.LOADING, null, null, null]

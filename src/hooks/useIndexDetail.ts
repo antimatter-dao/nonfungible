@@ -9,6 +9,7 @@ import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
 import { useWeb3React } from '@web3-react/core'
 import { getAccountInfo, getNFTTransferRecords } from 'utils/option/httpFetch'
 import { TOKEN_FLUIDITY_LIMIT } from '../constants'
+import { BigNumber } from 'bignumber.js'
 
 export interface NFTIndexInfoProps {
   name: string
@@ -101,18 +102,26 @@ export function useNFTIndexInfo(
 
 export function useAssetsTokens(assetsParameters: AssetsParameter[] | undefined): AssetsParameter[] {
   const address = assetsParameters?.map(({ currency }) => currency)
+  const allTokens = useAllTokens()
   const tokens = useWrappedTokenInfos(address ?? [])
 
   return useMemo(() => {
     if (!assetsParameters) return []
     if (!tokens) return assetsParameters
     return assetsParameters?.map((item, index) => {
+      if (item.currencyToken) {
+        return { ...item }
+      }
+      if (item.currency && allTokens[item.currency]) {
+        item.currencyToken = allTokens[item.currency] as WrappedTokenInfo
+        return { ...item }
+      }
       if (tokens[index]) item.currencyToken = tokens[index]
       if (item.currencyToken && item.amountRaw)
         item.amount = new TokenAmount(item.currencyToken, JSBI.BigInt(item.amountRaw)).toSignificant()
       return item
     })
-  }, [assetsParameters, tokens])
+  }, [allTokens, assetsParameters, tokens])
 }
 
 export function useNFTBalance(nftid: string | undefined) {
@@ -148,7 +157,7 @@ export function useCheckBuyButton(
       return ret
     }
     const Insufficients = tokenFluiditys.filter((item: TokenAmount | null) => {
-      return !item || item.lessThan(JSBI.BigInt(TOKEN_FLUIDITY_LIMIT))
+      return !item || new BigNumber(item.toSignificant()).isLessThan(TOKEN_FLUIDITY_LIMIT)
     })
     if (Insufficients.length) {
       ret.disabled = true
@@ -180,7 +189,7 @@ export function useCheckSellButton(number: string | undefined, tokenFluiditys: (
       return ret
     }
     const Insufficients = tokenFluiditys.filter((item: TokenAmount | null) => {
-      return !item || item.lessThan(JSBI.BigInt(TOKEN_FLUIDITY_LIMIT))
+      return !item || new BigNumber(item.toSignificant()).isLessThan(TOKEN_FLUIDITY_LIMIT)
     })
     if (Insufficients.length) {
       ret.disabled = true
@@ -193,8 +202,14 @@ export function useCheckSellButton(number: string | undefined, tokenFluiditys: (
 
 export function useIsApprovedForAll(account: string | undefined, spender: string): boolean {
   const contract = useIndexNFTContract()
-  const apprivedRes = useSingleCallResult(contract, 'isApprovedForAll', [account ?? undefined, spender])
-  return useMemo(() => (apprivedRes.result ? apprivedRes.result[0] : false), [apprivedRes])
+  const apprivedRes = useSingleCallResult(account ? contract : undefined, 'isApprovedForAll', [
+    account ?? undefined,
+    spender ?? undefined
+  ])
+  return useMemo(() => {
+    if (!account) return false
+    return apprivedRes.result ? apprivedRes.result[0] : false
+  }, [account, apprivedRes.result])
 }
 
 export interface NFTTransactionRecordsProps {

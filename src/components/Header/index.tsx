@@ -14,7 +14,7 @@ import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import ToggleMenu from './ToggleMenu'
 import { ButtonOutlinedPrimary } from 'components/Button'
 import { ReactComponent as AntimatterIcon } from 'assets/svg/antimatter_icon.svg'
-import { useToggleCreationModal } from 'state/application/hooks'
+import { useToggleCreationModal, useWalletModalToggle } from 'state/application/hooks'
 import CreationNFTModal from 'components/Creation'
 import { useCurrentUserInfo, useLogin, useLogOut } from 'state/userInfo/hooks'
 import { shortenAddress } from 'utils'
@@ -446,6 +446,8 @@ export default function Header() {
 function UserMenu({ account }: { account?: string | null }) {
   const history = useHistory()
   const logout = useLogOut()
+  const toggleWalletModal = useWalletModalToggle()
+
   return (
     <UserMenuWrapper>
       <div>
@@ -465,6 +467,7 @@ function UserMenu({ account }: { account?: string | null }) {
           <UserMenuItem onClick={() => history.push('/profile/' + UserInfoTabs.INDEX)}>
             {UserInfoTabRoute[UserInfoTabs.INDEX]}
           </UserMenuItem>
+          <UserMenuItem onClick={toggleWalletModal}>Wallet</UserMenuItem>
           <UserMenuItem onClick={() => history.push('/profile/settings')}>Settings</UserMenuItem>
         </AutoColumn>
       </div>

@@ -4,7 +4,7 @@ import { useHistory, useParams, useLocation } from 'react-router-dom'
 import { AutoColumn } from 'components/Column'
 import AppBody from 'pages/AppBody'
 import { AutoRow, RowBetween, RowFixed } from 'components/Row'
-import { ButtonOutlinedBlack } from 'components/Button'
+import { ButtonBlack, ButtonOutlinedBlack } from 'components/Button'
 import { AnimatedImg, AnimatedWrapper, TYPE } from 'theme'
 import CopyHelper from 'components/AccountDetails/Copy'
 import ProfileFallback from 'assets/images/profile-fallback.png'
@@ -21,6 +21,9 @@ import { useCurrentUserInfo, useLogOut } from 'state/userInfo/hooks'
 import { usePositionList, useIndexList } from 'hooks/useMyList'
 import Pagination from 'components/Pagination'
 import Loader from 'assets/svg/antimatter_background_logo_dark.svg'
+import ClaimModal from 'components/claim/MatterClaimModal'
+import { useCreatorFee } from 'hooks/useMatterClaim'
+import { CurrencyAmount, JSBI } from '@uniswap/sdk'
 
 export enum UserInfoTabs {
   POSITION = 'my_position',
@@ -89,7 +92,7 @@ const Capsule = styled.p`
 `
 
 const Synopsis = styled.p`
-  max-width: 741px;
+  max-width: 80%;
   overflow-wrap: anywhere;
   margin-top: 30px;
   width: 100%;
@@ -110,6 +113,10 @@ const Tab = styled.button<{ selected: boolean }>`
   border-bottom: 3px solid ${({ selected }) => (selected ? '#000000' : 'transparent')};
   margin-bottom: -1px;
   transition: 0.3s;
+  cursor: pointer;
+  &:hover {
+    color: #000000;
+  }
 `
 
 // function ActionButton({ onClick }: { onClick: () => void }) {
@@ -171,6 +178,8 @@ export default function User() {
   const { data: positionCardList, page: positionPage, loading: positionIsLoading } = usePositionList(userInfo)
   const { data: indexList, page: indexPage, loading: indexIsLoading } = useIndexList(userInfo)
   const logout = useLogOut()
+  const claimFee = useCreatorFee()
+  const [claimModal, setClaimModal] = useState(false)
 
   const handleTabClick = useCallback(
     tab => () => {
@@ -196,11 +205,11 @@ export default function User() {
 
   const indexData = useMemo(
     () =>
-      indexList.map(({ indexId, indexName }) => [
+      indexList.map(({ indexId, indexName, totalNftAmount, totalCreatorFee }) => [
         indexId,
         indexName,
-        '',
-        '0.05eth'
+        totalNftAmount,
+        CurrencyAmount.ether(JSBI.BigInt(totalCreatorFee ?? '')).toSignificant(6)
         // <ActionButton onClick={() => {}} key={indexId} />
       ]),
     [indexList]
@@ -247,6 +256,22 @@ export default function User() {
                 </RowFixed>
               </RowBetween>
               <Synopsis>{userInfo?.bio}</Synopsis>
+              <RowBetween style={{ justifyContent: 'flex-end', marginBottom: '-20px' }}>
+                <AutoColumn gap="8px" justify="end">
+                  <TYPE.darkGray style={{ display: 'flex', alignItems: 'center' }}>
+                    Unclaim MATTER: <TYPE.black fontSize={20}> {claimFee ?? '-'}</TYPE.black>
+                  </TYPE.darkGray>
+                  <ButtonBlack
+                    width="134px"
+                    disabled={!!(Number(claimFee) <= 0)}
+                    onClick={() => {
+                      setClaimModal(true)
+                    }}
+                  >
+                    Claim Fees
+                  </ButtonBlack>
+                </AutoColumn>
+              </RowBetween>
             </AutoColumn>
             <SwitchTab onTabClick={handleTabClick} currentTab={currentTab} />
             {((currentTab === UserInfoTabs.INDEX && indexIsLoading) ||
@@ -299,7 +324,7 @@ export default function User() {
             {!indexIsLoading && currentTab === UserInfoTabs.INDEX && (
               <>
                 <Table
-                  header={['Index ID', 'Index Name', 'Current Issurance', 'Fees Earned', '']}
+                  header={['Index ID', 'Index Name', 'Current Issurance', 'Fees Earned']}
                   rows={indexData}
                   isHeaderGray
                 />
@@ -324,6 +349,13 @@ export default function User() {
           </AutoColumn>
         </AppBody>
       </Wrapper>
+      <ClaimModal
+        claimFee={claimFee}
+        isOpen={claimModal}
+        onDismiss={() => {
+          setClaimModal(false)
+        }}
+      />
     </>
   )
 }

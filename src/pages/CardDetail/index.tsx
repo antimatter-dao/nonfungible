@@ -21,7 +21,7 @@ import {
 import NumericalInput from 'components/NumericalInput'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
-import AntimatterLogo from 'assets/svg/logo.svg'
+import AntimatterLogo from 'assets/svg/antimatter_logo_nft.svg'
 import { WrappedTokenInfo } from 'state/lists/hooks'
 import { useAmountInMins, useCalcBuyFee, useIndexBuyCall } from '../../hooks/useIndexBuyCallback'
 import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
@@ -41,9 +41,10 @@ import SettingsTab from 'components/Settings'
 import BigNumber from 'bignumber.js'
 import { useUserSlippageTolerance } from 'state/user/hooks'
 import TransactionsTable from './TransactionsTable'
+import { useWalletModalToggle } from 'state/application/hooks'
 
 const Wrapper = styled.div`
-  min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
+  /* min-height: calc(100vh - ${({ theme }) => theme.headerHeight}); */
   width: 1192px;
   margin: auto;
   color: ${({ theme }) => theme.black};
@@ -127,6 +128,13 @@ const AssetsWrapper = styled.div`
 const TradeWrapper = styled(AutoColumn)`
   grid-template-columns: 1fr 1fr;
 `
+export const StyledLink = styled.a`
+  text-decoration: none;
+  color: inherit;
+  &:hover {
+    text-decoration: underline;
+  }
+`
 
 export enum TabType {
   'Information' = 'Information',
@@ -160,6 +168,7 @@ export default function CardDetail({
   }
 }: RouteComponentProps<{ nftid?: string }>) {
   const { account } = useWeb3React()
+  const toggleWalletModal = useWalletModalToggle()
   const theme = useTheme()
   const history = useHistory()
   const [transactionModalOpen, setTransactionModalOpen] = useState(false)
@@ -306,7 +315,7 @@ export default function CardDetail({
         <div style={{ width: 110 }} />
       </RowBetween>
       <Wrapper>
-        <RowBetween style={{ marginTop: 70 }} align="flex-start">
+        <RowBetween style={{ marginTop: 10 }} align="flex-start">
           <StyledNFTCard>
             <NFTCard {...currentCard} />
           </StyledNFTCard>
@@ -389,18 +398,29 @@ export default function CardDetail({
                           </RowBetween>
                           <CurrencyETHShow />
                         </AutoColumn>
-                        <ButtonBlack
-                          onClick={() => {
-                            setBuyConfirmModal(true)
-                            setTimeout(() => {
-                              setBuyConfirmNoticeModal(true)
-                            }, 500)
-                          }}
-                          height={60}
-                          disabled={!Number(buyAmount) || !thisNFTethAmount}
-                        >
-                          Buy
-                        </ButtonBlack>
+                        {account ? (
+                          <ButtonBlack
+                            onClick={() => {
+                              setBuyConfirmModal(true)
+                              setTimeout(() => {
+                                setBuyConfirmNoticeModal(true)
+                              }, 500)
+                            }}
+                            height={60}
+                            disabled={!Number(buyAmount) || !thisNFTethAmount}
+                          >
+                            Buy
+                          </ButtonBlack>
+                        ) : (
+                          <ButtonBlack
+                            onClick={() => {
+                              toggleWalletModal()
+                            }}
+                            height={60}
+                          >
+                            Connect Wallet
+                          </ButtonBlack>
+                        )}
                       </BuyPannel>
                     )}
 
@@ -408,6 +428,7 @@ export default function CardDetail({
                       <BuyPannel>
                         <AutoColumn gap="8px" style={{ width: '100%' }}>
                           <NumberNFTInputPanel
+                            negativeMarginTop="1px"
                             value={sellAmount}
                             onUserInput={val => {
                               setSellAmount(val)
@@ -430,15 +451,26 @@ export default function CardDetail({
                           </RowBetween>
                           <CurrencyETHShow />
                         </AutoColumn>
-                        <ButtonBlack
-                          onClick={() => {
-                            setSellConfirmModal(true)
-                          }}
-                          height={60}
-                          disabled={!Number(sellAmount) || Number(sellAmount) > Number(NFTbalance?.toString())}
-                        >
-                          Sell
-                        </ButtonBlack>
+                        {account ? (
+                          <ButtonBlack
+                            onClick={() => {
+                              setSellConfirmModal(true)
+                            }}
+                            height={60}
+                            disabled={!Number(sellAmount) || Number(sellAmount) > Number(NFTbalance?.toString())}
+                          >
+                            Sell
+                          </ButtonBlack>
+                        ) : (
+                          <ButtonBlack
+                            onClick={() => {
+                              toggleWalletModal()
+                            }}
+                            height={60}
+                          >
+                            Connect Wallet
+                          </ButtonBlack>
+                        )}
                       </BuyPannel>
                     )}
                   </div>
@@ -480,7 +512,7 @@ export default function CardDetail({
           setBuyConfirmModal(false)
         }}
         fee={INDEX_NFT_BUY_FEE}
-        slippage={slippage}
+        // slippage={slippage}
         tokenFluiditys={tokenFluiditys}
         ethAmount={thisNFTethAmount}
         ETHbalance={ETHbalance ?? undefined}
@@ -503,8 +535,8 @@ export default function CardDetail({
         }}
         tokenFluiditys={tokenFluiditys}
         ethAmount={thisNFTethAmount}
-        ETHbalance={ETHbalance ?? undefined}
-        slippage={slippage}
+        // ETHbalance={ETHbalance ?? undefined}
+        // slippage={slippage}
         number={sellAmount}
         assetsParameters={tokens}
         onConfirm={toSell}
@@ -545,7 +577,9 @@ function IndexInfo({ nftInfo }: { nftInfo: NFTIndexInfoProps }) {
       <Hr />
       {/* <Paragraph header="Current issuance">123</Paragraph>
       <Hr /> */}
-      <Paragraph header="Description">{nftInfo.description}</Paragraph>
+      <Paragraph header="Description" textWidth="387px">
+        {nftInfo.description}
+      </Paragraph>
     </div>
   )
 }
@@ -558,7 +592,9 @@ function AssetItem({ amount, currencyToken }: { amount: string; currencyToken: W
           <CurrencyLogo currency={currencyToken} />
         </StyledAvatar>
         <RowBetween>
-          <TYPE.subHeader>{currencyToken?.symbol}</TYPE.subHeader>
+          <StyledLink target="_blank" href={`https://etherscan.io/token/${currencyToken?.address}`}>
+            <TYPE.subHeader>{currencyToken?.symbol}</TYPE.subHeader>
+          </StyledLink>
           <TYPE.black color={'black'} fontWeight={400}>
             {amount}
           </TYPE.black>

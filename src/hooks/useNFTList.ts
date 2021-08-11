@@ -8,6 +8,7 @@ import { useIndexNFTContract } from './useContract'
 import { toNumber } from './useIndexDetail'
 import { ZERO_ADDRESS } from '../constants'
 import { CardColor } from 'components/NFTCard'
+import { useBlockNumber } from 'state/application/hooks'
 
 interface RecordListProps {
   creatorName: string
@@ -40,6 +41,8 @@ export default function useNFTList(
   const [reqLoading, setReqLoading] = useState<boolean>(false)
   const [countPages, setCountPages] = useState<number>(0)
   const [currentPage, setCurrentPage] = useState<number>(1)
+  const [successNFTRes, setSuccessNFTRes] = useState<any[]>([])
+  const blockNumber = useBlockNumber()
   const tokens = useAllTokens()
 
   useEffect(() => {
@@ -64,13 +67,19 @@ export default function useNFTList(
         console.error('fetch NFT List', error)
       }
     })()
-  }, [currentPage, searchParams])
+  }, [currentPage, searchParams, blockNumber])
 
   const contract = useIndexNFTContract()
   const nftRes = useSingleContractMultipleData(contract, 'getIndex', nftIdList)
 
+  useEffect(() => {
+    if (nftRes.length && nftRes[0].loading !== true && nftRes[0].error !== true && nftRes[0].result) {
+      setSuccessNFTRes([...nftRes])
+    }
+  }, [nftRes])
+
   return useMemo(() => {
-    const data = nftRes
+    const data = successNFTRes
       .map((res, idx) => {
         if (!res.result) {
           return undefined
@@ -114,5 +123,5 @@ export default function useNFTList(
         setCurrentPage: setCurrentPage
       }
     }
-  }, [nftRes, reqLoading, countPages, currentPage, recordList, tokens])
+  }, [nftRes, successNFTRes, reqLoading, countPages, currentPage, recordList, tokens])
 }
