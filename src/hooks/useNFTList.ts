@@ -73,7 +73,6 @@ export default function useNFTList(
   const nftRes = useSingleContractMultipleData(contract, 'getIndex', nftIdList)
 
   useEffect(() => {
-    console.log('exec')
     if (nftRes.length && nftRes[0].loading !== true && nftRes[0].error !== true && nftRes[0].result) {
       setSuccessNFTRes([...nftRes])
     }

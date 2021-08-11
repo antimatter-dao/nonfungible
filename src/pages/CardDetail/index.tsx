@@ -43,7 +43,7 @@ import { useUserSlippageTolerance } from 'state/user/hooks'
 import TransactionsTable from './TransactionsTable'
 
 const Wrapper = styled.div`
-  min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
+  /* min-height: calc(100vh - ${({ theme }) => theme.headerHeight}); */
   width: 1192px;
   margin: auto;
   color: ${({ theme }) => theme.black};
@@ -313,7 +313,7 @@ export default function CardDetail({
         <div style={{ width: 110 }} />
       </RowBetween>
       <Wrapper>
-        <RowBetween style={{ marginTop: 70 }} align="flex-start">
+        <RowBetween style={{ marginTop: 10 }} align="flex-start">
           <StyledNFTCard>
             <NFTCard {...currentCard} />
           </StyledNFTCard>

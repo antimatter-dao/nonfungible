@@ -102,18 +102,26 @@ export function useNFTIndexInfo(
 
 export function useAssetsTokens(assetsParameters: AssetsParameter[] | undefined): AssetsParameter[] {
   const address = assetsParameters?.map(({ currency }) => currency)
+  const allTokens = useAllTokens()
   const tokens = useWrappedTokenInfos(address ?? [])
 
   return useMemo(() => {
     if (!assetsParameters) return []
     if (!tokens) return assetsParameters
     return assetsParameters?.map((item, index) => {
+      if (item.currencyToken) {
+        return { ...item }
+      }
+      if (item.currency && allTokens[item.currency]) {
+        item.currencyToken = allTokens[item.currency] as WrappedTokenInfo
+        return { ...item }
+      }
       if (tokens[index]) item.currencyToken = tokens[index]
       if (item.currencyToken && item.amountRaw)
         item.amount = new TokenAmount(item.currencyToken, JSBI.BigInt(item.amountRaw)).toSignificant()
       return item
     })
-  }, [assetsParameters, tokens])
+  }, [allTokens, assetsParameters, tokens])
 }
 
 export function useNFTBalance(nftid: string | undefined) {
