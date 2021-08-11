@@ -41,6 +41,7 @@ export default function useNFTList(
   const [reqLoading, setReqLoading] = useState<boolean>(false)
   const [countPages, setCountPages] = useState<number>(0)
   const [currentPage, setCurrentPage] = useState<number>(1)
+  const [successNFTRes, setSuccessNFTRes] = useState<any[]>([])
   const blockNumber = useBlockNumber()
   const tokens = useAllTokens()
 
@@ -71,8 +72,15 @@ export default function useNFTList(
   const contract = useIndexNFTContract()
   const nftRes = useSingleContractMultipleData(contract, 'getIndex', nftIdList)
 
+  useEffect(() => {
+    console.log('exec')
+    if (nftRes.length && nftRes[0].loading !== true && nftRes[0].error !== true && nftRes[0].result) {
+      setSuccessNFTRes([...nftRes])
+    }
+  }, [nftRes])
+
   return useMemo(() => {
-    const data = nftRes
+    const data = successNFTRes
       .map((res, idx) => {
         if (!res.result) {
           return undefined
@@ -116,5 +124,5 @@ export default function useNFTList(
         setCurrentPage: setCurrentPage
       }
     }
-  }, [nftRes, reqLoading, countPages, currentPage, recordList, tokens])
+  }, [nftRes, successNFTRes, reqLoading, countPages, currentPage, recordList, tokens])
 }

@@ -137,7 +137,7 @@ export default function SpotIndex() {
   } = useNFTList(searchParam)
   useEffect(() => {
     const _time = new Date().getTime()
-    if (NFTListData.length && !loading && _time - lastChangeLoading > 500) {
+    if (NFTListData.length && !loading && _time - lastChangeLoading > 100) {
       setShowLoading(false)
       setLastChangeLoading(_time)
     }
@@ -212,7 +212,15 @@ export default function SpotIndex() {
               />
             ))}
           </ContentWrapper>
-          <Pagination page={currentPage} count={countPages} setPage={setCurrentPage} />
+          <Pagination
+            page={currentPage}
+            count={countPages}
+            setPage={page => {
+              setShowLoading(true)
+              setLastChangeLoading(new Date().getTime())
+              setCurrentPage(page)
+            }}
+          />
         </>
       )}
     </Wrapper>

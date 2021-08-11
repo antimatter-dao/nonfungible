@@ -127,6 +127,13 @@ const AssetsWrapper = styled.div`
 const TradeWrapper = styled(AutoColumn)`
   grid-template-columns: 1fr 1fr;
 `
+export const StyledLink = styled.a`
+  text-decoration: none;
+  color: inherit;
+  &:hover {
+    text-decoration: underline;
+  }
+`
 
 export enum TabType {
   'Information' = 'Information',
@@ -560,7 +567,9 @@ function AssetItem({ amount, currencyToken }: { amount: string; currencyToken: W
           <CurrencyLogo currency={currencyToken} />
         </StyledAvatar>
         <RowBetween>
-          <TYPE.subHeader>{currencyToken?.symbol}</TYPE.subHeader>
+          <StyledLink target="_blank" href={`https://etherscan.io/token/${currencyToken?.address}`}>
+            <TYPE.subHeader>{currencyToken?.symbol}</TYPE.subHeader>
+          </StyledLink>
           <TYPE.black color={'black'} fontWeight={400}>
             {amount}
           </TYPE.black>
