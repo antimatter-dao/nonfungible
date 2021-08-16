@@ -42,7 +42,7 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
       tokens.map(([tokenA, tokenB]) => {
         return tokenA && tokenB && !tokenA.equals(tokenB) ? Pair.getAddress(chainId ?? 1, tokenA, tokenB) : undefined
       }),
-    [tokens]
+    [chainId, tokens]
   )
   const results = useMultipleContractSingleData(pairAddresses, PAIR_INTERFACE, 'getReserves')
 
@@ -66,7 +66,7 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
         )
       ]
     })
-  }, [results, tokens])
+  }, [chainId, results, tokens])
 }
 
 export function usePair(tokenA?: Currency, tokenB?: Currency): [PairState, Pair | null] {
