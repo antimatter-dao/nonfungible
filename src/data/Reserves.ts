@@ -40,7 +40,7 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
   const pairAddresses = useMemo(
     () =>
       tokens.map(([tokenA, tokenB]) => {
-        return tokenA && tokenB && !tokenA.equals(tokenB) ? Pair.getAddress(tokenA, tokenB) : undefined
+        return tokenA && tokenB && !tokenA.equals(tokenB) ? Pair.getAddress(chainId ?? 1, tokenA, tokenB) : undefined
       }),
     [tokens]
   )
@@ -59,7 +59,11 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
       const [token0, token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
       return [
         PairState.EXISTS,
-        new Pair(new TokenAmount(token0, reserve0.toString()), new TokenAmount(token1, reserve1.toString()))
+        new Pair(
+          chainId ?? 1,
+          new TokenAmount(token0, reserve0.toString()),
+          new TokenAmount(token1, reserve1.toString())
+        )
       ]
     })
   }, [results, tokens])
@@ -82,7 +86,7 @@ export function useNFTETHPrice(assets: AssetsParameter[]): NFTETHPriceProp {
       assets.map(({ currencyToken }) => {
         if (!chainId || !currencyToken) return undefined
         if (currencyToken && currencyToken.equals(WETH[chainId])) return undefined
-        return Pair.getAddress(currencyToken, WETH[chainId])
+        return Pair.getAddress(chainId ?? 1, currencyToken, WETH[chainId])
       }),
     [assets, chainId]
   )
@@ -136,6 +140,7 @@ export function useNFTETHPrice(assets: AssetsParameter[]): NFTETHPriceProp {
       const tokenA = token.currencyToken
       const tokenB = WETH[chainId]
       const ethPrice: string = new Pair(
+        chainId ?? 1,
         new TokenAmount(tokenA, reserve0.toString()),
         new TokenAmount(tokenB, reserve1.toString())
       )

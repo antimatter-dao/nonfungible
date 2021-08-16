@@ -71,7 +71,7 @@ export const MATTER_OPTION: { [chainId in ChainId]: OptionTypeData | null } = {
     currencySymbol: 'USDT',
     currencyDecimals: '6'
   },
-  [ChainId.ROPSTEN]: {
+  [ChainId.BSC]: {
     id: '0',
     callAddress: '0xF87aC9826e7CBceAE26E5Febaedc1e70e864F9A6',
     putAddress: '0xD8760634Ee64139637010Ca9efb9810BF3Fc90AD',
@@ -87,10 +87,7 @@ export const MATTER_OPTION: { [chainId in ChainId]: OptionTypeData | null } = {
     underlyingDecimals: '18',
     currencySymbol: 'DAI',
     currencyDecimals: '18'
-  },
-  [ChainId.RINKEBY]: null,
-  [ChainId.KOVAN]: null,
-  [ChainId.GÖRLI]: null
+  }
 }
 
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
@@ -106,7 +103,10 @@ export const GOVERNANCE_ADDRESS = '0xDf7d362D1E3e5Db29C0B0A1ae75064523C2B2D9f'
 // export const MATTER_ADDRESS = '0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F'
 
 // chain 1
-export const INDEX_NFT_ADDRESS = '0xD12D12AaCad77D54421A2c2AD723e259Bf390488'
+export const INDEX_NFT_ADDRESS: { [chainId in ChainId]: string } = {
+  [ChainId.MAINNET]: '0xD12D12AaCad77D54421A2c2AD723e259Bf390488',
+  [ChainId.BSC]: '0x6d31E526208c423C29e021282b3F0fE13EF9d064'
+}
 export const MATTER_ADDRESS = '0x9b99cca871be05119b2012fd4474731dd653febe'
 
 export const INDEX_NFT_BUY_FEE = '5000000000000000'
@@ -117,7 +117,7 @@ export const TOKEN_FLUIDITY_LIMIT = 5
 // export const GOVERNANCE_ADDRESS = '0x78fC5460737EB07Ce9e7d954B294ecA7E6203D19'
 // export const MATTER_ADDRESS = '0x6669Ee1e6612E1B43eAC84d4CB9a94Af0A98E740'
 
-export const GOVERNANCE_TOKEN = new Token(ChainId.ROPSTEN, MATTER_ADDRESS, 18, 'MAT', 'Mat')
+export const GOVERNANCE_TOKEN = new Token(ChainId.MAINNET, MATTER_ADDRESS, 18, 'MAT', 'Mat')
 
 export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 

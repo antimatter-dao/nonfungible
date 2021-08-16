@@ -15,6 +15,7 @@ import { INDEX_NFT_ADDRESS, TOKEN_FLUIDITY_LIMIT } from '../../constants'
 import { Dots } from 'components/swap/styleds'
 import IconClose from 'components/Icons/IconClose'
 import { AlertCircle } from 'react-feather'
+import { useActiveWeb3React } from '../../hooks'
 
 export const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -22,9 +23,9 @@ export const Wrapper = styled.div`
   padding: 40px;
   width: 100%;
   position: relative;
-  background: ${({ theme }) => theme.text1};
   max-height: 100%;
   overflow-y: auto;
+  background: ${({ theme }) => theme.text1};
 `
 const InfoWrapper = styled(AutoColumn)`
   padding: 24px 28px;
@@ -193,8 +194,9 @@ export function SellComfirmModel({
   // ETHbalance: CurrencyAmount | undefined
   tokenFluiditys: (TokenAmount | null)[]
 }) {
+  const { chainId } = useActiveWeb3React()
   const btn = useCheckSellButton(number, tokenFluiditys)
-  const [approvalState, approveCallback] = useNFTApproveCallback(INDEX_NFT_ADDRESS)
+  const [approvalState, approveCallback] = useNFTApproveCallback(INDEX_NFT_ADDRESS[chainId ?? 1])
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss} minHeight={30} maxHeight={85} width="480px" maxWidth={480}>

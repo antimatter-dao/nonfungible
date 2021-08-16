@@ -83,9 +83,7 @@ export function useENSRegistrarContract(withSignerIfPossible?: boolean): Contrac
   if (chainId) {
     switch (chainId) {
       case ChainId.MAINNET:
-      case ChainId.GÖRLI:
-      case ChainId.ROPSTEN:
-      case ChainId.RINKEBY:
+      case ChainId.BSC:
         address = '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e'
         break
     }
@@ -120,7 +118,8 @@ export function useGovernanceContract(): Contract | null {
 }
 
 export function useIndexNFTContract(): Contract | null {
-  return useContract(INDEX_NFT_ADDRESS, FINANCE_INDEX_ABI, true)
+  const { chainId } = useActiveWeb3React()
+  return useContract(INDEX_NFT_ADDRESS[chainId ?? 1], FINANCE_INDEX_ABI, true)
 }
 
 export function useUniContract(): Contract | null {

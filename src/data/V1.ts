@@ -30,7 +30,7 @@ export function useV1ExchangeAddress(tokenAddress?: string): string | undefined 
 
 export class MockV1Pair extends Pair {
   constructor(etherAmount: BigintIsh, tokenAmount: TokenAmount) {
-    super(tokenAmount, new TokenAmount(WETH[tokenAmount.token.chainId], etherAmount))
+    super(1, tokenAmount, new TokenAmount(WETH[tokenAmount.token.chainId], etherAmount))
   }
 }
 
@@ -102,6 +102,7 @@ export function useV1Trade(
   outputCurrency?: Currency,
   exactAmount?: CurrencyAmount
 ): Trade | undefined {
+  const { chainId } = useActiveWeb3React()
   // get the mock v1 pairs
   const inputPair = useMockV1Pair(inputCurrency)
   const outputPair = useMockV1Pair(outputCurrency)
@@ -126,7 +127,7 @@ export function useV1Trade(
   try {
     v1Trade =
       route && exactAmount
-        ? new Trade(route, exactAmount, isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT)
+        ? new Trade(chainId ?? 1, route, exactAmount, isExactIn ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT)
         : undefined
   } catch (error) {
     console.debug('Failed to create V1 trade', error)
