@@ -68,7 +68,7 @@ export default function StakingModal({ isOpen, onDismiss, stakingInfo, userLiqui
   // pair contract for this token to be staked
   const dummyPair =
     stakingInfo?.tokens[0] && stakingInfo?.tokens[1]
-      ? new Pair(new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
+      ? new Pair(chainId, new TokenAmount(stakingInfo.tokens[0], '0'), new TokenAmount(stakingInfo.tokens[1], '0'))
       : undefined
   const pairContract = usePairContract(dummyPair?.liquidityToken.address)
 

@@ -30,7 +30,6 @@
     "@uniswap/governance": "^1.0.2",
     "@uniswap/liquidity-staker": "^1.0.2",
     "@uniswap/merkle-distributor": "1.0.1",
-    "@uniswap/sdk": "3.0.3",
     "@uniswap/token-lists": "^1.0.0-beta.19",
     "@uniswap/v2-core": "1.0.0",
     "@uniswap/v2-periphery": "^1.1.0-beta.0",
@@ -132,6 +131,7 @@
     "@types/web3": "^1.2.2",
     "@uniswap/default-token-list": "^2.0.0",
     "date-fns": "^2.22.1",
-    "lightweight-charts": "^3.3.0"
+    "lightweight-charts": "^3.3.0",
+    "@uniswap/sdk": "antimatter-finance/nft-sdk.git"
   }
 }

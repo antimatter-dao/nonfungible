@@ -8,10 +8,7 @@ export const ROUTER_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
 
 export const ANTIMATTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '0x60d0769c4940cA58648C0AA34ecdf390a10F272e',
-  [ChainId.ROPSTEN]: '0x60d0769c4940cA58648C0AA34ecdf390a10F272e',
-  [ChainId.RINKEBY]: '0xe774A104715ba1B99dEAB30ab33e1C99B0695270',
-  [ChainId.KOVAN]: '',
-  [ChainId.GÖRLI]: ''
+  [ChainId.BSC]: '0x60d0769c4940cA58648C0AA34ecdf390a10F272e'
 }
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
@@ -126,10 +123,7 @@ export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 
 export const UNI: { [chainId in ChainId]: Token } = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'MATTER', 'Matter'),
-  [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, UNI_ADDRESS, 18, 'MATTER', 'Matter'),
-  [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, UNI_ADDRESS, 18, 'MATTER', 'Matter'),
-  [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, UNI_ADDRESS, 18, 'MATTER', 'Matter'),
-  [ChainId.KOVAN]: new Token(ChainId.KOVAN, UNI_ADDRESS, 18, 'MATTER', 'Matter')
+  [ChainId.BSC]: new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'MATTER', 'Matter')
 }
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
@@ -145,10 +139,7 @@ export const MERKLE_DISTRIBUTOR_ADDRESS: { [chainId in ChainId]?: string } = {
 
 const WETH_ONLY: ChainTokenList = {
   [ChainId.MAINNET]: [WETH[ChainId.MAINNET]],
-  [ChainId.ROPSTEN]: [WETH[ChainId.ROPSTEN]],
-  [ChainId.RINKEBY]: [WETH[ChainId.RINKEBY]],
-  [ChainId.GÖRLI]: [WETH[ChainId.GÖRLI]],
-  [ChainId.KOVAN]: [WETH[ChainId.KOVAN]]
+  [ChainId.BSC]: [WETH[ChainId.BSC]]
 }
 
 // used to construct intermediary pairs for trading
