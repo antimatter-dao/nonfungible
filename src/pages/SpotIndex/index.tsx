@@ -14,6 +14,7 @@ import { AnimatedImg, AnimatedWrapper, TYPE } from 'theme'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
 import { SportIndexSearchProps } from 'utils/option/httpFetch'
 import { useToken } from 'hooks/Tokens'
+import { FACTORY_ADDRESS } from '@uniswap/sdk'
 
 const SearchParams = [
   {
@@ -125,6 +126,8 @@ export default function SpotIndex() {
   const history = useHistory()
   const [showLoading, setShowLoading] = useState(true)
   const [lastChangeLoading, setLastChangeLoading] = useState(new Date().getTime())
+
+  console.log('FACTORY_ADDRESS', FACTORY_ADDRESS)
 
   const [searchParam, setSearchParam] = useState<SportIndexSearchProps>({
     searchParam: '',

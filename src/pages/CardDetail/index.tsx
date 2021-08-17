@@ -632,7 +632,7 @@ function CurrencyETHShow() {
 
   return (
     <StyledCurrencyShow>
-      {chainId === 34 ? (
+      {chainId === 56 ? (
         <BNBIcon width="20px" height="20px" style={{ marginRight: 8 }} />
       ) : (
         <ETHIcon width="20px" height="20px" style={{ marginRight: 8 }} />
