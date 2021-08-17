@@ -2727,7 +2727,7 @@
 
 "@uniswap/sdk@antimatter-finance/nft-sdk.git":
   version "3.0.3"
-  resolved "https://codeload.github.com/antimatter-finance/nft-sdk/tar.gz/28257421c668f8285bdff1b29a602cf8f8fc1d03"
+  resolved "https://codeload.github.com/antimatter-finance/nft-sdk/tar.gz/9850961ccb236214e2adcc3bfa8bca9ed298dde2"
   dependencies:
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
