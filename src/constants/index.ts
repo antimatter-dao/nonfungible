@@ -4,7 +4,10 @@ import { AbstractConnector } from '@web3-react/abstract-connector'
 import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
 import { OptionTypeData } from '../state/market/hooks'
 
-export const ROUTER_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
+export const ROUTER_ADDRESS: { [chainId in ChainId]: string } = {
+  [ChainId.MAINNET]: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+  [ChainId.BSC]: '0x10ED43C718714eb63d5aA57B78B54704E256024E'
+}
 
 export const ANTIMATTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '0x60d0769c4940cA58648C0AA34ecdf390a10F272e',

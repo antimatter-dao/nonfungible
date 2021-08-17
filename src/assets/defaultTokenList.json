@@ -203,6 +203,22 @@
       "symbol": "INJ",
       "decimals": 18,
       "logoURI": "https://assets.coingecko.com/coins/images/12882/thumb/Secondary_Symbol.png?1628233237"
+    },
+    {
+      "chainId": 56,
+      "address": "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+      "name": "PancakeSwap Token",
+      "symbol": "Cake",
+      "decimals": 18,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82/logo.png"
+    },
+    {
+      "chainId": 56,
+      "address": "0x8F0528cE5eF7B51152A59745bEfDD91D97091d2F",
+      "name": "AlpacaToken",
+      "symbol": "ALPACA",
+      "decimals": 18,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0x8F0528cE5eF7B51152A59745bEfDD91D97091d2F/logo.png"
     }
   ],
   "version": {
