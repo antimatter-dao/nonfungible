@@ -134,7 +134,7 @@ export const UNI: { [chainId in ChainId]: Token } = {
 }
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
-  [UNI_ADDRESS]: 'UNI',
+  [UNI_ADDRESS]: 'UNI1',
   [GOVERNANCE_ADDRESS]: 'Governance',
   [TIMELOCK_ADDRESS]: 'Timelock'
 }
