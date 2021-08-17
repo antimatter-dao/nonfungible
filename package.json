@@ -130,8 +130,8 @@
     "@material-ui/pickers": "^3.3.10",
     "@types/web3": "^1.2.2",
     "@uniswap/default-token-list": "^2.0.0",
+    "@uniswap/sdk": "antimatter-finance/nft-sdk.git",
     "date-fns": "^2.22.1",
-    "lightweight-charts": "^3.3.0",
-    "@uniswap/sdk": "antimatter-finance/nft-sdk.git"
+    "lightweight-charts": "^3.3.0"
   }
 }
