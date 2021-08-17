@@ -1,3 +1,4 @@
+import store from 'state'
 import { getCurrentUserInfoSync, clearLoginStoreSync } from 'state/userInfo/hooks'
 
 // const domain = 'https://nftapi.antimatter.finance'
@@ -55,18 +56,12 @@ const promiseGenerator = (request: Request) => {
 }
 
 const requestBodyGenerator = (body: any, defaultChainId = 1) => {
-  const userInfo = getCurrentUserInfoSync()
-  return JSON.stringify({ chainId: userInfo ? userInfo.chainId : defaultChainId, ...body })
+  const { chainId } = store.getState().currentAccount
+  return JSON.stringify({ chainId: chainId ? chainId : defaultChainId, ...body })
 }
 
-export function appLogin(
-  chainId: number,
-  publicAddress: string,
-  signature: string,
-  message: string
-): Promise<LoginRes> {
+export function appLogin(publicAddress: string, signature: string, message: string): Promise<LoginRes> {
   const param = {
-    chainId,
     publicAddress,
     signature,
     message
@@ -90,7 +85,7 @@ export function getAccountInfo(address: string): Promise<LoginRes> {
   }
   const request = new Request(`${domain}/app/getAccountInfo`, {
     method: 'POST',
-    body: JSON.stringify({ address, chainId: userInfo?.chainId }),
+    body: JSON.stringify({ address }),
     headers: _headers
   })
 

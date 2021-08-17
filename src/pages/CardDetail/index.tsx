@@ -42,6 +42,7 @@ import BigNumber from 'bignumber.js'
 import { useUserSlippageTolerance } from 'state/user/hooks'
 import TransactionsTable from './TransactionsTable'
 import { useWalletModalToggle } from 'state/application/hooks'
+import { useActiveWeb3React } from 'hooks'
 
 const Wrapper = styled.div`
   /* min-height: calc(100vh - ${({ theme }) => theme.headerHeight}); */
@@ -571,9 +572,12 @@ function CreaterInfo({
 }
 
 function IndexInfo({ nftInfo }: { nftInfo: NFTIndexInfoProps }) {
+  const { chainId } = useActiveWeb3React()
   return (
     <div>
-      <Paragraph header="Token contract address">{INDEX_NFT_ADDRESS}</Paragraph>
+      <Paragraph header="Token contract address">{INDEX_NFT_ADDRESS[chainId ?? 1]}</Paragraph>
+      <Hr />
+      <Paragraph header="Index name">{nftInfo.name}</Paragraph>
       <Hr />
       {/* <Paragraph header="Current issuance">123</Paragraph>
       <Hr /> */}

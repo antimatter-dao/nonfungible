@@ -10,18 +10,17 @@ import { UserInfo } from './actions'
 import { useHistory } from 'react-router-dom'
 import { UserState } from './reducer'
 
-export function getCurrentUserInfoSync(chainId?: number, account?: string): UserInfo | undefined {
+export function getCurrentUserInfoSync(account?: string): UserInfo | undefined {
   const allUserInfo = store.getState()?.userInfo
   if (!allUserInfo) return undefined
-  if (!account || !chainId) {
-    const { account, chainId } = store.getState().currentAccount
-    if (!allUserInfo.tokens[chainId]) return undefined
-    if (!allUserInfo.tokens[chainId][account]) return undefined
-    return allUserInfo.tokens[chainId][account]
+  if (!account) {
+    const { account } = store.getState().currentAccount
+    if (!account) return undefined
+    if (!allUserInfo.tokens[account]) return undefined
+    return allUserInfo.tokens[account]
   } else {
-    if (!allUserInfo.tokens[chainId]) return undefined
-    if (!allUserInfo.tokens[chainId][account]) return undefined
-    return allUserInfo.tokens[chainId][account]
+    if (!allUserInfo.tokens[account]) return undefined
+    return allUserInfo.tokens[account]
   }
 }
 
@@ -29,10 +28,7 @@ export function clearLoginStoreSync() {
   const userInfo = getCurrentUserInfoSync()
   store.dispatch({
     type: 'userInfo/removeUserInfo',
-    payload: {
-      chainId: userInfo && userInfo.chainId ? userInfo.chainId : 0,
-      address: userInfo && userInfo.account ? userInfo.account : ''
-    }
+    payload: { address: userInfo && userInfo.account ? userInfo.account : '' }
   })
   window.location.href = '#/'
 }
@@ -40,23 +36,19 @@ export function clearLoginStoreSync() {
 export function useCurrentUserInfo(): UserInfo | undefined {
   const allUserInfo = useSelector((store: { userInfo: UserState }) => store.userInfo)
   const [userInfo, setUserinfo] = useState<UserInfo | undefined>()
-  const { account, chainId } = useWeb3ReactCore()
+  const { account } = useWeb3ReactCore()
 
   useEffect(() => {
-    if (!account || !chainId) {
+    if (!account) {
       setUserinfo(undefined)
       return
     }
-    if (
-      !allUserInfo.tokens[chainId] ||
-      !allUserInfo.tokens[chainId][account] ||
-      !allUserInfo.tokens[chainId][account].token
-    ) {
+    if (!allUserInfo.tokens[account] || !allUserInfo.tokens[account].token) {
       setUserinfo(undefined)
       return
     }
-    setUserinfo(allUserInfo.tokens[chainId][account])
-  }, [allUserInfo, account, chainId])
+    setUserinfo(allUserInfo.tokens[account])
+  }, [allUserInfo, account])
 
   return userInfo
 }
@@ -83,25 +75,25 @@ export function useLogin(): {
   const login = useCallback(async () => {
     if (!account || !library || !chainId) return
     if (chainId !== 1 && chainId !== 56) return
-    const userInfo = getCurrentUserInfoSync(chainId, account)
-    if (userInfo && userInfo.token) return
+    const userInfo = getCurrentUserInfoSync(account)
+    if (userInfo && userInfo.token && userInfo) return
 
     const web3 = new Web3(library.provider)
     try {
       const signRes = await web3.eth.personal.sign(signStr, account, '')
       setLoginState(loginNoticeState.Logging)
-      appLogin(chainId, account, signRes, signStr)
+      appLogin(account, signRes, signStr)
         .then(loginRes => {
           setLoginState(loginNoticeState.LoginSuccess)
           dispatch(
             saveUserInfo({
-              chainId,
               address: account,
               userInfo: {
                 token: loginRes.token ?? '',
                 username: loginRes.username ?? '',
                 bio: loginRes.description ?? '',
-                id: loginRes.id ?? ''
+                id: loginRes.id ?? '',
+                account: account
               }
             })
           )
@@ -129,9 +121,9 @@ export function useLogOut() {
   return useCallback(async () => {
     if (!account || !chainId) return
     if (chainId !== 1 && chainId !== 56) return
-    const userInfo = getCurrentUserInfoSync(chainId, account)
+    const userInfo = getCurrentUserInfoSync(account)
     if (userInfo && userInfo.token) {
-      dispatch(removeUserInfo({ chainId, address: account }))
+      dispatch(removeUserInfo({ address: account }))
     }
     deactivate()
     if (history && history.location.pathname.indexOf('/profile') === 0) {

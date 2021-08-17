@@ -37,6 +37,10 @@ export function useNFTCreatorInfo(address: string | undefined): NFTCreatorInfo |
       return
     }
     getAccountInfo(address).then(res => {
+      if (!res) {
+        setInfo(undefined)
+        return
+      }
       const ret: NFTCreatorInfo = {
         username: res.username ?? '',
         bio: res.description ?? ''
