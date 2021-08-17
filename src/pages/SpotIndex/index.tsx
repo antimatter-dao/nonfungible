@@ -127,7 +127,7 @@ export default function SpotIndex() {
   const [showLoading, setShowLoading] = useState(true)
   const [lastChangeLoading, setLastChangeLoading] = useState(new Date().getTime())
 
-  console.log('FACTORY_ADDRESS', FACTORY_ADDRESS)
+  console.log('FACTORY_ADDRESS3.03', FACTORY_ADDRESS)
 
   const [searchParam, setSearchParam] = useState<SportIndexSearchProps>({
     searchParam: '',
