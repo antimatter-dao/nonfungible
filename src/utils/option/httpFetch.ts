@@ -1,7 +1,7 @@
 import { getCurrentUserInfoSync, clearLoginStoreSync } from 'state/userInfo/hooks'
 
-const domain = 'https://nftapi.antimatter.finance'
-// const domain = 'https://test-nftapi.antimatter.finance'
+// const domain = 'https://nftapi.antimatter.finance'
+const domain = 'https://test-nftapi.antimatter.finance'
 const headers = { 'content-type': 'application/json', accept: 'application/json' }
 
 interface LoginRes {
@@ -54,8 +54,19 @@ const promiseGenerator = (request: Request) => {
   })
 }
 
-export function appLogin(publicAddress: string, signature: string, message: string): Promise<LoginRes> {
+const requestBodyGenerator = (body: any, defaultChainId = 1) => {
+  const userInfo = getCurrentUserInfoSync()
+  return JSON.stringify({ chainId: userInfo ? userInfo.chainId : defaultChainId, ...body })
+}
+
+export function appLogin(
+  chainId: number,
+  publicAddress: string,
+  signature: string,
+  message: string
+): Promise<LoginRes> {
   const param = {
+    chainId,
     publicAddress,
     signature,
     message
@@ -79,7 +90,7 @@ export function getAccountInfo(address: string): Promise<LoginRes> {
   }
   const request = new Request(`${domain}/app/getAccountInfo`, {
     method: 'POST',
-    body: address,
+    body: JSON.stringify({ address, chainId: userInfo?.chainId }),
     headers: _headers
   })
 
@@ -98,7 +109,7 @@ export function positionListFetch(
   const request = new Request(`${domain}/app/getPositionList`, {
     method: 'POST',
     headers: { ...headers, token },
-    body: JSON.stringify({ address, curPage: currentPage, pageSize })
+    body: requestBodyGenerator({ address, curPage: currentPage, pageSize }, 0)
   })
 
   return promiseGenerator(request)
@@ -117,7 +128,7 @@ export function indexListFetch(
   const request = new Request(`${domain}/app/getIndexList`, {
     method: 'POST',
     headers: { ...headers, token },
-    body: JSON.stringify({ address, curPage: currentPage, pageSize })
+    body: requestBodyGenerator({ address, curPage: currentPage, pageSize }, 0)
   })
 
   return promiseGenerator(request)
@@ -133,7 +144,7 @@ export function allNFTFetch(curPage: number, { searchBy, searchParam }: SportInd
   }
   const request = new Request(`${domain}/app/getNftList`, {
     method: 'POST',
-    body: JSON.stringify(param),
+    body: requestBodyGenerator(param),
     headers: headers
   })
 
@@ -146,7 +157,7 @@ export function userInfoFetch(token: string | undefined, params: UserInfoQuery) 
   }
   const request = new Request(`${domain}/app/createAccount`, {
     method: 'POST',
-    body: JSON.stringify(params),
+    body: requestBodyGenerator(params, 0),
     headers: { ...headers, token }
   })
   return promiseGenerator(request)
@@ -160,7 +171,7 @@ export function getNFTTransferRecords(nftId: string): Promise<any> {
   }
   const request = new Request(`${domain}/app/transferRecord`, {
     method: 'POST',
-    body: JSON.stringify(param),
+    body: requestBodyGenerator(param),
     headers: headers
   })
   return promiseGenerator(request)

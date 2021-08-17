@@ -182,7 +182,7 @@ export default function SpotIndex() {
     <Wrapper>
       <Search onSearch={handleSearch} />
       {showLoading && loading ? (
-        <AnimatedWrapper style={{ marginTop: 40 }}>
+        <AnimatedWrapper style={{ marginTop: 80 }}>
           <AnimatedImg>
             <img src={Loader} alt="loading-icon" />
           </AnimatedImg>

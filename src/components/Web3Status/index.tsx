@@ -36,6 +36,7 @@ const Web3StatusError = styled(Web3StatusGeneric)`
   border: 1px solid ${({ theme }) => theme.red1};
   color: ${({ theme }) => theme.white};
   font-weight: 500;
+  height: 100%;
   :hover,
   :focus {
     background-color: ${({ theme }) => darken(0.1, theme.red1)};
