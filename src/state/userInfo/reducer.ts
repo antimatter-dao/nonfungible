@@ -3,7 +3,9 @@ import { saveUserInfo, removeUserInfo, UserInfo } from './actions'
 
 export interface UserState {
   tokens: {
-    [address: string]: UserInfo
+    [chainId: number]: {
+      [address: string]: UserInfo
+    }
   }
 }
 
@@ -14,14 +16,20 @@ export const initialState: UserState = {
 export default createReducer(initialState, builder =>
   builder
     .addCase(removeUserInfo, (state, action) => {
-      const { address } = action.payload
-      if (state.tokens) delete state.tokens[address]
+      const { chainId, address } = action.payload
+      if (state.tokens) delete state.tokens[chainId][address]
     })
     .addCase(saveUserInfo, (state, action) => {
-      const { address, userInfo } = action.payload
-      state.tokens = {
-        ...state.tokens,
-        [address]: userInfo
+      const { chainId, address, userInfo } = action.payload
+
+      const _tokens = state.tokens
+      if (_tokens[chainId]) {
+        _tokens[chainId][address] = Object.assign(userInfo, { chainId, account: address })
+      } else {
+        _tokens[chainId] = {
+          [address]: Object.assign(userInfo, { chainId, account: address })
+        }
       }
+      state.tokens = _tokens
     })
 )
