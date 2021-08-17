@@ -25,7 +25,6 @@ import AntimatterLogo from 'assets/svg/antimatter_logo_nft.svg'
 import { WrappedTokenInfo } from 'state/lists/hooks'
 import { useAmountInMins, useCalcBuyFee, useIndexBuyCall } from '../../hooks/useIndexBuyCallback'
 import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
-import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
 import { useCurrency } from 'hooks/Tokens'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { NumberNFTInputPanel } from 'components/NumberInputPanel'
@@ -36,13 +35,15 @@ import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useWeb3React } from '@web3-react/core'
 import { useAmountOutMins, useIndexSellCall } from 'hooks/useIndexSellCallback'
-import { INDEX_NFT_ADDRESS, INDEX_NFT_BUY_FEE } from '../../constants'
+import { CHAIN_ETH_NAME, INDEX_NFT_ADDRESS, INDEX_NFT_BUY_FEE } from '../../constants'
 import SettingsTab from 'components/Settings'
 import BigNumber from 'bignumber.js'
 import { useUserSlippageTolerance } from 'state/user/hooks'
 import TransactionsTable from './TransactionsTable'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { useActiveWeb3React } from 'hooks'
+import { ReactComponent as BNBIcon } from '../../assets/svg/bnb_icon.svg'
+import { ReactComponent as ETHIcon } from '../../assets/svg/eth_logo.svg'
 
 const Wrapper = styled.div`
   /* min-height: calc(100vh - ${({ theme }) => theme.headerHeight}); */
@@ -56,6 +57,20 @@ const TabButton = styled(ButtonWhite)<{ current?: string | boolean }>`
   background-color: ${({ theme, current }) => (current ? theme.white : 'transparent')};
   border-color: ${({ theme }) => theme.white};
 `
+
+const StyledCurrencyShow = styled.div`
+  height: 60px;
+  background: transparent;
+  font-size: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+  justify-content: flex-start;
+  color: #000000;
+  display: flex;
+  align-items: center;
+`
+
 const InfoPanel = styled.div`
   background: #ffffff;
   border-radius: 40px;
@@ -169,6 +184,7 @@ export default function CardDetail({
   }
 }: RouteComponentProps<{ nftid?: string }>) {
   const { account } = useWeb3React()
+  const { chainId } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const theme = useTheme()
   const history = useHistory()
@@ -479,7 +495,10 @@ export default function CardDetail({
                   <div>
                     <MarketPrice>
                       <span>Market price per unit</span>
-                      <span>{priceState === PriceState.VALID ? thisNFTethAmount.toSignificant(6) : '--'} ETH</span>
+                      <span>
+                        {priceState === PriceState.VALID ? thisNFTethAmount.toSignificant(6) : '--'}{' '}
+                        {CHAIN_ETH_NAME[chainId ?? 1]}
+                      </span>
                     </MarketPrice>
                     <div>
                       <TransactionsTable transactionRecords={NFTTransactionRecords} />
@@ -609,22 +628,16 @@ function AssetItem({ amount, currencyToken }: { amount: string; currencyToken: W
 }
 
 function CurrencyETHShow() {
-  const ETHCurrency = useCurrency('ETH')
+  const { chainId } = useActiveWeb3React()
 
   return (
-    <CurrencyNFTInputPanel
-      hiddenLabel={true}
-      value={''}
-      onUserInput={() => {}}
-      // onMax={handleMax}
-      currency={ETHCurrency}
-      // pair={dummyPair}
-      showMaxButton={false}
-      // label="Amount"
-      disableCurrencySelect={true}
-      id="stake-liquidity-token"
-      hideSelect={false}
-      hideInput={true}
-    />
+    <StyledCurrencyShow>
+      {chainId === 34 ? (
+        <BNBIcon width="20px" height="20px" style={{ marginRight: 8 }} />
+      ) : (
+        <ETHIcon width="20px" height="20px" style={{ marginRight: 8 }} />
+      )}
+      {CHAIN_ETH_NAME[chainId ?? 1]}
+    </StyledCurrencyShow>
   )
 }

@@ -2639,18 +2639,6 @@
     tiny-warning "^1.0.3"
     toformat "^2.0.0"
 
-"@uniswap/sdk@antimatter-finance/nft-sdk.git":
-  version "3.0.3"
-  resolved "https://codeload.github.com/antimatter-finance/nft-sdk/tar.gz/28257421c668f8285bdff1b29a602cf8f8fc1d03"
-  dependencies:
-    "@uniswap/v2-core" "^1.0.0"
-    big.js "^5.2.2"
-    decimal.js-light "^2.5.0"
-    jsbi "^3.1.1"
-    tiny-invariant "^1.1.0"
-    tiny-warning "^1.0.3"
-    toformat "^2.0.0"
-
 "@uniswap/token-lists@^1.0.0-beta.19":
   version "1.0.0-beta.25"
   resolved "https://registry.nlark.com/@uniswap/token-lists/download/@uniswap/token-lists-1.0.0-beta.25.tgz#e4279cf2581b297723d82eafd1bed35273070f07"
@@ -2662,11 +2650,6 @@
 "@uniswap/v2-core@^1.0.0":
   version "1.0.1"
   resolved "https://registry.npm.taobao.org/@uniswap/v2-core/download/@uniswap/v2-core-1.0.1.tgz#af8f508bf183204779938969e2e54043e147d425"
-
-"@uniswap/v2-core@^1.0.0":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@uniswap/v2-core/-/v2-core-1.0.1.tgz#af8f508bf183204779938969e2e54043e147d425"
-  integrity sha512-MtybtkUPSyysqLY2U210NBDeCHX+ltHt3oADGdjqoThZaFRDKwM6k1Nb3F0A3hk5hwuQvytFWhrWHOEq6nVJ8Q==
 
 "@uniswap/v2-periphery@^1.1.0-beta.0":
   version "1.1.0-beta.0"
@@ -5672,11 +5655,6 @@ decamelize@^1.2.0:
 decimal.js-light@^2.5.0:
   version "2.5.1"
   resolved "https://registry.npm.taobao.org/decimal.js-light/download/decimal.js-light-2.5.1.tgz#134fd32508f19e208f4fb2f8dac0d2626a867934"
-
-decimal.js-light@^2.5.0:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/decimal.js-light/-/decimal.js-light-2.5.1.tgz#134fd32508f19e208f4fb2f8dac0d2626a867934"
-  integrity sha512-qIMFpTMZmny+MMIitAB6D7iVPEorVw6YQRWkvarTkT4tBeSLLiHzcwj6q0MmYSFCiVpiqPJTJEYIrpcPzVEIvg==
 
 decode-uri-component@^0.2.0:
   version "0.2.0"
@@ -9196,8 +9174,7 @@ js-yaml@^3.13.1:
 
 jsbi@^3.1.1:
   version "3.1.6"
-  resolved "https://registry.yarnpkg.com/jsbi/-/jsbi-3.1.6.tgz#572431b0ff4b9c0f5f4b41e214dba76a734e676b"
-  integrity sha512-CGjq13y28FrBA5mAU+rsfHaVKEF9jrw3PhzZpIzTeMiPsT0XRDAS6E7QS8/ZTmFQUtl2MDJsxKQoYJzAhF7B1w==
+  resolved "https://registry.nlark.com/jsbi/download/jsbi-3.1.6.tgz#572431b0ff4b9c0f5f4b41e214dba76a734e676b"
 
 jsbn@~0.1.0:
   version "0.1.1"
@@ -14039,8 +14016,7 @@ timsort@^0.3.0:
 
 tiny-invariant@^1.0.2, tiny-invariant@^1.0.6, tiny-invariant@^1.1.0:
   version "1.1.0"
-  resolved "https://registry.yarnpkg.com/tiny-invariant/-/tiny-invariant-1.1.0.tgz#634c5f8efdc27714b7f386c35e6760991d230875"
-  integrity sha512-ytxQvrb1cPc9WBEI/HSeYYoGD0kWnGEOR8RY6KomWLBVhqz0RgTwVO9dLrGz7dC+nN9llyI7OKAgRq8Vq4ZBSw==
+  resolved "https://registry.nlark.com/tiny-invariant/download/tiny-invariant-1.1.0.tgz#634c5f8efdc27714b7f386c35e6760991d230875"
 
 tiny-warning@^1.0.0, tiny-warning@^1.0.2, tiny-warning@^1.0.3:
   version "1.0.3"
@@ -14118,8 +14094,7 @@ to-regex@^3.0.1, to-regex@^3.0.2:
 
 toformat@^2.0.0:
   version "2.0.0"
-  resolved "https://registry.yarnpkg.com/toformat/-/toformat-2.0.0.tgz#7a043fd2dfbe9021a4e36e508835ba32056739d8"
-  integrity sha512-03SWBVop6nU8bpyZCx7SodpYznbZF5R4ljwNLBcTQzKOD9xuihRo/psX58llS1BMFhhAI08H3luot5GoXJz2pQ==
+  resolved "https://registry.npm.taobao.org/toformat/download/toformat-2.0.0.tgz#7a043fd2dfbe9021a4e36e508835ba32056739d8"
 
 toggle-selection@^1.0.6:
   version "1.0.6"

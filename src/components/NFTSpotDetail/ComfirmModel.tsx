@@ -11,7 +11,7 @@ import { BigNumber } from 'bignumber.js'
 import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
 import { useCheckBuyButton, useCheckSellButton } from 'hooks/useIndexDetail'
 import { useNFTApproveCallback, ApprovalState } from 'hooks/useNFTApproveCallback'
-import { INDEX_NFT_ADDRESS, TOKEN_FLUIDITY_LIMIT } from '../../constants'
+import { CHAIN_ETH_NAME, INDEX_NFT_ADDRESS, TOKEN_FLUIDITY_LIMIT } from '../../constants'
 import { Dots } from 'components/swap/styleds'
 import IconClose from 'components/Icons/IconClose'
 import { AlertCircle } from 'react-feather'
@@ -94,6 +94,7 @@ export function BuyComfirmModel({
   tokenFluiditys: (TokenAmount | null)[]
 }) {
   const btn = useCheckBuyButton(ethAmount, ETHbalance, number, tokenFluiditys)
+  const { chainId } = useActiveWeb3React()
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss} minHeight={30} maxHeight={85} width="480px" maxWidth={480}>
@@ -131,12 +132,14 @@ export function BuyComfirmModel({
                   .multipliedBy(number)
                   .toFixed(6)
                   .toString()}{' '}
-                ETH
+                {CHAIN_ETH_NAME[chainId ?? 1]}
               </RightText>
             </RowBetween>
             <RowBetween>
               <TYPE.smallGray>Fee :</TYPE.smallGray>
-              <RightText>{CurrencyAmount.ether(JSBI.BigInt(fee ?? '0')).toSignificant(6)} ETH</RightText>
+              <RightText>
+                {CurrencyAmount.ether(JSBI.BigInt(fee ?? '0')).toSignificant(6)} {CHAIN_ETH_NAME[chainId ?? 1]}
+              </RightText>
             </RowBetween>
             {/* <RowBetween>
               <TYPE.smallGray>Slippage :</TYPE.smallGray>
@@ -234,7 +237,7 @@ export function SellComfirmModel({
                   .multipliedBy(number)
                   .toFixed(6)
                   .toString()}{' '}
-                ETH
+                {CHAIN_ETH_NAME[chainId ?? 1]}
               </RightText>
             </RowBetween>
             {/* <RowBetween>

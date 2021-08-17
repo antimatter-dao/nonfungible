@@ -110,6 +110,10 @@ export const INDEX_NFT_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '0xD12D12AaCad77D54421A2c2AD723e259Bf390488',
   [ChainId.BSC]: '0x6d31E526208c423C29e021282b3F0fE13EF9d064'
 }
+export const CHAIN_ETH_NAME: { [chainId in ChainId]: string } = {
+  [ChainId.MAINNET]: 'ETH',
+  [ChainId.BSC]: 'BNB'
+}
 export const MATTER_ADDRESS = '0x9b99cca871be05119b2012fd4474731dd653febe'
 
 export const INDEX_NFT_BUY_FEE = '5000000000000000'

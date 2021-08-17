@@ -15,6 +15,7 @@ import { useIsTransactionPending } from '../../state/transactions/hooks'
 import { getEtherscanLink, shortenAddress } from '../../utils'
 import { useClaimMATTERCall } from 'hooks/useMatterClaim'
 import AntimatterLogo from 'assets/svg/antimatter_logo_nft.svg'
+import { CHAIN_ETH_NAME } from '../../constants'
 
 const ContentWrapper = styled(AutoColumn)`
   width: 100%;
@@ -96,15 +97,17 @@ export default function AddressClaimModal({
                 <CloseIcon onClick={wrappedOnDismiss} style={{ zIndex: 99 }} stroke="black" />
               </RowBetween>
               <TYPE.black fontWeight={700} fontSize={36}>
-                {claimFee} ETH
+                {claimFee} {CHAIN_ETH_NAME[chainId ?? 1]}
               </TYPE.black>
             </CardSection>
             <Break />
           </ModalUpper>
           <AutoColumn gap="md" style={{ padding: '2rem', paddingTop: '0' }} justify="center">
-            <TYPE.subHeader fontWeight={500}>
-              The protocol will use fees to market purchase MATTER and send to you as reward
-            </TYPE.subHeader>
+            {chainId === 1 && (
+              <TYPE.subHeader fontWeight={500}>
+                The protocol will use fees to market purchase MATTER and send to you as reward
+              </TYPE.subHeader>
+            )}
             <ButtonPrimary padding="16px 16px" width="100%" borderRadius="12px" mt="1rem" onClick={onClaim}>
               Claim MATTER
             </ButtonPrimary>
@@ -133,7 +136,7 @@ export default function AddressClaimModal({
               </TYPE.largeHeader>
               {!claimConfirmed && (
                 <Text fontSize={36} color={'#ff007a'} fontWeight={800}>
-                  {claimFee} ETH
+                  {claimFee} {CHAIN_ETH_NAME[chainId ?? 1]}
                 </Text>
               )}
               <TYPE.largeHeader fontWeight={600} color="black">
