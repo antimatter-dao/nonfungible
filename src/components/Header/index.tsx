@@ -1,11 +1,13 @@
-import { TokenAmount } from '@uniswap/sdk'
+import { ChainId, TokenAmount } from '@uniswap/sdk'
 import React, { useCallback } from 'react'
 import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
+import { Check } from 'react-feather'
+import { darken } from 'polished'
 // import { useTranslation } from 'react-i18next'
 import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
-import { useAggregateUniBalance } from '../../state/wallet/hooks'
+import { useAggregateUniBalance, useETHBalances } from '../../state/wallet/hooks'
 import { ButtonText, ExternalLink, TYPE } from '../../theme'
 import Row, { RowFixed, RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
@@ -21,6 +23,9 @@ import { shortenAddress } from 'utils'
 import { AutoColumn } from 'components/Column'
 import Copy from 'components/AccountDetails/Copy'
 import { UserInfoTabRoute, UserInfoTabs } from 'pages/User'
+import { ChevronDown } from 'react-feather'
+import { ReactComponent as BSCInvert } from '../../assets/svg/binance.svg'
+import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 
 const activeClassName = 'ACTIVE'
 
@@ -41,6 +46,23 @@ export const tabs: Tab[] = [
   { title: 'Collectables', route: 'collectables' },
   { title: 'Governance', link: 'https://governance.antimatter.finance/' }
 ]
+
+const NetworkInfo: {
+  [key: number]: { title: string; color: string; icon: JSX.Element; link?: string; linkIcon?: JSX.Element }
+} = {
+  1: {
+    color: '#FFFFFF',
+    icon: <ETH />,
+    link: 'https://app.antimatter.finance',
+    title: 'ETH'
+  },
+  56: {
+    color: '#F0B90B',
+    icon: <BSCInvert />,
+    link: 'https://app.antimatter.finance',
+    title: 'BSC'
+  }
+}
 
 export const headerHeightDisplacement = '32px'
 
@@ -331,18 +353,126 @@ const UserMenuItem = styled.button`
     background-color: #ededed;
   }
 `
+const HeaderElement = styled.div<{
+  show?: boolean
+}>`
+  display: flex;
+  align-items: center;
+
+  /* addresses safari's lack of support for "gap" */
+  & > *:not(:first-child) {
+    margin-left: 8px;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+   flex-direction: row-reverse;
+    align-items: center;
+  `};
+  & > div {
+    border: 1px solid ${({ theme, show }) => (show ? theme.text1 : 'transparent')};
+    border-radius: 4px;
+    height: 32px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+  }
+`
+
+const NetworkCard = styled.div<{ color?: string }>`
+  color: #000000;
+  cursor: pointer;
+  display: flex;
+  padding: 0 4px;
+  height: 32px;
+  margin-right: 12px;
+  margin-left: 19px;
+  justify-content: center;
+  border-radius: 4px;
+  align-items: center;
+  background-color: ${({ color }) => color ?? 'rgba(255, 255, 255, 0.12)'}
+  font-size: 13px;
+  font-weight: 500;
+  position: relative;
+  & > svg:first-child {
+    height: 20px;
+    width: 20px;
+  }
+  .dropdown_wrapper {
+    &>div{
+      a {
+        padding: 12px 12px 12px 44px ;
+      }
+    }
+  }
+  :hover {
+    cursor: pointer;
+    .dropdown_wrapper {
+      top: 100%;
+      left: -20px;
+      height: 10px;
+      position: absolute;
+      width: 172px;
+      &>div{
+        height: auto;
+        margin-top: 10px;
+        border: 1px solid ${({ theme }) => theme.text5};
+        a{
+        position: relative;
+          & >svg{
+            height: 20px;
+            width: 20px;
+            margin-right: 15px;
+          }
+        }
+      }
+    }
+  }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin: 0
+`};
+`
+
+const Dropdown = styled.div`
+  z-index: 3;
+  height: 0;
+  position: absolute;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 172px;
+  a {
+    color: #ffffff;
+    background-color: ${({ theme }) => theme.bg2};
+    text-decoration: none;
+    padding: 14px 17px;
+    border-bottom: 1px solid ${({ theme }) => theme.text5}
+    transition: 0.5s;
+    display: flex;
+    align-items: center;
+    :last-child{
+      border: none;
+    }
+    :hover {
+      background-color: ${({ theme }) => theme.bg4};
+      color: ${({ theme }) => darken(0.1, theme.primary1)};
+    }
+  }
+`
 
 export default function Header() {
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const userInfo = useCurrentUserInfo()
   const { login } = useLogin()
   const match = useRouteMatch('/profile')
   const toggleCreationModal = useToggleCreationModal()
   const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
-
+  const ETHBalance = useETHBalances(account ? [account] : [])[account ?? '']
   const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
-
+  const countETHUpValue = ETHBalance?.toFixed(0) ?? '0'
+  const countETHUpValuePrevious = usePrevious(countETHUpValue) ?? '0'
   const onCreateOrLogin = useCallback(() => {
     if (userInfo && userInfo.token) toggleCreationModal()
     else login()
@@ -380,6 +510,35 @@ export default function Header() {
         </HeaderLinks>
         <div style={{ paddingLeft: 8, display: 'flex', alignItems: 'center', marginLeft: 'auto', marginRight: '2rem' }}>
           <HeaderControls>
+            <HeaderElement show={!!account}>
+              {chainId && NetworkInfo[chainId] && (
+                <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
+                  {NetworkInfo[chainId as number]?.icon} {NetworkInfo[chainId].title}
+                  <ChevronDown size={18} style={{ marginLeft: '5px' }} />
+                  <div className="dropdown_wrapper">
+                    <Dropdown>
+                      {Object.keys(NetworkInfo).map(key => {
+                        const info = NetworkInfo[parseInt(key) as keyof typeof NetworkInfo]
+                        if (!info) {
+                          return null
+                        }
+                        return info.link ? (
+                          <ExternalLink href={info.link} key={info.link}>
+                            {parseInt(key) === chainId && (
+                              <span style={{ position: 'absolute', left: '15px' }}>
+                                <Check size={18} />
+                              </span>
+                            )}
+                            {info.linkIcon ?? info.icon}
+                            {info.title}
+                          </ExternalLink>
+                        ) : null
+                      })}
+                    </Dropdown>
+                  </div>
+                </NetworkCard>
+              )}
+            </HeaderElement>
             {account && (
               <ButtonOutlinedPrimary width="120px" marginRight="16px" height={44} onClick={onCreateOrLogin}>
                 Create
@@ -387,7 +546,7 @@ export default function Header() {
             )}
 
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-              {!!account && aggregateBalance && (
+              {chainId !== ChainId.BSC && !!account && aggregateBalance && (
                 <UNIWrapper>
                   <UNIAmount style={{ pointerEvents: 'none' }}>
                     {account && (
@@ -407,6 +566,29 @@ export default function Header() {
                       </TYPE.gray>
                     )}
                     MATTER
+                  </UNIAmount>
+                </UNIWrapper>
+              )}
+              {chainId === ChainId.BSC && !!account && ETHBalance && (
+                <UNIWrapper>
+                  <UNIAmount style={{ pointerEvents: 'none' }}>
+                    {account && (
+                      <TYPE.gray
+                        style={{
+                          paddingRight: '.4rem'
+                        }}
+                      >
+                        <CountUp
+                          key={countETHUpValue}
+                          isCounting
+                          start={parseFloat(countETHUpValuePrevious)}
+                          end={parseFloat(countETHUpValue)}
+                          thousandsSeparator={','}
+                          duration={1}
+                        />
+                      </TYPE.gray>
+                    )}
+                    BNB
                   </UNIAmount>
                 </UNIWrapper>
               )}

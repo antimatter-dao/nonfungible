@@ -213,12 +213,147 @@
       "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82/logo.png"
     },
     {
+      "name": "Cardano Token",
+      "symbol": "ADA",
+      "address": "0x3EE2200Efb3400fAbB9AacF31297cBdD1d435D47",
       "chainId": 56,
-      "address": "0x8F0528cE5eF7B51152A59745bEfDD91D97091d2F",
+      "decimals": 18,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0x3EE2200Efb3400fAbB9AacF31297cBdD1d435D47/logo.png"
+    },
+    {
+      "name": "ALICE",
+      "symbol": "ALICE",
+      "address": "0xAC51066d7bEC65Dc4589368da368b212745d63E8",
+      "chainId": 56,
+      "decimals": 6,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0xAC51066d7bEC65Dc4589368da368b212745d63E8/logo.png"
+    },
+    {
       "name": "AlpacaToken",
       "symbol": "ALPACA",
+      "address": "0x8F0528cE5eF7B51152A59745bEfDD91D97091d2F",
+      "chainId": 56,
       "decimals": 18,
       "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0x8F0528cE5eF7B51152A59745bEfDD91D97091d2F/logo.png"
+    },
+    {
+      "name": "AlphaToken",
+      "symbol": "ALPHA",
+      "address": "0xa1faa113cbE53436Df28FF0aEe54275c13B40975",
+      "chainId": 56,
+      "decimals": 18,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0xa1faa113cbE53436Df28FF0aEe54275c13B40975/logo.png"
+    },
+    {
+      "name": "Ample",
+      "symbol": "AMPL-BSC-MP",
+      "address": "0xDB021b1B247fe2F1fa57e0A87C748Cc1E321F07F",
+      "chainId": 56,
+      "decimals": 9,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0xDB021b1B247fe2F1fa57e0A87C748Cc1E321F07F/logo.png"
+    },
+    {
+      "name": "Automata",
+      "symbol": "ATA",
+      "address": "0xA2120b9e674d3fC3875f415A7DF52e382F141225",
+      "chainId": 56,
+      "decimals": 18,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0xA2120b9e674d3fC3875f415A7DF52e382F141225/logo.png"
+    },
+    {
+      "name": "Baby Doge Coin",
+      "symbol": "BABYDOGE",
+      "address": "0xc748673057861a797275CD8A068AbB95A902e8de",
+      "chainId": 56,
+      "decimals": 9,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0xc748673057861a797275CD8A068AbB95A902e8de/logo.png"
+    },
+    {
+      "name": "Baby EverDoge",
+      "symbol": "BABYEVERDOGE",
+      "address": "0x06c4212Ae2fEa51a27A045D968E73F7E91eA5521",
+      "chainId": 56,
+      "decimals": 9,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0x06c4212Ae2fEa51a27A045D968E73F7E91eA5521/logo.png"
+    },
+    {
+      "name": "Baby Shiba Inu",
+      "symbol": "BABYSHIBAINU",
+      "address": "0xAECf6d1afF214feF70042740054f0f6D0Caa98Ab",
+      "chainId": 56,
+      "decimals": 9,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0xAECf6d1afF214feF70042740054f0f6D0Caa98Ab/logo.png"
+    },
+    {
+      "name": "BELT Token",
+      "symbol": "BELT",
+      "address": "0xE0e514c71282b6f4e823703a39374Cf58dc3eA4f",
+      "chainId": 56,
+      "decimals": 18,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0xE0e514c71282b6f4e823703a39374Cf58dc3eA4f/logo.png"
+    },
+    {
+      "name": "beefy.finance",
+      "symbol": "BIFI",
+      "address": "0xCa3F508B8e4Dd382eE878A314789373D80A5190A",
+      "chainId": 56,
+      "decimals": 18,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0xCa3F508B8e4Dd382eE878A314789373D80A5190A/logo.png"
+    },
+    {
+      "name": "Binamon",
+      "symbol": "BMON",
+      "address": "0x08ba0619b1e7A582E0BCe5BBE9843322C954C340",
+      "chainId": 56,
+      "decimals": 18,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0x08ba0619b1e7A582E0BCe5BBE9843322C954C340/logo.png"
+    },
+    {
+      "name": "BoxerInu",
+      "symbol": "BOXER",
+      "address": "0x192E9321b6244D204D4301AfA507EB29CA84D9ef",
+      "chainId": 56,
+      "decimals": 9,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0x192E9321b6244D204D4301AfA507EB29CA84D9ef/logo.png"
+    },
+    {
+      "name": "BunnyPark",
+      "symbol": "BP",
+      "address": "0xACB8f52DC63BB752a51186D1c55868ADbFfEe9C1",
+      "chainId": 56,
+      "decimals": 18,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0xACB8f52DC63BB752a51186D1c55868ADbFfEe9C1/logo.png"
+    },
+    {
+      "name": "BSCPAD.com",
+      "symbol": "BSCPAD",
+      "address": "0x5A3010d4d8D3B5fB49f8B6E57FB9E48063f16700",
+      "chainId": 56,
+      "decimals": 18,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0x5A3010d4d8D3B5fB49f8B6E57FB9E48063f16700/logo.png"
+    },
+    {
+      "name": "Baby ShibaInu",
+      "symbol": "BSHIB",
+      "address": "0xdeff0eE83Ba00Be152BCFf88795F1577BF5bE806",
+      "chainId": 56,
+      "decimals": 9,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0xdeff0eE83Ba00Be152BCFf88795F1577BF5bE806/logo.png"
+    },{
+      "name": "BitTorrent",
+      "symbol": "BTT",
+      "address": "0x8595F9dA7b868b1822194fAEd312235E43007b49",
+      "chainId": 56,
+      "decimals": 18,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0x8595F9dA7b868b1822194fAEd312235E43007b49/logo.png"
+    },
+    {
+      "name": "Bunny Token",
+      "symbol": "BUNNY",
+      "address": "0xC9849E6fdB743d08fAeE3E34dd2D1bc69EA11a51",
+      "chainId": 56,
+      "decimals": 18,
+      "logoURI": "https://assets.trustwalletapp.com/blockchains/smartchain/assets/0xC9849E6fdB743d08fAeE3E34dd2D1bc69EA11a51/logo.png"
     }
   ],
   "version": {
