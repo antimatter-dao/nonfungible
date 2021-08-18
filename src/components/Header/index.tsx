@@ -563,8 +563,9 @@ export default function Header() {
                         if (!info) {
                           return null
                         }
-                        return info.link ? (
+                        return (
                           <div
+                            key={info.title}
                             onClick={() => {
                               if (
                                 info.title === 'BSC' &&
@@ -606,7 +607,7 @@ export default function Header() {
                             {info.linkIcon ?? info.icon}
                             {info.title}
                           </div>
-                        ) : null
+                        )
                       })}
                     </Dropdown>
                   </div>
