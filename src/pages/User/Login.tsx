@@ -23,6 +23,7 @@ export default function Login() {
     const currentAccount = store.getState().currentAccount
     if ((chainId === 1 || chainId === 56) && currentAccount.chainId && currentAccount.chainId !== chainId) {
       window.location.href = '#/'
+      window.location.reload()
     }
     dispatch(saveCurrentAccount({ chainId: chainId ?? 0, account: account ?? '' }))
   }, [account, chainId, dispatch])
