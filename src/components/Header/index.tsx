@@ -1,5 +1,5 @@
 import { ChainId, TokenAmount } from '@uniswap/sdk'
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Link, NavLink, useHistory, useRouteMatch } from 'react-router-dom'
 import styled from 'styled-components'
 import { Check } from 'react-feather'
@@ -26,6 +26,8 @@ import { UserInfoTabRoute, UserInfoTabs } from 'pages/User'
 import { ChevronDown } from 'react-feather'
 import { ReactComponent as BSCInvert } from '../../assets/svg/binance.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
+import { useWeb3React } from '@web3-react/core'
+import { Modal } from '@material-ui/core'
 
 const activeClassName = 'ACTIVE'
 
@@ -418,7 +420,7 @@ const NetworkCard = styled.div<{ color?: string }>`
         margin-top: 10px;
         border: 1px solid ${({ theme }) => theme.text5};
         a{
-        position: relative;
+          position: relative;
           & >svg{
             height: 20px;
             width: 20px;
@@ -430,7 +432,7 @@ const NetworkCard = styled.div<{ color?: string }>`
   }
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 0
-`};
+  `};
 `
 
 const Dropdown = styled.div`
@@ -442,16 +444,21 @@ const Dropdown = styled.div`
   display: flex;
   flex-direction: column;
   width: 172px;
-  a {
+  > div {
     color: #ffffff;
     background-color: ${({ theme }) => theme.bg2};
     text-decoration: none;
     padding: 14px 17px;
-    border-bottom: 1px solid ${({ theme }) => theme.text5}
+    border-bottom: 1px solid ${({ theme }) => theme.text5};
     transition: 0.5s;
     display: flex;
     align-items: center;
-    :last-child{
+    > svg {
+      width: 26px;
+      height: 26px;
+      margin-right: 5px;
+    }
+    :last-child {
       border: none;
     }
     :hover {
@@ -460,9 +467,42 @@ const Dropdown = styled.div`
     }
   }
 `
+const StyledModalNotice = styled.div`
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  width: 400px;
+  box-shadow: 0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 5px 8px 0px rgb(0 0 0 / 14%), 0px 1px 14px 0px rgb(0 0 0 / 12%);
+  background-color: #424242;
+  padding: 16px 32px 24px;
+  #simple-modal-description {
+    font-size: 18px;
+  }
+  :focus-visible {
+    outline: none;
+  }
+`
+function ModalNotice({ isOpen, onDismiss }: { isOpen: boolean; onDismiss: () => void }) {
+  return (
+    <Modal
+      open={isOpen}
+      onClose={onDismiss}
+      aria-labelledby="simple-modal-title"
+      aria-describedby="simple-modal-description"
+    >
+      <StyledModalNotice>
+        <h2 id="simple-modal-title">Tips</h2>
+        <p id="simple-modal-description">Please switch to Ethereum.</p>
+      </StyledModalNotice>
+    </Modal>
+  )
+}
 
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
+  const { library } = useWeb3React()
   const userInfo = useCurrentUserInfo()
   const { login } = useLogin()
   const match = useRouteMatch('/profile')
@@ -473,6 +513,7 @@ export default function Header() {
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
   const countETHUpValue = ETHBalance?.toFixed(0) ?? '0'
   const countETHUpValuePrevious = usePrevious(countETHUpValue) ?? '0'
+  const [netNotice, setNetNotice] = useState(false)
   const onCreateOrLogin = useCallback(() => {
     if (userInfo && userInfo.token) toggleCreationModal()
     else login()
@@ -523,7 +564,40 @@ export default function Header() {
                           return null
                         }
                         return info.link ? (
-                          <ExternalLink href={info.link} key={info.link}>
+                          <div
+                            onClick={() => {
+                              if (
+                                info.title === 'BSC' &&
+                                chainId !== 56 &&
+                                library &&
+                                library.provider &&
+                                library.provider.request
+                              ) {
+                                library.provider.request({
+                                  method: 'wallet_addEthereumChain',
+                                  params: [
+                                    {
+                                      chainId: `0x${Number(56).toString(16)}`,
+                                      chainName: 'Binance Smart Chain Mainnet',
+                                      nativeCurrency: {
+                                        name: 'BNB',
+                                        symbol: 'BNB',
+                                        decimals: 18
+                                      },
+                                      rpcUrls: [
+                                        'https://bsc-dataseed3.binance.org',
+                                        'https://bsc-dataseed1.binance.org',
+                                        'https://bsc-dataseed2.binance.org'
+                                      ],
+                                      blockExplorerUrls: ['https://bscscan.com/']
+                                    }
+                                  ]
+                                })
+                              } else if (chainId !== 1 && info.title === 'ETH') {
+                                setNetNotice(true)
+                              }
+                            }}
+                          >
                             {parseInt(key) === chainId && (
                               <span style={{ position: 'absolute', left: '15px' }}>
                                 <Check size={18} />
@@ -531,7 +605,7 @@ export default function Header() {
                             )}
                             {info.linkIcon ?? info.icon}
                             {info.title}
-                          </ExternalLink>
+                          </div>
                         ) : null
                       })}
                     </Dropdown>
@@ -621,6 +695,12 @@ export default function Header() {
       </MobileHeader>
 
       <CreationNFTModal />
+      <ModalNotice
+        isOpen={netNotice}
+        onDismiss={() => {
+          setNetNotice(false)
+        }}
+      />
     </HeaderFrame>
   )
 }

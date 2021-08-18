@@ -56,8 +56,15 @@ export function useCheckSpotCreateButton(tokenFluiditys: (TokenAmount | null)[])
     }
     if (!tokenFluiditys) {
       ret.disabled = true
-      ret.text = 'Insufficient liquidity'
+      ret.text = 'Please waiting'
       return ret
+    }
+    for (const item of tokenFluiditys) {
+      if (item === null) {
+        ret.disabled = true
+        ret.text = 'Please waiting'
+        return ret
+      }
     }
     const Insufficients = tokenFluiditys.filter((item: TokenAmount | null) => {
       return !item || new BigNumber(item.toSignificant()).isLessThan(TOKEN_FLUIDITY_LIMIT)
