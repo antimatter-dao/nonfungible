@@ -44,6 +44,7 @@ import { useWalletModalToggle } from 'state/application/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { ReactComponent as BNBIcon } from '../../assets/svg/bnb_icon.svg'
 import { ReactComponent as ETHIcon } from '../../assets/svg/eth_logo.svg'
+import { getEtherscanLink } from 'utils'
 
 const Wrapper = styled.div`
   /* min-height: calc(100vh - ${({ theme }) => theme.headerHeight}); */
@@ -608,6 +609,7 @@ function IndexInfo({ nftInfo }: { nftInfo: NFTIndexInfoProps }) {
 }
 
 function AssetItem({ amount, currencyToken }: { amount: string; currencyToken: WrappedTokenInfo | undefined }) {
+  const { chainId } = useActiveWeb3React()
   return (
     <TokenWrapper>
       <RowFixed style={{ width: '100%' }}>
@@ -615,7 +617,10 @@ function AssetItem({ amount, currencyToken }: { amount: string; currencyToken: W
           <CurrencyLogo currency={currencyToken} />
         </StyledAvatar>
         <RowBetween>
-          <StyledLink target="_blank" href={`https://etherscan.io/token/${currencyToken?.address}`}>
+          <StyledLink
+            target="_blank"
+            href={getEtherscanLink(chainId ?? 1, currencyToken ? currencyToken.address ?? '' : '', 'token')}
+          >
             <TYPE.subHeader>{currencyToken?.symbol}</TYPE.subHeader>
           </StyledLink>
           <TYPE.black color={'black'} fontWeight={400}>

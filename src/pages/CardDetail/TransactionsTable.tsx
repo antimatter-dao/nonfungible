@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react'
 import { NFTTransactionRecordsProps } from '../../hooks/useIndexDetail'
-import { shortenAddress } from 'utils'
+import { getEtherscanLink, shortenAddress } from 'utils'
 import styled from 'styled-components'
 import Table from '@material-ui/core/Table'
 import { TableContainer, TableHead, TableCell, TableRow, TableBody, makeStyles } from '@material-ui/core'
 import { StyledLink } from '.'
+import { useActiveWeb3React } from 'hooks'
 
 interface StyleProps {
   isHeaderGray?: boolean
@@ -128,12 +129,13 @@ export default function TransactionsTable({
 }: {
   transactionRecords: NFTTransactionRecordsProps[] | undefined
 }) {
+  const { chainId } = useActiveWeb3React()
   const header = ['address', 'buy/sell', 'amount', 'price']
   const rows: (string | number | JSX.Element)[][] = useMemo(() => {
     if (!transactionRecords) return []
     return transactionRecords.map(({ nftAmount, type, sender, totalSpend }) => {
       return [
-        <StyledLink key={sender} href={`https://etherscan.io/address/${sender}`} target="_blank">
+        <StyledLink key={sender} href={getEtherscanLink(chainId ?? 1, sender, 'address')} target="_blank">
           {shortenAddress(sender)}
         </StyledLink>,
         type,
@@ -141,7 +143,7 @@ export default function TransactionsTable({
         totalSpend
       ]
     })
-  }, [transactionRecords])
+  }, [chainId, transactionRecords])
 
   return <BaseTable header={header} rows={rows} isHeaderGray />
 }

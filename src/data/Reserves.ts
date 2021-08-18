@@ -137,7 +137,9 @@ export function useNFTETHPrice(assets: AssetsParameter[]): NFTETHPriceProp {
       //     .toSignificant()
       //     .toString()
       // )
-      const [tokenA, tokenB] = token.currencyToken.sortsBefore(WETH[chainId])? [token.currencyToken,WETH[chainId]]: [WETH[chainId], token.currencyToken]
+      const [tokenA, tokenB] = token.currencyToken.sortsBefore(WETH[chainId])
+        ? [token.currencyToken, WETH[chainId]]
+        : [WETH[chainId], token.currencyToken]
       // const tokenA = token.currencyToken
       // const tokenB = WETH[chainId]
       const ethPrice: string = new Pair(
