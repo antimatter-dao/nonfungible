@@ -53,7 +53,7 @@ export function useClaimMATTERCall(): {
           })
           .then((response: TransactionResponse) => {
             addTransaction(response, {
-              summary: `Claim MATTER`
+              summary: `Claim`
             })
             return response.hash
           })

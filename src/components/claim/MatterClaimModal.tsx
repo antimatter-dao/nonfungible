@@ -93,7 +93,7 @@ export default function AddressClaimModal({
             {/* <CardNoise /> */}
             <CardSection gap="md">
               <RowBetween>
-                <TYPE.black fontWeight={500}>Claim MATTER Token</TYPE.black>
+                <TYPE.black fontWeight={500}>Claim {chainId === 1 ? 'MATTER' : ''} Token</TYPE.black>
                 <CloseIcon onClick={wrappedOnDismiss} style={{ zIndex: 99 }} stroke="black" />
               </RowBetween>
               <TYPE.black fontWeight={700} fontSize={36}>
@@ -109,7 +109,7 @@ export default function AddressClaimModal({
               </TYPE.subHeader>
             )}
             <ButtonPrimary padding="16px 16px" width="100%" borderRadius="12px" mt="1rem" onClick={onClaim}>
-              Claim MATTER
+              Claim {chainId === 1 ? 'MATTER' : ''}
             </ButtonPrimary>
           </AutoColumn>
         </ContentWrapper>

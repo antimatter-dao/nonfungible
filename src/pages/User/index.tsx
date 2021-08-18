@@ -259,7 +259,7 @@ export default function User() {
               <RowBetween style={{ justifyContent: 'flex-end', marginBottom: '-20px' }}>
                 <AutoColumn gap="8px" justify="end">
                   <TYPE.darkGray style={{ display: 'flex', alignItems: 'center' }}>
-                    Unclaim MATTER: <TYPE.black fontSize={20}> {claimFee ?? '-'}</TYPE.black>
+                    Unclaim Fees: <TYPE.black fontSize={20}> {claimFee ?? '-'}</TYPE.black>
                   </TYPE.darkGray>
                   <ButtonBlack
                     width="134px"

@@ -8,8 +8,9 @@ import { useIndexNFTContract } from './useContract'
 import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
 import { useWeb3React } from '@web3-react/core'
 import { getAccountInfo, getNFTTransferRecords } from 'utils/option/httpFetch'
-import { TOKEN_FLUIDITY_LIMIT } from '../constants'
+import { CHAIN_ETH_NAME, TOKEN_FLUIDITY_LIMIT } from '../constants'
 import { BigNumber } from 'bignumber.js'
+import { useActiveWeb3React } from 'hooks'
 
 export interface NFTIndexInfoProps {
   name: string
@@ -146,6 +147,7 @@ export function useCheckBuyButton(
   number: string | undefined,
   tokenFluiditys: (TokenAmount | null)[]
 ): BuyButtonProps {
+  const { chainId } = useActiveWeb3React()
   return useMemo(() => {
     const ret: BuyButtonProps = {
       text: 'Confirm',
@@ -170,11 +172,11 @@ export function useCheckBuyButton(
     }
     if (ETHbalance.lessThan(ethAmount.multiply(JSBI.BigInt(number)))) {
       ret.disabled = true
-      ret.text = 'Insufficient ETH balance'
+      ret.text = `Insufficient ${CHAIN_ETH_NAME[chainId ?? 1]} balance`
       return ret
     }
     return ret
-  }, [number, ethAmount, ETHbalance, tokenFluiditys])
+  }, [number, ethAmount, ETHbalance, tokenFluiditys, chainId])
 }
 
 export function useCheckSellButton(number: string | undefined, tokenFluiditys: (TokenAmount | null)[]): BuyButtonProps {
