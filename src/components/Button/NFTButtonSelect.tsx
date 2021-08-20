@@ -20,6 +20,17 @@ export const StyledDropDown = styled(DropDown)`
   }
 `
 
+const ButtonWrapper = styled.div<{ width: string; marginRight: string }>`
+  width: ${({ width }) => (width ? width : '100%')};
+  position: relative;
+  flex: 1 0;
+  margin-right: ${({ marginRight }) => marginRight ?? 0};
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100%;
+    margin-right:0;
+  `}
+`
+
 export const ButtonSelectStyle = styled(ButtonOutlined)<{ selected?: boolean; width?: string }>`
   width: ${({ width }) => (width ? width : '100%')};
   font-weight: 400;
@@ -117,7 +128,7 @@ export default function ButtonSelect({
     onClick && onClick()
   }, [isOpen, onClick])
   return (
-    <div style={{ position: 'relative', marginRight: marginRight, width: width, flex: '1 0' }}>
+    <ButtonWrapper width={width} marginRight={marginRight}>
       {label && (
         <AutoRow style={{ marginBottom: '4px' }}>
           <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
@@ -150,6 +161,6 @@ export default function ButtonSelect({
           })}
         </OptionWrapper>
       )}
-    </div>
+    </ButtonWrapper>
   )
 }

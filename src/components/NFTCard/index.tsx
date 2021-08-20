@@ -98,7 +98,7 @@ const CardWrapper = styled.div<{ color: CardColor; padding?: string | number }>`
 const OutlineCard = styled.div<{ borderRadius?: string }>`
   border: 1px solid ${({ theme }) => theme.text2};
   height: 100%;
-  z-index: 2;
+  z-index: 3;
   border-radius: ${({ borderRadius }) => borderRadius ?? '20px'};
   width: 100%;
   height: 100%;
@@ -107,7 +107,7 @@ const OutlineCard = styled.div<{ borderRadius?: string }>`
   justify-content: space-between;
   padding: 24px 20px;
   & * {
-    z-index: 2;
+    z-index: 3;
   }
 `
 

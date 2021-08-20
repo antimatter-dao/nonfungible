@@ -11,7 +11,7 @@ const LogosContainer = styled.div`
 
 const LogoWrapper = styled.div<{ size: number; top: number; left: number }>`
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
   top: ${({ top }) => top}px;

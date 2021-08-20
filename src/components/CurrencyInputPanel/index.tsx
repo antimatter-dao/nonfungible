@@ -65,7 +65,7 @@ const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean }>
   position: absolute;
   right: 0;
   width: 50%;
-  z-index: 2;
+  z-index: 3;
   color:${selected ? theme.text1 : theme.primary1}
   border: 1px solid ${selected ? theme.text4 : theme.primary1}
   :hover,:focus,:active {
@@ -104,7 +104,7 @@ const CurrencyNFTSelect = styled.button<{ selected: boolean; halfWidth?: boolean
   position: absolute;
   right: 0;
   width: 50%;
-  z-index: 2;
+  z-index: 3;
   color:${selected ? theme.text1 : theme.primary1}
   border: 1px solid ${selected ? theme.text4 : theme.primary1}
   :hover,:focus,:active {
