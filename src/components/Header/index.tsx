@@ -453,6 +453,7 @@ const Dropdown = styled.div`
     transition: 0.5s;
     display: flex;
     align-items: center;
+    padding-left: 35px;
     > svg {
       width: 26px;
       height: 26px;

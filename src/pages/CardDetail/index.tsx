@@ -202,7 +202,7 @@ export default function CardDetail({
     setTransactionModalOpen(false)
   }
 
-  const { loading: NFTIndexLoading, data: NFTIndexInfo } = useNFTIndexInfo(nftid)
+  const { data: NFTIndexInfo } = useNFTIndexInfo(nftid)
   const creatorInfo = useNFTCreatorInfo(NFTIndexInfo?.creator)
   const NFTTransactionRecords = useNFTTransactionRecords(nftid)
 
@@ -304,7 +304,7 @@ export default function CardDetail({
       })
   }, [toSellCallback, nftid, sellAmount, amountOutMins])
 
-  if (NFTIndexLoading || !NFTIndexInfo) {
+  if (!NFTIndexInfo) {
     return (
       <AnimatedWrapper>
         <AnimatedImg>
