@@ -7,7 +7,7 @@ export default function useMediaWidth(width: keyof typeof MEDIA_WIDTHS) {
   const windowSize = useWindowSize()
 
   useEffect(() => {
-    if (windowSize.width && windowSize.width > MEDIA_WIDTHS[width]) {
+    if (windowSize.width && windowSize.width >= MEDIA_WIDTHS[width]) {
       setIsUpTo(false)
     } else {
       setIsUpTo(true)

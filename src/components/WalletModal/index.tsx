@@ -30,20 +30,19 @@ const CloseIcon = styled.div`
     cursor: pointer;
     opacity: 0.6;
   }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  color: ${({ theme }) => theme.text1};
+  `}
 `
 
-const CloseColor = styled(Close)`
-  path {
-    stroke: ${({ theme }) => theme.bg1};
-  }
-`
+const CloseColor = styled(Close)``
 
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   margin: 0;
   padding: 0;
   width: 100%;
-  background: ${({ theme }) => theme.text1};
+  background-color: ${({ theme }) => theme.text1};
   overflow: hidden;
   position: relative;
   :after {
@@ -58,6 +57,12 @@ const Wrapper = styled.div`
     filter: blur(120px);
     border-radius: 120px;
   }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    background-color: #000000;
+    :after {
+      background: transparent;
+    }
+  `}
 `
 
 const HeaderRow = styled.div`
@@ -70,6 +75,10 @@ const HeaderRow = styled.div`
   `};
   display: flex;
   justify-content: center;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  justify-content: flex-start;
+  margin-bottom: 15px
+  `}
 `
 
 const ContentWrapper = styled.div`
@@ -83,7 +92,6 @@ const ContentWrapper = styled.div`
 const UpperSection = styled.div`
   position: relative;
   padding-top: 52px
-  background: ${({ theme }) => theme.text1};
   overflow: hidden;
 
   h5 {
@@ -131,6 +139,9 @@ const HoverText = styled.div`
   :hover {
     cursor: pointer;
   }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    color: #ffffff
+  `}
 `
 
 const WALLET_VIEWS = {

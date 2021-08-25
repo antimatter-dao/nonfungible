@@ -84,18 +84,19 @@ const MobileSearchWrapper = styled.div`
   padding: ${({ theme }) => theme.mobileHeaderHeight} 24px 24px
   width: 100%;
   background-color: ${({ theme }) => theme.bg1};
-  z-index: 2002;
+  z-index: 12;
   height: 100vh;
 `
 
 const MobileSearchButton = styled(ButtonEmpty)`
-  position: absolute;
-  top: -150px;
-  z-index: 2001;
-  right: 60px;
+  position: fixed;
+  top: 21px;
+  z-index: 11;
+  right: 72px;
   width: fit-content;
+  height: auto;
   svg {
-    z-index: 2001;
+    z-index: 11;
   }
 `
 
@@ -111,6 +112,7 @@ const MobileCloseIcon = styled(CloseIcon)`
 export default function Search({ onSearch }: { onSearch: (searchParam: string, searchBy: string) => void }) {
   const [searchParam, setSearchParam] = useState('')
   const [searchBy, setSearchBy] = useState('')
+  const match = useMediaWidth('upToLarge')
 
   const handleSearch = useCallback(() => {
     onSearch(searchParam, searchBy)
@@ -130,11 +132,11 @@ export default function Search({ onSearch }: { onSearch: (searchParam: string, s
             onSelection={id => {
               setSearchParam(id)
             }}
-            width="280px"
+            width={match ? '100%' : '280px'}
             options={SearchParams}
             selectedId={searchParam}
             placeholder="Select search parameter"
-            marginRight="10px"
+            marginRight={match ? '0' : '10px'}
           />
           <TextValueInput
             borderColor="#ffffff"
@@ -144,6 +146,7 @@ export default function Search({ onSearch }: { onSearch: (searchParam: string, s
             }}
             placeholder="Search by"
             height="3rem"
+            maxWidth={match ? 'unset' : '552px'}
           />
           <ButtonWrapper>
             <ButtonPrimary width="152px" onClick={handleSearch}>
@@ -181,7 +184,7 @@ export function MobileSearch({ onSearch }: { onSearch: (searchParam: string, sea
 
   return (
     <>
-      <MobileSearchButton onClick={handleOpen}>
+      <MobileSearchButton onClick={handleOpen} id="mobileSearch">
         <SearchIcon style={{ fill: '#ffffff' }} />
       </MobileSearchButton>
       {isOpen && (

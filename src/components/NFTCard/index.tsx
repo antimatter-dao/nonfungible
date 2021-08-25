@@ -93,6 +93,11 @@ const CardWrapper = styled.div<{ color: CardColor; padding?: string | number }>`
       height: 272px;
     }
   }
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    width: 100%;
+    min-width: 312px;
+    height: 276px;
+  `}
 `
 
 const OutlineCard = styled.div<{ borderRadius?: string }>`
@@ -109,6 +114,14 @@ const OutlineCard = styled.div<{ borderRadius?: string }>`
   & * {
     z-index: 3;
   }
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`padding-top: 20px;`}
+`
+
+const CapsuleWrapper = styled(AutoColumn)`
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    display: flex;
+    grid-gap: 8px
+  `}
 `
 
 function NFTCardBase({
@@ -153,7 +166,7 @@ export default function NFTCard({
       <TYPE.black fontWeight={700} fontSize={28} color="#000000" style={{ ...ellipsis('100%') }}>
         {name}
       </TYPE.black>
-      <AutoColumn gap="4px">
+      <CapsuleWrapper gap="4px">
         <Capsule color={color}>
           <TYPE.smallGray>Index ID:&nbsp;</TYPE.smallGray>
           <TYPE.small color="#000000"> {indexId}</TYPE.small>
@@ -162,7 +175,7 @@ export default function NFTCard({
           <TYPE.smallGray>Creator:&nbsp;</TYPE.smallGray>
           <TYPE.small color="#000000"> {creator}</TYPE.small>
         </Capsule>
-      </AutoColumn>
+      </CapsuleWrapper>
     </NFTCardBase>
   )
 }

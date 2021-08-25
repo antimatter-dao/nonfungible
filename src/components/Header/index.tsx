@@ -694,7 +694,7 @@ export default function Header() {
           <Link to={'/'}>
             <StyledLogo />
           </Link>
-          <ToggleMenu />
+          <ToggleMenu onCreate={onCreateOrLogin} />
         </RowBetween>
       </MobileHeader>
 

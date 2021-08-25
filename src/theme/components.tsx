@@ -290,6 +290,9 @@ export const AnimatedWrapper = styled.div`
   justify-content: center;
   height: 100%;
   width: 100%;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  padding-bottom: ${theme.headerHeight}
+  `}
 `
 
 export const AnimatedImg = styled.div`

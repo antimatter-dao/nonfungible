@@ -3,11 +3,12 @@ import { X } from 'react-feather'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components'
 import { tabs } from './index'
-import { Base } from '../Button'
+import { Base, ButtonEmpty } from '../Button'
 import { AutoColumn } from 'components/Column'
 import { ReactComponent as Menu } from '../../assets/svg/menu.svg'
 import arrowUpUrl from 'assets/svg/arrow_up.svg'
 import { ExternalLink } from 'theme'
+import Modal from 'components/Modal'
 
 const ToggleMenuButton = styled(Base)`
   background: none;
@@ -17,23 +18,23 @@ const ToggleMenuButton = styled(Base)`
     border: none;
   }
 `
-const TogggleMenuWrapper = styled.div`
-  z-index: 100;
-  position: absolute;
-  left: 0;
-  width: 100vw;
-  border-radius: 32px;
-  background: ${({ theme }) => theme.gradient2};
-  top: ${({ theme }) => theme.mobileHeaderHeight};
-  height: calc(100vh - ${({ theme }) => theme.mobileHeaderHeight + ' - ' + theme.headerHeight});
-  border: 1px solid ${({ theme }) => theme.bg3};
-  border-bottom: none;
-  overflow-y: auto;
-`
+// const TogggleMenuWrapper = styled.div`
+//   z-index: 100;
+//   position: absolute;
+//   left: 0;
+//   width: 100vw;
+//   border-radius: 32px;
+//   background: ${({ theme }) => theme.gradient2};
+//   top: 0;
+//   height: calc(100vh - ${({ theme }) => theme.headerHeight});
+//   border: 1px solid ${({ theme }) => theme.bg3};
+//   border-bottom: none;
+//   overflow-y: auto;
+// `
 
 const TabMobile = styled(NavLink)<{ isSubTab?: boolean }>`
-  font-size: 24px;
-  font-weight: 400;
+  font-size: 28px;
+  font-weight: 500;
   color: ${({ theme }) => theme.text1};
   width: 100%;
   padding: 16px 30px;
@@ -63,8 +64,8 @@ const SubTabMobile = styled(ExternalLink)`
 `
 
 const ToggleTabMobile = styled.div<{ isopen: 'true' | 'false' }>`
-  font-size: 24px;
-  font-weight: 400;
+  font-size: 28px;
+  font-weight: 500;
   color: ${({ theme }) => theme.text1};
   width: 100%;
   padding: 16px 30px;
@@ -83,11 +84,30 @@ const ToggleTabMobile = styled.div<{ isopen: 'true' | 'false' }>`
   }
 `
 
+const CloseButton = styled(ButtonEmpty)`
+  position: absolute;
+  color: #ffffff;
+  top: 16px;
+  right: 25px;
+  width: auto;
+  height: auto;
+`
+
+const CreateButton = styled(ButtonEmpty)`
+  width: auto;
+  height: auto;
+  font-size: 28px;
+  font-weight: 500;
+  padding: 16px 30px;
+  justify-content: flex-start;
+`
+
 function ToggleTab({ children, title }: { children: JSX.Element | string; title: string }) {
   const [isOpen, setIsOpen] = useState(false)
   const handleClick = useCallback(() => {
     setIsOpen(!isOpen)
   }, [setIsOpen, isOpen])
+
   return (
     <>
       <ToggleTabMobile title={title} onClick={handleClick} isopen={isOpen ? 'true' : 'false'}>
@@ -98,17 +118,28 @@ function ToggleTab({ children, title }: { children: JSX.Element | string; title:
   )
 }
 
-export default function ToggleMenu() {
+export default function ToggleMenu({ onCreate }: { onCreate: () => void }) {
   const [isOpen, setIsOpen] = useState(false)
+
+  const handleOpen = useCallback(() => setIsOpen(true), [])
+  const handleClose = useCallback(() => setIsOpen(false), [])
+
+  const handleCreate = useCallback(() => {
+    onCreate()
+    setIsOpen(false)
+  }, [onCreate])
 
   return (
     <>
-      <ToggleMenuButton onClick={() => setIsOpen(!isOpen)}>
-        {isOpen ? <X size={24} /> : <Menu style={{ height: 30, width: 24 }} />}
+      <ToggleMenuButton onClick={handleOpen}>
+        <Menu style={{ height: 30, width: 24 }} />
       </ToggleMenuButton>
       {isOpen && (
-        <TogggleMenuWrapper>
-          <AutoColumn>
+        <Modal onDismiss={handleClose} isOpen={isOpen}>
+          <CloseButton onClick={handleClose}>
+            <X size={24} />
+          </CloseButton>
+          <AutoColumn style={{ marginTop: 148 }}>
             {tabs.map(({ title, route, subTab }) =>
               subTab ? (
                 <ToggleTab key={title} title={title}>
@@ -133,8 +164,9 @@ export default function ToggleMenu() {
                 </TabMobile>
               )
             )}
+            <CreateButton onClick={handleCreate}>+ Create</CreateButton>
           </AutoColumn>
-        </TogggleMenuWrapper>
+        </Modal>
       )}
     </>
   )

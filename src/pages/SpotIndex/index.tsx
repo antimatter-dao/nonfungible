@@ -38,7 +38,10 @@ const ContentWrapper = styled.div`
   padding: 52px 0;
   justify-content: center;
   ${({ theme }) => theme.mediaWidth.upToLarge`padding: 30px`}
-  ${({ theme }) => theme.mediaWidth.upToSmall`padding: 10px`}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  padding: 24px
+  grid-template-columns: 100%;
+  `}
 `
 
 const defaultCardData = {
