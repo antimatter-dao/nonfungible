@@ -8,7 +8,7 @@ import { darken } from 'polished'
 import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
 import { useAggregateUniBalance, useETHBalances } from '../../state/wallet/hooks'
-import { ButtonText, ExternalLink, TYPE } from '../../theme'
+import { ButtonText, ExternalLink, HideExtraSmall, TYPE } from '../../theme'
 import Row, { RowFixed, RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
 import usePrevious from '../../hooks/usePrevious'
@@ -617,10 +617,13 @@ export default function Header() {
                 </NetworkCard>
               )}
             </HeaderElement>
+
             {account && (
-              <ButtonOutlinedPrimary width="120px" marginRight="16px" height={44} onClick={onCreateOrLogin}>
-                Create
-              </ButtonOutlinedPrimary>
+              <HideExtraSmall>
+                <ButtonOutlinedPrimary width="120px" marginRight="16px" height={44} onClick={onCreateOrLogin}>
+                  Create
+                </ButtonOutlinedPrimary>
+              </HideExtraSmall>
             )}
 
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
@@ -710,9 +713,9 @@ export default function Header() {
 }
 
 function UserMenu({ account }: { account?: string | null }) {
-  const history = useHistory()
   const logout = useLogOut()
   const toggleWalletModal = useWalletModalToggle()
+  const history = useHistory()
 
   return (
     <UserMenuWrapper>

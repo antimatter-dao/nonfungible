@@ -82,7 +82,6 @@ const CurrencyNFTSelect = styled.button<{ selected: boolean; halfWidth?: boolean
   background-color: ${({ theme }) => theme.bg2};
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text3)};
   border-radius: 14px;
-  /* box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')}; */
   outline: none;
   cursor: pointer;
   user-select: none;
@@ -93,15 +92,10 @@ const CurrencyNFTSelect = styled.button<{ selected: boolean; halfWidth?: boolean
   border: 1px solid rgba(0, 0, 0, 0.1);
   background-color: #fff !important;
   font-weight: ${({ selected }) => (selected ? 500 : 400)};
-  /* :focus,
-  :active {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-  } */
   :hover {
     border: 1px solid ${({ selected }) => (selected ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.1)')};
   }
   ${({ theme, selected }) => theme.mediaWidth.upToSmall`
-  position: absolute;
   right: 0;
   width: 50%;
   z-index: 3;

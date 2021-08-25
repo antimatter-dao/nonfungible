@@ -8,7 +8,7 @@ const LogosContainer = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
   height: 75%;
   top: 20px;
   left: -10px
@@ -33,18 +33,18 @@ const LogoWrapper = styled.div<{ size: number; top: number; left: number }>`
     height: 60%;
     width: 60%;
   }
-  ${({ top, left, theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ top, left, theme }) => theme.mediaWidth.upToSmall`
     top: ${(top / 3.5).toFixed(1)}%;
     left: ${(left / 2.5).toFixed(1)}%;
   `}
-  ${({ size, theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ size, theme }) => theme.mediaWidth.upToSmall`
   width: ${((size * 2) / 3 + 10).toFixed(1)}px;
   height: ${((size * 2) / 3 + 10).toFixed(1)}px;
   `}
 `
 
 export default function CurrencyLogosOverlay({ icons = [] }: { icons: React.ReactNode[] }) {
-  const match = useMediaWidth('upToExtraSmall')
+  const match = useMediaWidth('upToSmall')
   const constructIcons = useCallback(
     (icons: React.ReactNode[]) => {
       switch (icons.length) {

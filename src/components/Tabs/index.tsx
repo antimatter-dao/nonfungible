@@ -18,5 +18,10 @@ const StyledTabItem = styled(ButtonEmpty)<{ current?: string | boolean }>`
   &:hover {
     color: ${({ theme }) => theme.black};
   }
+  white-space: nowrap;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  margin-right: 14px;
+  font-size: 14px;
+  `}
 `
 export { StyledTabItem, StyledTabs }

@@ -93,7 +93,7 @@ const CardWrapper = styled.div<{ color: CardColor; padding?: string | number }>`
       height: 272px;
     }
   }
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
     min-width: 312px;
     height: 276px;
@@ -114,11 +114,11 @@ const OutlineCard = styled.div<{ borderRadius?: string }>`
   & * {
     z-index: 3;
   }
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`padding-top: 20px;`}
+  ${({ theme }) => theme.mediaWidth.upToSmall`padding-top: 20px;`}
 `
 
 const CapsuleWrapper = styled(AutoColumn)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     display: flex;
     grid-gap: 8px
   `}

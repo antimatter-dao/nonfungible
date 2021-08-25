@@ -1,10 +1,14 @@
+import React, { useCallback, useMemo, useState } from 'react'
+import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
+import { useWeb3React } from '@web3-react/core'
+import { RouteComponentProps, useHistory } from 'react-router-dom'
+import styled from 'styled-components'
+import BigNumber from 'bignumber.js'
 import { ButtonBlack, ButtonEmpty, ButtonWhite } from 'components/Button'
 import { RowBetween, RowFixed } from 'components/Row'
 import { StyledTabItem, StyledTabs } from 'components/Tabs'
-import React, { useCallback, useMemo, useState } from 'react'
-import { AnimatedImg, AnimatedWrapper, TYPE } from 'theme'
-import { ChevronLeft } from 'react-feather'
-import styled from 'styled-components'
+import { AnimatedImg, AnimatedWrapper, HideMedium, HideSmall, TYPE } from 'theme'
+import { ReactComponent as ArrowLeftCircle } from 'assets/svg/arrow_left_circle.svg'
 import useTheme from 'hooks/useTheme'
 import { Hr, Paragraph } from './Paragraph'
 import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
@@ -15,11 +19,10 @@ import {
   useAssetsTokens,
   useNFTBalance,
   useNFTCreatorInfo,
-  useNFTIndexInfo,
+  // useNFTIndexInfo,
   useNFTTransactionRecords
 } from 'hooks/useIndexDetail'
 import NumericalInput from 'components/NumericalInput'
-import { RouteComponentProps, useHistory } from 'react-router-dom'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
 import AntimatterLogo from 'assets/svg/antimatter_logo_nft.svg'
 import { WrappedTokenInfo } from 'state/lists/hooks'
@@ -31,13 +34,10 @@ import { NumberNFTInputPanel } from 'components/NumberInputPanel'
 import { BuyComfirmModel, BuyComfirmNoticeModel, SellComfirmModel } from '../../components/NFTSpotDetail/ComfirmModel'
 import { AssetsParameter } from '../../components/Creation'
 import { PriceState, useNFTETHPrice } from '../../data/Reserves'
-import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
 import { useCurrencyBalance } from 'state/wallet/hooks'
-import { useWeb3React } from '@web3-react/core'
 import { useAmountOutMins, useIndexSellCall } from 'hooks/useIndexSellCallback'
 import { CHAIN_ETH_NAME, INDEX_NFT_ADDRESS, INDEX_NFT_BUY_FEE } from '../../constants'
 import SettingsTab from 'components/Settings'
-import BigNumber from 'bignumber.js'
 import { useUserSlippageTolerance } from 'state/user/hooks'
 import TransactionsTable from './TransactionsTable'
 import { useWalletModalToggle } from 'state/application/hooks'
@@ -51,12 +51,29 @@ const Wrapper = styled.div`
   width: 1192px;
   margin: auto;
   color: ${({ theme }) => theme.black};
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    width: 94%
+  `}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100%;
+    padding:0 24px;
+  `}
 `
 const TabButton = styled(ButtonWhite)<{ current?: string | boolean }>`
   width: 152px;
   color: ${({ theme, current }) => (current ? theme.black : theme.white)};
   background-color: ${({ theme, current }) => (current ? theme.white : 'transparent')};
   border-color: ${({ theme }) => theme.white};
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 108px;
+  `}
+`
+const TabWrapper = styled(RowBetween)`
+  width: 320px
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+  width: auto;
+  grid-gap: 8px;
+`};
 `
 
 const StyledCurrencyShow = styled.div`
@@ -79,10 +96,34 @@ const InfoPanel = styled.div`
   padding: 26px 52px;
   min-height: 490px;
   max-height: 490px;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    padding: 26px 24px;
+    max-height: unset;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  padding: 26px 52px;
+  width: 80%;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100%;
+    min-width: 312px;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  padding: 16px;
+  border-radius: 30px;
+`}
 `
 const StyledNFTCard = styled.div`
   transform-origin: 0 0;
   transform: scale(1.29);
+  width: 361.2px;
+  height: 490.2px;
+  flex-shrink: 0;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  transform: unset;
+  width: 100%;
+  height: auto;
+  `}
 `
 
 const StyledAvatar = styled.div<{ wh?: string }>`
@@ -119,6 +160,9 @@ const BuyPannel = styled(ColumnCenter)`
   height: 360px;
   align-items: flex-start;
   justify-content: space-between;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+  padding-right: 0;
+  `}
 `
 const MarketPrice = styled(RowBetween)`
   border: 1px solid #000000;
@@ -134,6 +178,9 @@ const TokenWrapper = styled.div`
   display: flex;
   align-items: center;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width; 100%;
+  `}
 `
 const AssetsWrapper = styled.div`
   display: grid;
@@ -141,9 +188,53 @@ const AssetsWrapper = styled.div`
   grid-column-gap: 40px;
   grid-template-rows: repeat(4, 1fr);
   height: 388px;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  grid-template-columns: 1fr;
+  `}
 `
 const TradeWrapper = styled(AutoColumn)`
   grid-template-columns: 1fr 1fr;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+  grid-template-columns: auto;
+  `}
+`
+const BackButton = styled(ButtonEmpty)`
+  color: rgba(255, 255, 255, 0.6);
+  :hover {
+    color: rgba(255, 255, 255, 1);
+  }
+`
+
+const StyledArrowLeftCircle = styled(ArrowLeftCircle)`
+  margin-right: 12px;
+  flex-shrink: 0;
+  circle {
+    fill: #ffffff;
+  }
+  path {
+    stroke: #000000;
+  }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  circle {
+    fill: none;
+    stroke: #ffffff
+  }  
+  path {
+    stroke: #ffffff;
+  }
+  `}
+`
+
+const ContentWrapper = styled(RowBetween)`
+  margin-top: 70px;
+  align-items: flex-start;
+  grid-gap: 8px;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+  min-width: 312px;
+  `}
 `
 export const StyledLink = styled.a`
   text-decoration: none;
@@ -316,24 +407,26 @@ export default function CardDetail({
   return (
     <>
       <RowBetween style={{ padding: '27px 20px' }}>
-        <ButtonEmpty width="auto" color={theme.text1}>
+        <BackButton width="auto" color={theme.text1}>
           <RowFixed onClick={() => history.goBack()}>
-            <ChevronLeft />
-            Go Back
+            <StyledArrowLeftCircle />
+            <HideSmall>Go Back</HideSmall>
           </RowFixed>
-        </ButtonEmpty>
-        <RowBetween style={{ width: 320 }}>
+        </BackButton>
+        <TabWrapper>
           <TabButton current={currentTab === TabType.Information} onClick={() => setCurrentTab(TabType.Information)}>
             Information
           </TabButton>
           <TabButton current={currentTab === TabType.Trade} onClick={() => setCurrentTab(TabType.Trade)}>
             Trade
           </TabButton>
-        </RowBetween>
-        <div style={{ width: 110 }} />
+        </TabWrapper>
+        <HideMedium>
+          <div style={{ width: 110 }} />
+        </HideMedium>
       </RowBetween>
       <Wrapper>
-        <RowBetween style={{ marginTop: 10 }} align="flex-start">
+        <ContentWrapper>
           <StyledNFTCard>
             <NFTCard {...currentCard} />
           </StyledNFTCard>
@@ -374,147 +467,184 @@ export default function CardDetail({
           ) : (
             <InfoPanel>
               <TradeWrapper>
-                <>
-                  <div>
-                    <StyledTabs>
-                      <StyledTabItem
-                        current={currentTradeTab === TradeTabType.Buy}
-                        onClick={() => setCurrentTradeTab(TradeTabType.Buy)}
+                <div>
+                  <StyledTabs>
+                    <StyledTabItem
+                      current={currentTradeTab === TradeTabType.Buy}
+                      onClick={() => setCurrentTradeTab(TradeTabType.Buy)}
+                    >
+                      Buy
+                    </StyledTabItem>
+                    <StyledTabItem
+                      current={currentTradeTab === TradeTabType.Sell}
+                      onClick={() => setCurrentTradeTab(TradeTabType.Sell)}
+                    >
+                      Sell
+                    </StyledTabItem>
+                  </StyledTabs>
+
+                  {currentTradeTab === TradeTabType.Buy && (
+                    <BuyPannel>
+                      <AutoColumn gap="8px" style={{ width: '100%' }}>
+                        <TYPE.black color="black">Amount </TYPE.black>
+                        <CustomNumericalInput
+                          style={{
+                            width: 'unset',
+                            height: '60px'
+                          }}
+                          maxLength={6}
+                          isInt={true}
+                          placeholder="0"
+                          value={buyAmount}
+                          onUserInput={val => {
+                            setBuyAmount(val)
+                          }}
+                        />
+                      </AutoColumn>
+                      <AutoColumn gap="8px" style={{ width: '100%' }}>
+                        <RowBetween>
+                          <TYPE.black color="black">Payment Currency </TYPE.black>
+                          <SettingsTab onlySlippage={true} />
+                        </RowBetween>
+                        <CurrencyETHShow />
+                      </AutoColumn>
+                      <ButtonBlack
+                        onClick={() => {
+                          setBuyConfirmModal(true)
+                          setTimeout(() => {
+                            setBuyConfirmNoticeModal(true)
+                          }, 500)
+                        }}
+                        height={60}
+                        disabled={!Number(buyAmount) || !thisNFTethAmount}
                       >
                         Buy
-                      </StyledTabItem>
-                      <StyledTabItem
-                        current={currentTradeTab === TradeTabType.Sell}
-                        onClick={() => setCurrentTradeTab(TradeTabType.Sell)}
-                      >
-                        Sell
-                      </StyledTabItem>
-                    </StyledTabs>
-
-                    {currentTradeTab === TradeTabType.Buy && (
-                      <BuyPannel>
-                        <AutoColumn gap="8px" style={{ width: '100%' }}>
-                          <TYPE.black color="black">Amount </TYPE.black>
-                          <CustomNumericalInput
-                            style={{
-                              width: 'unset',
-                              height: '60px'
-                            }}
-                            maxLength={6}
-                            isInt={true}
-                            placeholder="0"
-                            value={buyAmount}
-                            onUserInput={val => {
-                              setBuyAmount(val)
-                            }}
-                          />
-                        </AutoColumn>
-                        <AutoColumn gap="8px" style={{ width: '100%' }}>
-                          <RowBetween>
-                            <TYPE.black color="black">Payment Currency </TYPE.black>
-                            <SettingsTab onlySlippage={true} />
-                          </RowBetween>
-                          <CurrencyETHShow />
-                        </AutoColumn>
-                        {account ? (
-                          <ButtonBlack
-                            onClick={() => {
-                              setBuyConfirmModal(true)
-                              setTimeout(() => {
-                                setBuyConfirmNoticeModal(true)
-                              }, 500)
-                            }}
-                            height={60}
-                            disabled={!Number(buyAmount) || !thisNFTethAmount}
-                          >
-                            Buy
-                          </ButtonBlack>
-                        ) : (
-                          <ButtonBlack
-                            onClick={() => {
-                              toggleWalletModal()
-                            }}
-                            height={60}
-                          >
-                            Connect Wallet
-                          </ButtonBlack>
-                        )}
-                      </BuyPannel>
-                    )}
-
-                    {currentTradeTab === TradeTabType.Sell && (
-                      <BuyPannel>
-                        <AutoColumn gap="8px" style={{ width: '100%' }}>
-                          <NumberNFTInputPanel
-                            negativeMarginTop="1px"
-                            value={sellAmount}
-                            onUserInput={val => {
-                              setSellAmount(val)
-                            }}
-                            intOnly={true}
-                            label="Amount"
-                            onMax={() => {
-                              setSellAmount(NFTbalance?.toString() ?? '0')
-                            }}
-                            balance={NFTbalance?.toString()}
-                            error={Number(sellAmount) > Number(NFTbalance?.toString()) ? 'Insufficient balance' : ''}
-                            showMaxButton={true}
-                            id="sell_id"
-                          />
-                        </AutoColumn>
-                        <AutoColumn gap="8px" style={{ width: '100%' }}>
-                          <RowBetween>
-                            <TYPE.black color="black">Payment Currency </TYPE.black>
-                            <SettingsTab onlySlippage={true} />
-                          </RowBetween>
-                          <CurrencyETHShow />
-                        </AutoColumn>
-                        {account ? (
-                          <ButtonBlack
-                            onClick={() => {
-                              setSellConfirmModal(true)
-                            }}
-                            height={60}
-                            disabled={!Number(sellAmount) || Number(sellAmount) > Number(NFTbalance?.toString())}
-                          >
-                            Sell
-                          </ButtonBlack>
-                        ) : (
-                          <ButtonBlack
-                            onClick={() => {
-                              toggleWalletModal()
-                            }}
-                            height={60}
-                          >
-                            Connect Wallet
-                          </ButtonBlack>
-                        )}
-                      </BuyPannel>
-                    )}
-                  </div>
-
-                  <div>
-                    <MarketPrice>
-                      <span>Market price per unit</span>
-                      <span>
-                        {priceState === PriceState.VALID ? thisNFTethAmount.toSignificant(6) : '--'}{' '}
-                        {CHAIN_ETH_NAME[chainId ?? 1]}
-                      </span>
-                    </MarketPrice>
-                    <div>
-                      <TransactionsTable transactionRecords={NFTTransactionRecords} />
-                      {!NFTTransactionRecords?.length && (
-                        <TYPE.darkGray textAlign="center" padding="10px">
-                          No transaction record
-                        </TYPE.darkGray>
+                      </ButtonBlack>
+                    </BuyPannel>
+                  )}
+                  {currentTradeTab === TradeTabType.Buy && (
+                    <BuyPannel>
+                      <AutoColumn gap="8px" style={{ width: '100%' }}>
+                        <TYPE.black color="black">Amount </TYPE.black>
+                        <CustomNumericalInput
+                          style={{
+                            width: 'unset',
+                            height: '60px'
+                          }}
+                          maxLength={6}
+                          isInt={true}
+                          placeholder="0"
+                          value={buyAmount}
+                          onUserInput={val => {
+                            setBuyAmount(val)
+                          }}
+                        />
+                      </AutoColumn>
+                      <AutoColumn gap="8px" style={{ width: '100%' }}>
+                        <RowBetween>
+                          <TYPE.black color="black">Payment Currency </TYPE.black>
+                          <SettingsTab onlySlippage={true} />
+                        </RowBetween>
+                        <CurrencyETHShow />
+                      </AutoColumn>
+                      {account ? (
+                        <ButtonBlack
+                          onClick={() => {
+                            setBuyConfirmModal(true)
+                            setTimeout(() => {
+                              setBuyConfirmNoticeModal(true)
+                            }, 500)
+                          }}
+                          height={60}
+                          disabled={!Number(buyAmount) || !thisNFTethAmount}
+                        >
+                          Buy
+                        </ButtonBlack>
+                      ) : (
+                        <ButtonBlack
+                          onClick={() => {
+                            toggleWalletModal()
+                          }}
+                          height={60}
+                        >
+                          Connect Wallet
+                        </ButtonBlack>
                       )}
-                    </div>
+                    </BuyPannel>
+                  )}
+
+                  {currentTradeTab === TradeTabType.Sell && (
+                    <BuyPannel>
+                      <AutoColumn gap="8px" style={{ width: '100%' }}>
+                        <NumberNFTInputPanel
+                          negativeMarginTop="1px"
+                          value={sellAmount}
+                          onUserInput={val => {
+                            setSellAmount(val)
+                          }}
+                          intOnly={true}
+                          label="Amount"
+                          onMax={() => {
+                            setSellAmount(NFTbalance?.toString() ?? '0')
+                          }}
+                          balance={NFTbalance?.toString()}
+                          error={Number(sellAmount) > Number(NFTbalance?.toString()) ? 'Insufficient balance' : ''}
+                          showMaxButton={true}
+                          id="sell_id"
+                        />
+                      </AutoColumn>
+                      <AutoColumn gap="8px" style={{ width: '100%' }}>
+                        <RowBetween>
+                          <TYPE.black color="black">Payment Currency </TYPE.black>
+                          <SettingsTab onlySlippage={true} />
+                        </RowBetween>
+                        <CurrencyETHShow />
+                      </AutoColumn>
+                      {account ? (
+                        <ButtonBlack
+                          onClick={() => {
+                            setSellConfirmModal(true)
+                          }}
+                          height={60}
+                          disabled={!Number(sellAmount) || Number(sellAmount) > Number(NFTbalance?.toString())}
+                        >
+                          Sell
+                        </ButtonBlack>
+                      ) : (
+                        <ButtonBlack
+                          onClick={() => {
+                            toggleWalletModal()
+                          }}
+                          height={60}
+                        >
+                          Connect Wallet
+                        </ButtonBlack>
+                      )}
+                    </BuyPannel>
+                  )}
+                </div>
+
+                <div>
+                  <MarketPrice>
+                    <span>Market price per unit</span>
+                    <span>
+                      {priceState === PriceState.VALID ? thisNFTethAmount.toSignificant(6) : '--'}{' '}
+                      {CHAIN_ETH_NAME[chainId ?? (1 as keyof typeof CHAIN_ETH_NAME)]}
+                    </span>
+                  </MarketPrice>
+                  <div>
+                    <TransactionsTable transactionRecords={NFTTransactionRecords} />
+                    {!NFTTransactionRecords?.length && (
+                      <TYPE.darkGray textAlign="center" padding="10px">
+                        No transaction record
+                      </TYPE.darkGray>
+                    )}
                   </div>
-                </>
+                </div>
               </TradeWrapper>
             </InfoPanel>
           )}
-        </RowBetween>
+        </ContentWrapper>
       </Wrapper>
 
       <TransactionConfirmationModal
@@ -595,7 +725,9 @@ function IndexInfo({ nftInfo }: { nftInfo: NFTIndexInfoProps }) {
   const { chainId } = useActiveWeb3React()
   return (
     <div>
-      <Paragraph header="Token contract address">{INDEX_NFT_ADDRESS[chainId ?? 1]}</Paragraph>
+      <Paragraph header="Token contract address">
+        {INDEX_NFT_ADDRESS[chainId ?? (1 as keyof typeof CHAIN_ETH_NAME)]}
+      </Paragraph>
       <Hr />
       <Paragraph header="Index name">{nftInfo.name}</Paragraph>
       <Hr />
