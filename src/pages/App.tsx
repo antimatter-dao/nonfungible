@@ -71,6 +71,7 @@ const BodyWrapper = styled.div`
   position: relative;
   ${({ theme }) => theme.mediaWidth.upToLarge`
   margin-bottom: ${({ theme }) => theme.headerHeight};
+  min-height: calc(100vh - ${({ theme }) => theme.headerHeight + ' - ' + theme.mobileHeaderHeight});
   `}
 `
 

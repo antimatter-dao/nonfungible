@@ -19,7 +19,7 @@ import {
   useAssetsTokens,
   useNFTBalance,
   useNFTCreatorInfo,
-  // useNFTIndexInfo,
+  useNFTIndexInfo,
   useNFTTransactionRecords
 } from 'hooks/useIndexDetail'
 import NumericalInput from 'components/NumericalInput'
@@ -312,8 +312,6 @@ export default function CardDetail({
   }, [eths])
 
   const thisNFTethAmount = CurrencyAmount.ether(JSBI.BigInt(price ?? '0'))
-  // console.log('priceState', priceState)
-  // console.log('price', thisNHTethAmount.raw.toString())
 
   const [currentSubTab, setCurrentSubTab] = useState<SubTabType>(SubTabType.Creater)
   const [currentTab, setCurrentTab] = useState<TabType>(TabType.Information)

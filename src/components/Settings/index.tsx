@@ -29,9 +29,9 @@ const StyledMenuIcon = styled(Settings)`
   height: 16px;
   width: 16px;
 
-  /* > * {
-    stroke: ${({ theme }) => theme.black};
-  } */
+  > * {
+    fill: ${({ theme }) => theme.black};
+  }
 
   :hover {
     opacity: 0.7;
@@ -88,15 +88,6 @@ const EmojiWrapper = styled.div`
 //   text-align: left;
 // `
 
-const Overlay = styled.div`
-  z-index: 3;
-  position: absolute;
-  width: 100vw;
-  height: 100vh;
-  top: 0
-  left: 0
-  background-color: ${({ theme }) => theme.modalBG};
-`
 // ${({ theme }) => theme.mediaWidth.upToMedium`
 
 // `}
@@ -105,12 +96,18 @@ width: 100%;
 display: flex;
 align-items: center;
 justify-content: center;
-position: absolute;
+position: fixed;
 width: 100vw;
 height: 100vh;
 top: 0
 left: 0
-z-index: 3;
+z-index: 101;
+background-color: ${({ theme }) => theme.modalBG};
+${({ theme }) => theme.mediaWidth.upToSmall`
+background-color: #000000;
+top: 0;
+height: calc(100vh - ${theme.headerHeight})
+`}
 `
 
 const MenuFlyout = styled.span`
@@ -225,7 +222,7 @@ export default function SettingsTab({
           </EmojiWrapper>
         ) : null}
       </StyledMenuButton>
-      {(open || showConfirmation) && <Overlay />}
+      {/* {(open || showConfirmation) && <Overlay />} */}
       {open && (
         <OverlayWrapper>
           {/* <Filler /> */}
