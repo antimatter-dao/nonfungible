@@ -63,6 +63,11 @@ export const CloseIcon = styled(X)<{ onClick: () => void }>`
   > * {
     stroke: ${({ theme }) => theme.bg1};
   }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  > * {
+    stroke: ${({ theme }) => theme.text1};
+  }
+  `}
 `
 
 // for wrapper react feather icons

@@ -204,6 +204,12 @@ const Divider = styled.div`
   margin: 20px auto 0;
 `
 
+const NameWrapper = styled(RowFixed)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin: 0 auto;
+  `}
+`
+
 // function ActionButton({ onClick }: { onClick: () => void }) {
 //   return (
 //     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -322,12 +328,12 @@ export default function User() {
                 <ProfileWrapper gap="12px">
                   <ProfileImg />
                   <AutoColumn>
-                    <RowFixed>
+                    <NameWrapper>
                       <Text fontSize={28} fontWeight={500}>
                         {userInfo?.username}
                       </Text>
                       <Capsule>#{userInfo?.id}</Capsule>
-                    </RowFixed>
+                    </NameWrapper>
                     <TYPE.darkGray fontWeight={400}>
                       <AddressWrapper>
                         {userInfo?.account} <CopyHelper toCopy={userInfo?.account ?? ''} />
@@ -368,7 +374,7 @@ export default function User() {
                   </ButtonBlack>
                 </AutoColumn>
               </ClaimWrapper>
-              <ShowSmall>
+              <ShowSmall style={{ justifyContent: 'center' }}>
                 <RowFixed>
                   <ButtonOutlined width="134px" marginRight="12px" onClick={handleShowSetting}>
                     <Settings style={{ marginRight: 15 }} />

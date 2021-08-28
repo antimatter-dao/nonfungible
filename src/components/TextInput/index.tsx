@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { Text } from 'rebass'
 import { StyledInput } from 'components/NumericalInput'
 import { AutoRow } from 'components/Row'
 import { TYPE } from 'theme'
@@ -60,7 +61,7 @@ const Container = styled.div<{ width: string; maxWidth?: string }>`
 
 const LabelRow = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.text1};
+  color: #000000;
   font-size: 0.75rem;
   line-height: 1rem;
   span:hover {
@@ -69,6 +70,9 @@ const LabelRow = styled.div`
   }
   margin-bottom: 8px;
   ${({ theme }) => theme.flexRowNoWrap}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    color: #ffffff
+  `}
 `
 
 export const TextInput = React.memo(function InnerInput({
@@ -106,9 +110,9 @@ export const TextInput = React.memo(function InnerInput({
         <LabelRow>
           <AutoRow justify="space-between">
             {label && (
-              <TYPE.black fontWeight={500} fontSize={14}>
+              <Text fontWeight={500} fontSize={14}>
                 {label}
-              </TYPE.black>
+              </Text>
             )}
           </AutoRow>
         </LabelRow>
@@ -189,9 +193,9 @@ export const TextValueInput = React.memo(function InnerInput({
         <LabelRow>
           <AutoRow justify="space-between">
             {label && (
-              <TYPE.black fontWeight={500} fontSize={14}>
+              <Text fontWeight={500} fontSize={14}>
                 {label}
-              </TYPE.black>
+              </Text>
             )}
           </AutoRow>
         </LabelRow>

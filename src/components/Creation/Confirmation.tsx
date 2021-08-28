@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { TYPE } from '../../theme'
+import { ShowSmall, TYPE, HideSmall } from '../../theme'
 import { AutoColumn } from '../../components/Column'
 import styled from 'styled-components'
 import { RowBetween, RowFixed } from 'components/Row'
@@ -17,6 +17,11 @@ const Wrapper = styled(AutoColumn)`
   border-radius: 10px;
   max-height: 40vh;
   overflow-y: auto;
+  grid-row-gap: 20px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  background: #ffffff
+  grid-row-gap: 24px;
+  `}
 `
 const RightText = styled(TYPE.small)`
   color: ${({ theme }) => theme.text6};
@@ -40,16 +45,24 @@ export function SpotConfirmation({
   const userInfo = useCurrentUserInfo()
   return (
     <AutoColumn gap="40px">
-      <div>
+      <HideSmall>
         <TYPE.largeHeader fontSize={30} color="black">
           Confirmation
         </TYPE.largeHeader>
         <TYPE.small fontSize={12} color="text4">
-          Please review the following information{' '}
+          Please review the following information
         </TYPE.small>
-      </div>
+      </HideSmall>
+      <ShowSmall>
+        <TYPE.largeHeader fontSize={30} color="text1">
+          Confirmation
+        </TYPE.largeHeader>
+        <TYPE.small fontSize={12} color="text1" style={{ marginTop: 12 }}>
+          Please review the following information
+        </TYPE.small>
+      </ShowSmall>
 
-      <Wrapper gap="20px">
+      <Wrapper>
         <AutoColumn gap="12px">
           <TYPE.smallHeader color="text6">Creator Info</TYPE.smallHeader>
           <RowBetween>

@@ -8,7 +8,7 @@ import { darken } from 'polished'
 import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
 import { useAggregateUniBalance, useETHBalances } from '../../state/wallet/hooks'
-import { ButtonText, ExternalLink, HideExtraSmall, TYPE } from '../../theme'
+import { ButtonText, ExternalLink, HideSmall, TYPE } from '../../theme'
 import Row, { RowFixed, RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
 import usePrevious from '../../hooks/usePrevious'
@@ -434,6 +434,7 @@ const NetworkCard = styled.div<{ color?: string }>`
   }
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 0
+    margin-right: 10px
   `};
 `
 
@@ -508,6 +509,7 @@ export default function Header() {
   const { library } = useWeb3React()
   const userInfo = useCurrentUserInfo()
   const { login } = useLogin()
+  const history = useHistory()
   const match = useRouteMatch('/profile')
   const toggleCreationModal = useToggleCreationModal()
   const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
@@ -523,9 +525,11 @@ export default function Header() {
   }, [userInfo, login, toggleCreationModal])
 
   const toShowUserPanel = useCallback(() => {
-    if (userInfo && userInfo.token) return
-    else login()
-  }, [userInfo, login])
+    if (userInfo && userInfo.token) {
+      history.push('/profile')
+      return
+    } else login()
+  }, [userInfo, login, history])
 
   return (
     <HeaderFrame>
@@ -619,11 +623,11 @@ export default function Header() {
             </HeaderElement>
 
             {account && (
-              <HideExtraSmall>
+              <HideSmall>
                 <ButtonOutlinedPrimary width="120px" marginRight="16px" height={44} onClick={onCreateOrLogin}>
                   Create
                 </ButtonOutlinedPrimary>
-              </HideExtraSmall>
+              </HideSmall>
             )}
 
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>

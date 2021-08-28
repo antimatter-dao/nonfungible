@@ -126,6 +126,9 @@ export const SearchNFTInput = styled.input`
     border: 1px solid ${({ theme }) => theme.primary1};
     outline: none;
   }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    background: #ffffff;
+  `}
 `
 
 export const Separator = styled.div`

@@ -40,10 +40,10 @@ const ContentWrapper = styled.div`
   ${({ theme }) => theme.mediaWidth.upToLarge`padding: 30px`}
   ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 24px;
-   grid-template-columns: 50% 50%;
+    grid-template-columns: repeat(auto-fill, 312px);
    `}
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-  grid-template-columns: 100%;
+    grid-template-columns: 100%;
   `}
 `
 

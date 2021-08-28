@@ -4,17 +4,19 @@ import ReactGA from 'react-ga'
 import { useTranslation } from 'react-i18next'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
+import { X } from 'react-feather'
+import { CloseIcon } from 'theme/components'
 import { useActiveWeb3React } from '../../hooks'
 import { useAllTokens, useToken, useIsUserAddedToken, useFoundOnInactiveList } from '../../hooks/Tokens'
-import { ButtonText, CloseIcon, TYPE } from '../../theme'
+import { ButtonText, HideSmall, ShowSmall, TYPE } from '../../theme'
 import { isAddress } from '../../utils'
-import Column from '../Column'
+import Column, { AutoColumn } from '../Column'
 import Row, { RowBetween } from '../Row'
 import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
 import { filterTokens, useSortedTokensByQuery } from './filtering'
 import { useTokenComparator } from './sorting'
-import { PaddedColumn, SearchNFTInput } from './styleds'
+import { SearchNFTInput } from './styleds'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import styled from 'styled-components'
 import useToggle from 'hooks/useToggle'
@@ -22,6 +24,7 @@ import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import useTheme from 'hooks/useTheme'
 import ImportRow from './ImportRow'
 import useDebounce from 'hooks/useDebounce'
+import { ButtonEmpty as ButtonEmptyUnstyled } from 'components/Button'
 
 const ContentWrapper = styled(Column)`
   width: 100%;
@@ -38,6 +41,23 @@ const Footer = styled.div`
   border-top-right-radius: 0;
   border-top: 1px solid ${({ theme }) => theme.text5};
 `
+
+const ButtonEmpty = styled(ButtonEmptyUnstyled)`
+  width: auto;
+  top: 12px;
+  right: 12px;
+  position: absolute;
+  color: #ffffff;
+  margin-left: auto;
+`
+
+export const PaddedColumn = styled(AutoColumn)`
+  padding: 38px 36px 30px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  padding: 24px
+  `}
+`
+
 interface CurrencySearchProps {
   isOpen: boolean
   onDismiss: () => void
@@ -165,11 +185,21 @@ export function CurrencySearch({
   return (
     <ContentWrapper>
       <PaddedColumn gap="16px">
-        <RowBetween>
-          <div></div>
-          <Text fontSize={18}>Select a token</Text>
-          <CloseIcon onClick={onDismiss} />
-        </RowBetween>
+        <HideSmall>
+          <RowBetween>
+            <div></div>
+            <Text fontSize={18}>Select a token</Text>
+            <CloseIcon onClick={onDismiss} />
+          </RowBetween>
+        </HideSmall>
+        <ShowSmall>
+          <Text fontWeight={500} fontSize={28} style={{ marginTop: 40, marginBottom: 40, color: '#ffffff' }}>
+            Select a token
+          </Text>
+          <ButtonEmpty>
+            <X onClick={onDismiss} color="#ffffff" />
+          </ButtonEmpty>
+        </ShowSmall>
         <Row>
           <SearchNFTInput
             type="text"

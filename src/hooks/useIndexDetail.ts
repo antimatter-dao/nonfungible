@@ -235,6 +235,10 @@ export function useNFTTransactionRecords(nftId: string | undefined): NFTTransact
       return
     }
     getNFTTransferRecords(nftId).then(res => {
+      if (res === undefined) {
+        setInfo(undefined)
+        return
+      }
       const ret: NFTTransactionRecordsProps[] = res.records.map(
         (item: any): NFTTransactionRecordsProps => {
           return {

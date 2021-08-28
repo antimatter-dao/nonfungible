@@ -1,10 +1,14 @@
 import { AutoRow, RowBetween, RowFixed } from 'components/Row'
 import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { TYPE } from 'theme'
+import { HideSmall, ShowSmall, TYPE } from 'theme'
 import styled from 'styled-components'
 import { AutoColumn } from 'components/Column'
 import { TextValueInput } from 'components/TextInput'
-import { ButtonBlack, ButtonDropdown, ButtonOutlined } from 'components/Button'
+import {
+  ButtonBlack as ButtonBlackDesktop,
+  ButtonDropdown,
+  ButtonOutlined as ButtonOutlinedDesktop
+} from 'components/Button'
 import NumericalInput from 'components/NumericalInput'
 import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
 import { SpotConfirmation } from './Confirmation'
@@ -46,7 +50,15 @@ export const IndexIcon = styled.div<{ current?: boolean }>`
   text-transform: capitalize;
   border-radius: 50%;
   margin-left: 16px;
+  flex-shrink: 0;
   color: ${({ current }) => (current ? 'black' : 'rgba(0, 0, 0, 0.2)')};
+  ${({ theme, current }) => theme.mediaWidth.upToSmall`
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    color: ${current ? '#ffffff' : 'rgba(255, 255, 255, 0.2)'};
+    border-color: rgba(255, 255, 255, 0.2);
+  `}
 `
 export const InputRow = styled.div<{ disabled?: boolean }>`
   align-items: center;
@@ -103,6 +115,10 @@ export const TokenButtonDropdown = styled(ButtonDropdown)`
 const StyledCard = styled.div`
   transform-origin: 0 0;
   transform: scale(0.715);
+  width: 100%;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  transform: unset;
+  `}
 `
 
 const BackgroundItem = styled.div<{ selected?: boolean; color: CardColor }>`
@@ -112,6 +128,62 @@ const BackgroundItem = styled.div<{ selected?: boolean; color: CardColor }>`
   width: 76px;
   height: 76px;
   background: ${({ theme, color }) => theme[color]};
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  width: 56px;
+  height: 56px;`}
+`
+
+const ButtonBlack = styled(ButtonBlackDesktop)`
+  margin-top: 40px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  margin-top: auto;
+  background-color: ${({ theme }) => theme.primary1};
+  color: #000000;
+  :hover{
+    background: ${({ theme }) => theme.primary4};
+  }
+  `}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    :disabled {
+      color: ${({ theme }) => theme.text3};
+      background: ${({ theme }) => theme.bg4};
+    }
+  `}
+`
+
+const ButtonOutlined = styled(ButtonOutlinedDesktop)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    border-color: ${({ theme }) => theme.primary1};
+    color: ${({ theme }) => theme.primary1};
+  `}
+`
+
+const CardPanelWrapper = styled(AutoRow)`
+  align-items: flex-start;
+  > div:first-child {
+    width: 264px;
+  }
+  > div:last-child {
+    width: 200px;
+    height: 300px;
+  }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    justify-content: center;
+    > div:first-child, > div:last-child{
+      width: 100%;
+      height: auto;
+    }
+  `}
+`
+
+const ButtonGroup = styled(AutoColumn)`
+  margin-top: 40px;
+  > button:last-child {
+    margin-top: 0;
+  }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin-top: auto;
+  `}
 `
 
 export default function SpotIndex({
@@ -223,31 +295,32 @@ export default function SpotIndex({
   return (
     <>
       {current === 1 && (
-        <AutoColumn gap="40px">
-          <CreationHeader current={current}>Index Content</CreationHeader>
+        <>
+          <AutoColumn gap="40px">
+            <CreationHeader current={current}>Index Content</CreationHeader>
 
-          <TextValueInput
-            value={data.name}
-            onUserInput={val => {
-              setData('name', val)
-            }}
-            maxLength={20}
-            label="Index Name"
-            placeholder="Please enter the name of your index"
-            hint="Maximum 20 characters"
-          />
+            <TextValueInput
+              value={data.name}
+              onUserInput={val => {
+                setData('name', val)
+              }}
+              maxLength={20}
+              label="Index Name"
+              placeholder="Please enter the name of your index"
+              hint="Maximum 20 characters"
+            />
 
-          <TextValueInput
-            value={data.description}
-            onUserInput={val => {
-              setData('description', val)
-            }}
-            maxLength={100}
-            label="Description"
-            placeholder="Please explain why this index is meaningful"
-            hint="Maximum 100 characters"
-          />
-
+            <TextValueInput
+              value={data.description}
+              onUserInput={val => {
+                setData('description', val)
+              }}
+              maxLength={100}
+              label="Description"
+              placeholder="Please explain why this index is meaningful"
+              hint="Maximum 100 characters"
+            />
+          </AutoColumn>
           <ButtonBlack
             height={60}
             onClick={() => setCurrent(++current)}
@@ -255,86 +328,104 @@ export default function SpotIndex({
           >
             Next Step
           </ButtonBlack>
-        </AutoColumn>
+        </>
       )}
 
       {current === 2 && (
-        <AutoColumn gap="40px">
-          <CreationHeader current={current}>Index Parameter</CreationHeader>
+        <>
+          <AutoColumn gap="40px">
+            <CreationHeader current={current}>Index Parameter</CreationHeader>
+            <AutoColumn gap="10px">
+              <RowBetween>
+                <HideSmall>
+                  <TYPE.black fontSize={14} fontWeight={500}>
+                    Underlying asset
+                  </TYPE.black>
+                </HideSmall>
+                <ShowSmall>
+                  <TYPE.body fontSize={14} fontWeight={500}>
+                    Underlying asset
+                  </TYPE.body>
+                </ShowSmall>
+                <TYPE.darkGray fontSize={14} fontWeight={400}>
+                  Maximum 8 assets
+                </TYPE.darkGray>
+              </RowBetween>
 
-          <AutoColumn gap="10px">
-            {assetParams.map((item: AssetsParameter, index: number) => {
-              return (
-                <StyledCurrencyInputPanel key={index} lessTwo={!!(assetParams.length < 3)}>
-                  <CurrencyNFTInputPanel
-                    hiddenLabel={true}
-                    value={item.amount}
-                    onUserInput={val => {
-                      const newData = { ...item, amount: val }
-                      handleParameterInput(index, newData)
-                    }}
-                    disabledCurrencys={disabledCurrencys}
-                    // onMax={handleMax}
-                    currency={item.currencyToken}
-                    // pair={dummyPair}
-                    showMaxButton={false}
-                    onCurrencySelect={currency => {
-                      if (currency instanceof WrappedTokenInfo) {
-                        const newData = { ...item, currency: currency.address, currencyToken: currency }
+              {assetParams.map((item: AssetsParameter, index: number) => {
+                return (
+                  <StyledCurrencyInputPanel key={index} lessTwo={!!(assetParams.length < 3)}>
+                    <CurrencyNFTInputPanel
+                      hiddenLabel={true}
+                      value={item.amount}
+                      onUserInput={val => {
+                        const newData = { ...item, amount: val }
                         handleParameterInput(index, newData)
-                      } else if (currency instanceof Token) {
-                        const tokenInfo: TokenInfo = {
-                          chainId: currency.chainId,
-                          address: currency.address,
-                          name: currency.name ?? '',
-                          decimals: currency.decimals,
-                          symbol: currency.symbol ?? ''
+                      }}
+                      disabledCurrencys={disabledCurrencys}
+                      // onMax={handleMax}
+                      currency={item.currencyToken}
+                      // pair={dummyPair}
+                      showMaxButton={false}
+                      onCurrencySelect={currency => {
+                        if (currency instanceof WrappedTokenInfo) {
+                          const newData = { ...item, currency: currency.address, currencyToken: currency }
+                          handleParameterInput(index, newData)
+                        } else if (currency instanceof Token) {
+                          const tokenInfo: TokenInfo = {
+                            chainId: currency.chainId,
+                            address: currency.address,
+                            name: currency.name ?? '',
+                            decimals: currency.decimals,
+                            symbol: currency.symbol ?? ''
+                          }
+                          const _currency = new WrappedTokenInfo(tokenInfo, [])
+                          const newData = { ...item, currency: currency.address, currencyToken: _currency }
+                          handleParameterInput(index, newData)
                         }
-                        const _currency = new WrappedTokenInfo(tokenInfo, [])
-                        const newData = { ...item, currency: currency.address, currencyToken: _currency }
-                        handleParameterInput(index, newData)
-                      }
-                    }}
-                    label="Amount"
-                    disableCurrencySelect={false}
-                    id="stake-liquidity-token"
-                    hideSelect={false}
-                  />
-                  <X
-                    className="del-input"
-                    onClick={() => {
-                      delAssetsItem(index)
-                    }}
-                  />
-                </StyledCurrencyInputPanel>
-              )
-            })}
+                      }}
+                      label="Amount"
+                      disableCurrencySelect={false}
+                      id="stake-liquidity-token"
+                      hideSelect={false}
+                    />
+                    <X
+                      className="del-input"
+                      onClick={() => {
+                        delAssetsItem(index)
+                      }}
+                    />
+                  </StyledCurrencyInputPanel>
+                )
+              })}
+            </AutoColumn>
           </AutoColumn>
-
-          <AutoColumn gap="12px">
+          <ButtonGroup gap="12px">
             <ButtonOutlined height={60} onClick={addAsset} disabled={assetParams.length === 8}>
               + Add asset
             </ButtonOutlined>
             <ButtonBlack height={60} onClick={toColorStep} disabled={assetsBtnDIsabled}>
               Next Step
             </ButtonBlack>
-          </AutoColumn>
-        </AutoColumn>
+          </ButtonGroup>
+        </>
       )}
 
       {current === 3 && (
-        <AutoColumn gap="40px">
-          <CreationHeader current={current}>NFT Cover Background</CreationHeader>
-          <NFTCardPanel
-            cardData={currentCard}
-            setCardColor={(color: CardColor) => {
-              setData('color', color)
-            }}
-          />
+        <>
+          <AutoColumn gap="40px">
+            <CreationHeader current={current}>NFT Cover Background</CreationHeader>
+            <NFTCardPanel
+              cardData={currentCard}
+              setCardColor={(color: CardColor) => {
+                setData('color', color)
+              }}
+            />
+          </AutoColumn>
           <ButtonBlack height={60} onClick={handleGenerate}>
             Generate
           </ButtonBlack>
-        </AutoColumn>
+        </>
       )}
 
       {current === 4 && (
@@ -356,9 +447,14 @@ export function NFTCardPanel({
   setCardColor: (color: CardColor) => void
 }) {
   return (
-    <AutoRow justify="space-between" style={{ alignItems: 'flex-start' }}>
-      <AutoColumn gap="12px" style={{ width: 264 }}>
-        <TYPE.black>Select backgroud color</TYPE.black>
+    <CardPanelWrapper justify="space-between">
+      <AutoColumn gap="12px">
+        <HideSmall>
+          <TYPE.black fontSize={14}>Select backgroud color</TYPE.black>
+        </HideSmall>
+        <ShowSmall>
+          <TYPE.darkGray fontSize={14}>Select backgroud color</TYPE.darkGray>
+        </ShowSmall>
         <AutoRow gap="6px">
           {Object.values(CardColor).map(color => (
             <BackgroundItem
@@ -370,15 +466,22 @@ export function NFTCardPanel({
           ))}
         </AutoRow>
       </AutoColumn>
-      <AutoColumn style={{ width: 200, height: 300 }} gap="12px">
-        <TYPE.black fontSize={14} style={{ maxWidth: 100 }}>
-          Preview
-        </TYPE.black>
+      <AutoColumn gap="12px">
+        <HideSmall>
+          <TYPE.black fontSize={14} style={{ maxWidth: 100 }}>
+            Preview
+          </TYPE.black>
+        </HideSmall>
+        <ShowSmall>
+          <TYPE.darkGray fontSize={14} style={{ maxWidth: 100, marginTop: 24 }}>
+            Preview
+          </TYPE.darkGray>
+        </ShowSmall>
         <StyledCard>
           <NFTCard noBorderArea={true} {...cardData} />
         </StyledCard>
       </AutoColumn>
-    </AutoRow>
+    </CardPanelWrapper>
   )
 }
 

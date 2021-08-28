@@ -25,6 +25,7 @@ const InputRow = styled.div<{ selected: boolean; halfWidth?: boolean; hideSelect
   height: 3rem;
   ${({ theme }) => theme.mediaWidth.upToSmall`
   width: 100%;
+  height: 48px;
 `};
 `
 
@@ -33,6 +34,9 @@ const InputNFTRow = styled(InputRow)`
   border: 1px solid rgba(0, 0, 0, 0.1);
   width: ${({ halfWidth, hideSelect }) => (hideSelect ? '100%' : halfWidth ? '48%' : '56%')}};
   height: 60px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    background-color: #ffffff;
+  `}
 `
 
 const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean }>`
@@ -99,16 +103,17 @@ const CurrencyNFTSelect = styled.button<{ selected: boolean; halfWidth?: boolean
   right: 0;
   width: 50%;
   z-index: 3;
-  color:${selected ? theme.text1 : theme.primary1}
-  border: 1px solid ${selected ? theme.text4 : theme.primary1}
+  height: 48px;
+  // color:${selected ? theme.text1 : theme.primary1}
+  // border: 1px solid ${selected ? theme.text4 : theme.primary1}
   :hover,:focus,:active {
-    border: 1px solid ${selected ? theme.text4 : theme.primary1}
+    // border: 1px solid ${selected ? theme.text4 : theme.primary1}
   }
   `}
 `
 
 const CustomNumericalInput = styled(NumericalInput)`
-  background: transparent;
+  background-color: transparent;
   font-size: 16px;
 `
 
@@ -408,7 +413,7 @@ export function CurrencyNFTInputPanel({
             )}
           </LabelRow>
         )}
-        <Aligner>
+        <Aligner style={{ gap: 8 }}>
           {!hideInput && (
             <InputNFTRow
               style={hideInput ? { padding: '0', borderRadius: '8px' } : {}}

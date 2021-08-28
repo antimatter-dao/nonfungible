@@ -30,9 +30,13 @@ export const StyledDialogOverlay = styled(AnimatedDialogOverlay)<{
 
     height: calc(100vh - ${({ theme }) => theme.headerHeight});
     top: ${({ theme }) => theme.headerHeight};
+    ${({ theme }) => theme.mediaWidth.upToLarge`
+      height: calc(100vh - ${({ theme }) => theme.headerHeight + ' - ' + theme.mobileHeaderHeight});
+      top: ${theme.mobileHeaderHeight};
+    `}
     ${({ theme }) => theme.mediaWidth.upToSmall`
-      height: calc(100vh - ${({ theme }) => theme.headerHeight});
-      top: unset;
+      height: 100vh;
+      top: 0;
       bottom: ${({ theme }) => theme.headerHeight};
       background: #000000;
       justify-content: flex-end;
@@ -65,7 +69,7 @@ export const StyledDialogContent = styled(
 ).attrs({
   'aria-label': 'dialog'
 })`
-  overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
+  overflow-y: ${({ mobile }) => (mobile ? 'auto' : 'hidden')};
 
   &[data-reach-dialog-content] {
     box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
@@ -76,7 +80,7 @@ export const StyledDialogContent = styled(
       css`
         min-width: ${minWidth}px;
       `}
-    overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
+    overflow-y: ${({ mobile }) => (mobile ? 'auto' : 'hidden')};
     overflow-x: hidden;
     background-color: ${({ theme }) => theme.white};
 
@@ -107,6 +111,9 @@ export const StyledDialogContent = styled(
     ${({ theme }) => theme.mediaWidth.upToSmall`
       width: 100vw;
       max-width:unset;
+      min-height:unset;
+      max-height:unset;
+      height: 100vh;
       overflow-y: auto;
       border-radius: 0;
       background-color: #000000;
@@ -124,6 +131,7 @@ interface ModalProps {
   maxWidth?: number
   width?: string
   zIndex?: number
+  alignitems?: string
 }
 
 export default function Modal({
@@ -135,7 +143,8 @@ export default function Modal({
   width,
   initialFocusRef,
   zIndex,
-  children
+  children,
+  alignitems
 }: ModalProps) {
   const fadeTransition = useTransition(isOpen, null, {
     config: { duration: 200 },
@@ -168,6 +177,7 @@ export default function Modal({
               initialFocusRef={initialFocusRef}
               unstable_lockFocusAcrossFrames={false}
               zindex={zIndex}
+              alignitems={alignitems}
             >
               {/* <Filler /> */}
               <Wrapper>
