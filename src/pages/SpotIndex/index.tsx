@@ -27,6 +27,9 @@ const EmptyList = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin:24px
+  `}
 `
 const ContentWrapper = styled.div`
   position: relative;

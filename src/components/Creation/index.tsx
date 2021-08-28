@@ -203,7 +203,7 @@ export const defaultLockerData: CreateLockerData = {
 
 export default function CreationNFTModal() {
   const { account } = useWeb3React()
-  const [transactionModalOpen, setTransactionModalOpen] = useState(true)
+  const [transactionModalOpen, setTransactionModalOpen] = useState(false)
   const [attemptingTxn, setAttemptingTxn] = useState(false)
   const [hash, setHash] = useState('')
   const [error, setError] = useState(false)
