@@ -1,6 +1,6 @@
-import { ButtonEmpty } from 'components/Button'
+import { ButtonBlack, ButtonEmpty } from 'components/Button'
 import { RowBetween, RowFixed } from 'components/Row'
-import { StyledTabItem, StyledTabs } from 'components/Tabs'
+import { StyledTabItem } from 'components/Tabs'
 import React, { useCallback, useMemo, useState } from 'react'
 import { AnimatedImg, AnimatedWrapper, TYPE } from 'theme'
 import { ChevronLeft } from 'react-feather'
@@ -8,29 +8,20 @@ import styled from 'styled-components'
 import useTheme from 'hooks/useTheme'
 import { Hr, Paragraph } from './Paragraph'
 import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
-import {
-  NFTCreatorInfo,
-  NFTIndexInfoProps,
-  useAssetsTokens,
-  useNFTCreatorInfo,
-  useNFTIndexInfo
-} from 'hooks/useIndexDetail'
+import { NFTCreatorInfo, NFTIndexInfoProps, useAssetsTokens, useNFTCreatorInfo } from 'hooks/useIndexDetail'
+import { useLocker721Info } from 'hooks/useLocker721Detail'
+import { useLockerClaim721Call } from 'hooks/useLockerClaimCallback'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
 import AntimatterLogo from 'assets/svg/antimatter_logo_nft.svg'
 import { WrappedTokenInfo } from 'state/lists/hooks'
 import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
 import CurrencyLogo from 'components/CurrencyLogo'
-import { SellComfirmModel } from '../../components/NFTSpotDetail/ComfirmModel'
 import { AssetsParameter } from '../../components/Creation'
-import { useNFTETHPrice } from '../../data/Reserves'
-import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
-import { useAmountOutMins, useIndexSellCall } from 'hooks/useIndexSellCallback'
-import { INDEX_NFT_ADDRESS } from '../../constants'
-import BigNumber from 'bignumber.js'
-import { useUserSlippageTolerance } from 'state/user/hooks'
 import { useActiveWeb3React } from 'hooks'
+import { LOCKER_721_ADDRESS } from '../../constants'
 import { getEtherscanLink } from 'utils'
+import { Locker721ClaimComfirmModel } from 'components/NFTSpotDetail/ComfirmModel'
 
 const Wrapper = styled.div`
   /* min-height: calc(100vh - ${({ theme }) => theme.headerHeight}); */
@@ -109,11 +100,14 @@ export default function LockerDetail({
 }: RouteComponentProps<{ nftid?: string }>) {
   const theme = useTheme()
   const history = useHistory()
+  const { account } = useActiveWeb3React()
   const [transactionModalOpen, setTransactionModalOpen] = useState(false)
   const [attemptingTxn, setAttemptingTxn] = useState(false)
   const [hash, setHash] = useState('')
   const [error, setError] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
+
+  const [claimModal, setClaimModal] = useState(false)
 
   const transactionOnDismiss = () => {
     setError(false)
@@ -121,76 +115,49 @@ export default function LockerDetail({
     setTransactionModalOpen(false)
   }
 
-  const { data: NFTIndexInfo } = useNFTIndexInfo(nftid)
-  const creatorInfo = useNFTCreatorInfo(NFTIndexInfo?.creator)
+  const { data: locker721Info } = useLocker721Info(nftid)
+  const creatorInfo = useNFTCreatorInfo(locker721Info?.creator)
 
-  const tokens: AssetsParameter[] = useAssetsTokens(NFTIndexInfo?.assetsParameters)
-  const {
-    ethAmount: [priceState, price],
-    eths
-  } = useNFTETHPrice(tokens)
-  console.log('🚀 ~ file: index.tsx ~ line 165 ~ priceState', priceState)
-
-  const tokenFluiditys: (TokenAmount | null)[] = useMemo(() => {
-    return eths.map(val => val[3])
-  }, [eths])
-
-  const thisNFTethAmount = CurrencyAmount.ether(JSBI.BigInt(price ?? '0'))
-  // console.log('priceState', priceState)
-  // console.log('price', thisNHTethAmount.raw.toString())
+  const tokens: AssetsParameter[] = useAssetsTokens(locker721Info?.assetsParameters)
 
   const [currentSubTab, setCurrentSubTab] = useState<SubTabType>(SubTabType.Creater)
-  const [sellAmount, setSellAmount] = useState('')
-
-  const [sellConfirmModal, setSellConfirmModal] = useState(false)
-
-  const userSlippage = useUserSlippageTolerance()
-  const slippage = useMemo(() => {
-    return new BigNumber(userSlippage[0])
-      .dividedBy(10000)
-      .toFixed(3)
-      .toString()
-  }, [userSlippage])
-  const amountOutMins = useAmountOutMins(eths, sellAmount, slippage)
 
   const currentCard = useMemo((): NFTCardProps => {
-    if (!NFTIndexInfo) return defaultCardData
+    if (!locker721Info) return defaultCardData
     const _icons = tokens.map((val, idx) => {
       return <CurrencyLogo currency={val.currencyToken} key={idx} />
     })
     return {
-      id: NFTIndexInfo.creatorId,
-      name: NFTIndexInfo.name,
-      indexId: NFTIndexInfo.creatorId,
-      color: NFTIndexInfo.color,
-      address: NFTIndexInfo.creator,
+      id: locker721Info.creatorId,
+      name: locker721Info.name,
+      indexId: locker721Info.creatorId,
+      color: locker721Info.color,
+      address: locker721Info.creator,
       icons: _icons,
       creator: creatorInfo ? creatorInfo.username : ''
     }
-  }, [NFTIndexInfo, tokens, creatorInfo])
+  }, [locker721Info, tokens, creatorInfo])
 
-  const { callback: toSellCallback } = useIndexSellCall()
-  const toSell = useCallback(() => {
-    if (!toSellCallback || !sellAmount || !nftid || !amountOutMins) return
+  const { callback: toClaimCallback } = useLockerClaim721Call()
+  const toClaim = useCallback(() => {
+    if (!toClaimCallback || !nftid) return
     setTransactionModalOpen(true)
     setAttemptingTxn(true)
-    setSellConfirmModal(false)
-    toSellCallback(nftid, sellAmount, amountOutMins)
+    toClaimCallback(nftid)
       .then(hash => {
         setAttemptingTxn(false)
         setHash(hash)
-        setSellAmount('')
       })
       .catch(err => {
         // setTransactionModalOpen(false)
         setAttemptingTxn(false)
         setError(true)
         setErrorMsg(err?.message)
-        console.error('toSellCall commit', err)
+        console.error('to claim commit', err)
       })
-  }, [toSellCallback, nftid, sellAmount, amountOutMins])
+  }, [toClaimCallback, nftid])
 
-  if (!NFTIndexInfo) {
+  if (!locker721Info) {
     return (
       <AnimatedWrapper>
         <AnimatedImg>
@@ -216,30 +183,42 @@ export default function LockerDetail({
             <NFTCard {...currentCard} />
           </StyledNFTCard>
           <InfoPanel>
-            <StyledTabs>
-              <StyledTabItem
-                current={currentSubTab === SubTabType.Creater}
-                onClick={() => setCurrentSubTab(SubTabType.Creater)}
-              >
-                Creator info
-              </StyledTabItem>
-              <StyledTabItem
-                current={currentSubTab === SubTabType.Locker}
-                onClick={() => setCurrentSubTab(SubTabType.Locker)}
-              >
-                Locker info
-              </StyledTabItem>
-              <StyledTabItem
-                current={currentSubTab === SubTabType.Underlying}
-                onClick={() => setCurrentSubTab(SubTabType.Underlying)}
-              >
-                Underlying asset
-              </StyledTabItem>
-            </StyledTabs>
+            <RowBetween style={{ marginBottom: 10 }}>
+              <RowFixed>
+                <StyledTabItem
+                  current={currentSubTab === SubTabType.Creater}
+                  onClick={() => setCurrentSubTab(SubTabType.Creater)}
+                >
+                  Creator info
+                </StyledTabItem>
+                <StyledTabItem
+                  current={currentSubTab === SubTabType.Locker}
+                  onClick={() => setCurrentSubTab(SubTabType.Locker)}
+                >
+                  Locker info
+                </StyledTabItem>
+                <StyledTabItem
+                  current={currentSubTab === SubTabType.Underlying}
+                  onClick={() => setCurrentSubTab(SubTabType.Underlying)}
+                >
+                  Underlying asset
+                </StyledTabItem>
+              </RowFixed>
+              {account === locker721Info.creator && (
+                <RowFixed>
+                  <ButtonBlack width="140px" height="44px" onClick={() => setClaimModal(true)}>
+                    Claim Tokens
+                  </ButtonBlack>
+                  {/* <ButtonBlack width="100px" height="44px" marginLeft="10px">
+                  Send
+                </ButtonBlack> */}
+                </RowFixed>
+              )}
+            </RowBetween>
             {currentSubTab === SubTabType.Creater ? (
-              <CreaterInfo nftInfo={NFTIndexInfo} creatorInfo={creatorInfo} />
+              <CreaterInfo nftInfo={locker721Info} creatorInfo={creatorInfo} />
             ) : currentSubTab === SubTabType.Locker ? (
-              <IndexInfo nftInfo={NFTIndexInfo} />
+              <IndexInfo nftInfo={locker721Info} />
             ) : (
               <AssetsWrapper>
                 {tokens.map(({ amount, currencyToken }, index) => {
@@ -261,18 +240,11 @@ export default function LockerDetail({
         errorMsg={errorMsg}
       />
 
-      <SellComfirmModel
-        isOpen={sellConfirmModal}
-        onDismiss={() => {
-          setSellConfirmModal(false)
-        }}
-        tokenFluiditys={tokenFluiditys}
-        ethAmount={thisNFTethAmount}
-        // ETHbalance={ETHbalance ?? undefined}
-        // slippage={slippage}
-        number={sellAmount}
-        assetsParameters={tokens}
-        onConfirm={toSell}
+      <Locker721ClaimComfirmModel
+        assetsParameters={locker721Info.assetsParameters}
+        onConfirm={toClaim}
+        isOpen={claimModal}
+        onDismiss={() => setClaimModal(false)}
       />
     </>
   )
@@ -307,7 +279,7 @@ function IndexInfo({ nftInfo }: { nftInfo: NFTIndexInfoProps }) {
   const { chainId } = useActiveWeb3React()
   return (
     <div>
-      <Paragraph header="Token contract address">{INDEX_NFT_ADDRESS[chainId ?? 1]}</Paragraph>
+      <Paragraph header="Token contract address">{LOCKER_721_ADDRESS[chainId ?? 1]}</Paragraph>
       <Hr />
       <Paragraph header="Index name">{nftInfo.name}</Paragraph>
       <Hr />

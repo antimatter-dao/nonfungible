@@ -114,6 +114,7 @@ export interface AssetsParameter {
   amount: string
   amountRaw?: string
   currencyToken?: WrappedTokenInfo
+  unClaimAmount?: string
 }
 export interface CreateSpotData {
   name: string
@@ -270,7 +271,6 @@ export default function CreationNFTModal() {
         console.error('spo commit err', err)
       })
   }, [createSpotData, callback, account, spotCommitSuccessHandler, setAttemptingTxn, setTransactionModalOpen])
-  console.log('🚀 ~ file: index.tsx ~ line 273 ~ CreationNFTModal ~ createLockerData', createLockerData)
 
   const { callback: lockerCreateCall } = useLockerCreateCall()
   const createLockerConfirm = useCallback(() => {

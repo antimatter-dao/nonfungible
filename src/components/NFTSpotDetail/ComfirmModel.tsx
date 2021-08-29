@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { TYPE } from '../../theme'
 import { ButtonBlack } from '../Button'
 import { AutoColumn } from '../Column'
@@ -16,6 +16,7 @@ import { Dots } from 'components/swap/styleds'
 import IconClose from 'components/Icons/IconClose'
 import { AlertCircle } from 'react-feather'
 import { useActiveWeb3React } from '../../hooks'
+import { useToken } from 'hooks/Tokens'
 
 export const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -259,6 +260,70 @@ export function SellComfirmModel({
           ) : (
             <ButtonBlack disabled={true}>UNKNOWN</ButtonBlack>
           )}
+        </AutoColumn>
+      </Wrapper>
+    </Modal>
+  )
+}
+
+function ShowTokenSymbol({ address }: { address: string }) {
+  const token = useToken(address)
+  return (
+    <RowFixed>
+      <CurrencyLogo size="16px" currency={token ?? undefined} />
+      {token?.symbol}
+    </RowFixed>
+  )
+}
+
+export function Locker721ClaimComfirmModel({
+  isOpen,
+  onDismiss,
+  onConfirm,
+  assetsParameters
+}: {
+  isOpen: boolean
+  onDismiss: () => void
+  onConfirm: () => void
+  assetsParameters: AssetsParameter[]
+}) {
+  const btnDisabled: boolean = useMemo(() => {
+    if (!assetsParameters[0]) return true
+    return !assetsParameters
+      .map(item => {
+        return JSBI.GT(JSBI.BigInt(item.unClaimAmount ?? 0), JSBI.BigInt(0))
+      })
+      .reduce((pre, cur) => pre && cur)
+  }, [assetsParameters])
+  return (
+    <Modal isOpen={isOpen} onDismiss={onDismiss} minHeight={30} maxHeight={85} width="600px" maxWidth={600}>
+      <Wrapper>
+        <IconClose onEvent={onDismiss} style={{ top: 28, right: 28 }} />
+        <AutoColumn gap="15px">
+          <div>
+            <TYPE.largeHeader fontSize={30} color="black">
+              Confirmation
+            </TYPE.largeHeader>
+            <TYPE.small fontSize={12}>You will claim tokens</TYPE.small>
+          </div>
+          <InfoWrapper gap="10px">
+            <TYPE.small>Unclaim tokens:</TYPE.small>
+            {assetsParameters.map(item => (
+              <RowBetween style={{ alignItems: 'flex-start' }} key={item.currency}>
+                <TYPE.smallGray>
+                  <ShowTokenSymbol address={item.currency} />
+                </TYPE.smallGray>
+                <RightText>
+                  {item.currencyToken && item.unClaimAmount
+                    ? new TokenAmount(item.currencyToken, JSBI.BigInt(item.unClaimAmount)).toSignificant()
+                    : '0'}
+                </RightText>
+              </RowBetween>
+            ))}
+          </InfoWrapper>
+          <ButtonBlack onClick={onConfirm} disabled={btnDisabled} height="60px">
+            Claim
+          </ButtonBlack>
         </AutoColumn>
       </Wrapper>
     </Modal>

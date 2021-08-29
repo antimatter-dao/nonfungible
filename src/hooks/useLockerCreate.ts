@@ -127,7 +127,11 @@ export function useLockerCreateCall(): {
       }
       const _createParam = Object.values(createParam)
       const _claimParam = claimParam.map(item => Object.values(item))
-      console.log('🚀 ~ file: useLockerCreate.ts ~ line 97 ~ onCreate ~ _createParam', _createParam, _claimParam)
+      console.log(
+        '🚀 ~ file: useLockerCreate.ts ~ line 97 ~ onCreate ~ _createParam',
+        JSON.stringify(_createParam),
+        JSON.stringify(_claimParam)
+      )
 
       return contract
         .create(_createParam, _claimParam, { value: null, gasLimit: '3500000' })
@@ -138,9 +142,9 @@ export function useLockerCreateCall(): {
           return response.hash
         })
 
-      // return contract.estimateGas.create(_param1, _param2, {}).then(estimatedGasLimit => {
+      // return contract.estimateGas.create(_createParam, _claimParam, {}).then(estimatedGasLimit => {
       //   return contract
-      //     .create(_param1, _param2, { value: null, gasLimit: calculateGasMargin(estimatedGasLimit) })
+      //     .create(_createParam, _claimParam, { gasLimit: calculateGasMargin(estimatedGasLimit) })
       //     .then((response: TransactionResponse) => {
       //       addTransaction(response, {
       //         summary: `Create Locker`
