@@ -1,7 +1,7 @@
 import { AutoColumn } from 'components/Column'
 import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { TYPE } from 'theme'
-import { CreationHeader, NFTCardPanel } from './SpotIndex'
+import { CreationHeader, CustomNumericalInput, NFTCardPanel, StyledCurrencyInputPanel } from './SpotIndex'
 import {
   StyledRadio,
   StyledRadioGroup,
@@ -19,11 +19,22 @@ import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from 
 import DateFnsUtils from '@date-io/date-fns'
 import styled from 'styled-components'
 import { CardColor, NFTCardProps } from 'components/NFTCard'
-import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 import { LockerConfirmation } from './Confirmation'
 import { CurrencyNFTInputPanel } from 'components/CurrencyInputPanel'
 import { WrappedTokenInfo } from 'state/lists/hooks'
 import { useCheckLockerSchedule, useCheckLockerContent } from 'state/creation/hooks'
+import { X } from 'react-feather'
+import { useCurrentUserInfo } from 'state/userInfo/hooks'
+import CurrencyLogo from 'components/CurrencyLogo'
+import { useAssetsTokens } from 'hooks/useIndexDetail'
+import { ApprovalState, useMultiApproveCallback } from 'hooks/useMultiApproveCallback'
+import { Currency, CurrencyAmount, JSBI, Token } from '@uniswap/sdk'
+import { TokenInfo } from '@uniswap/token-lists'
+import { LOCKER_721_ADDRESS } from 'constants/index'
+import { useActiveWeb3React } from 'hooks'
+import { tryParseAmount } from 'state/swap/hooks'
+import { useCurrencyBalances } from 'state/wallet/hooks'
+import { Dots } from 'components/swap/styleds'
 
 const StyledDateBox = styled.div`
   width: 260px;
@@ -43,6 +54,92 @@ const StyledTimeBox = styled(StyledDateBox)`
 
 const indexArr = [1, 2, 3, 4]
 
+function LockerConfirm({
+  onConfirm,
+  selectAllTokens,
+  selectCurrencyBalances,
+  approvalStates,
+  approveCallback
+}: {
+  onConfirm: () => void
+  selectAllTokens: (CurrencyAmount | undefined)[]
+  selectCurrencyBalances: (CurrencyAmount | undefined)[]
+  approvalStates: ApprovalState[]
+  approveCallback: (() => Promise<any>)[]
+}): JSX.Element {
+  const confirmButton: { text: string; disabled: boolean } = useMemo(() => {
+    const ret: { text: string; disabled: boolean } = {
+      text: 'Confirm',
+      disabled: false
+    }
+    for (let index = 0; index < selectAllTokens.length; index++) {
+      const currencyToken = selectAllTokens[index]
+      const currencyBalances = selectCurrencyBalances[index]
+      const approvalState = approvalStates[index]
+      if (!currencyBalances || currencyBalances?.lessThan(currencyToken ?? JSBI.BigInt(0))) {
+        ret.text = 'Insufficient balance'
+        ret.disabled = true
+        return ret
+      }
+      if (approvalState !== ApprovalState.APPROVED) {
+        ret.text = 'Please to approve'
+        ret.disabled = true
+        return ret
+      }
+    }
+    return ret
+  }, [approvalStates, selectAllTokens, selectCurrencyBalances])
+
+  const btnGroups: (JSX.Element | null)[] = useMemo(() => {
+    return selectAllTokens.map((currencyToken, index) => {
+      const currencyBalances = selectCurrencyBalances[index]
+      const approvalState = approvalStates[index]
+      const approve = approveCallback[index]
+
+      if (!currencyBalances) {
+        return (
+          <ButtonBlack key={index} disabled>
+            Please waiting
+          </ButtonBlack>
+        )
+      }
+
+      if (currencyBalances.lessThan(currencyToken ?? JSBI.BigInt(0))) {
+        return (
+          <ButtonBlack key={index} disabled>{`Insufficient ${currencyBalances.currency.symbol} balance`}</ButtonBlack>
+        )
+      }
+      if (approvalState === ApprovalState.PENDING) {
+        return (
+          <ButtonBlack key={index} disabled>
+            Allow Amitmatter to use your ${currencyBalances.currency.symbol} <Dots />
+          </ButtonBlack>
+        )
+      }
+      if (approvalState !== ApprovalState.APPROVED) {
+        return (
+          <ButtonBlack key={index} onClick={approve}>
+            Allow Amitmatter to use your ${currencyBalances.currency.symbol}
+          </ButtonBlack>
+        )
+      }
+
+      return null
+    })
+  }, [approvalStates, approveCallback, selectAllTokens, selectCurrencyBalances])
+
+  return (
+    <AutoColumn gap="5px">
+      {btnGroups.map(item => item)}
+      {!confirmButton.disabled && (
+        <ButtonBlack key={'a1'} onClick={onConfirm} height={60} disabled={confirmButton.disabled}>
+          {confirmButton.text}
+        </ButtonBlack>
+      )}
+    </AutoColumn>
+  )
+}
+
 export default function LockerIndex({
   current,
   setCurrent,
@@ -57,6 +154,8 @@ export default function LockerIndex({
   onConfirm: () => void
 }) {
   const { creationType, schedule } = data
+  const { chainId, account } = useActiveWeb3React()
+  const userInfo = useCurrentUserInfo()
   const isPassLockerSchedule = useCheckLockerSchedule(data)
   const isPassLockerContent = useCheckLockerContent(data)
 
@@ -104,18 +203,33 @@ export default function LockerIndex({
     setAssetParams([...assetParams, { amount: '', currency: '' }])
   }, [assetParams, setAssetParams])
 
+  const delAssetsItem = useCallback(
+    index => {
+      if (assetParams.length < 2) return
+      const _assetParams = assetParams.filter((item, idx) => {
+        return item && idx !== index
+      })
+      setAssetParams(_assetParams)
+    },
+    [assetParams, setAssetParams]
+  )
+  const disabledCurrencys = useMemo(
+    () => assetParams.map(({ currencyToken }) => currencyToken as Currency).filter(item => item),
+    [assetParams]
+  )
+
   const assetsBtnDIsabled = useMemo(() => {
     return (
       assetParams.filter(val => {
-        return val.amount.trim() && val.currency.trim()
-      }).length < 2
+        return val.amount.trim() && val.currency.trim() && Number(val.amount.trim())
+      }).length < 1
     )
   }, [assetParams])
 
   const toColorStep = useCallback(() => {
     const _assetParams = assetParams
       .filter(val => {
-        return val.amount.trim() && val.amount.trim()
+        return val.amount.trim() && val.amount.trim() && Number(val.amount.trim())
       })
       .map(v => {
         return {
@@ -124,25 +238,42 @@ export default function LockerIndex({
           amount: v.amount
         }
       })
-    if (_assetParams.length < 2) return
+    if (_assetParams.length < 1) return
     setData('assetsParameters', _assetParams)
     setCurrent(++current)
   }, [current, setCurrent, assetParams, setData])
 
+  const selectTokens = useAssetsTokens(data.assetsParameters)
+
   const currentCard = useMemo((): NFTCardProps => {
-    const _icons = data.assetsParameters.map((val, idx) => {
-      return <ETH key={idx} />
+    const _icons = selectTokens.map((val, idx) => {
+      return <CurrencyLogo currency={val.currencyToken} key={idx} />
     })
     return {
       id: '',
       name: data.name,
-      indexId: '',
+      indexId: data.creatorId,
       color: data.color,
       address: '',
       icons: _icons,
-      creator: 'Jack'
+      creator: userInfo ? userInfo.username : ''
     }
-  }, [data])
+  }, [data, selectTokens, userInfo])
+
+  const selectAllTokens = useMemo(() => {
+    return selectTokens.map(item => {
+      return tryParseAmount(item.amount.toString(), item.currencyToken)
+    })
+  }, [selectTokens])
+  const selectAllCurrencys = useMemo(() => {
+    return selectTokens.map(item => {
+      return item.currencyToken
+    })
+  }, [selectTokens])
+  const { approvalStates, approveCalls } = useMultiApproveCallback(selectAllTokens, LOCKER_721_ADDRESS[chainId ?? 1])
+  const approveCallback = approveCalls()
+
+  const selectCurrencyBalances = useCurrencyBalances(account ?? undefined, selectAllCurrencys)
 
   return (
     <>
@@ -161,7 +292,12 @@ export default function LockerIndex({
               onChange={handleCurrentLockerTypeChange}
             >
               <FormControlLabel value={LockerType.ERC721} control={<StyledRadio />} label={LockerType.ERC721} />
-              <FormControlLabel value={LockerType.ERC1155} control={<StyledRadio />} label={LockerType.ERC1155} />
+              <FormControlLabel
+                value={LockerType.ERC1155}
+                control={<StyledRadio />}
+                disabled
+                label={LockerType.ERC1155}
+              />
             </StyledRadioGroup>
           </AutoColumn>
 
@@ -213,9 +349,9 @@ export default function LockerIndex({
           <AutoColumn gap="10px">
             {assetParams.map((item: AssetsParameter, index: number) => {
               return (
-                <>
+                <StyledCurrencyInputPanel key={index} lessTwo={!!(assetParams.length < 2)}>
                   <CurrencyNFTInputPanel
-                    hiddenLabel={true}
+                    hiddenLabel={false}
                     value={item.amount}
                     onUserInput={val => {
                       const newData = { ...item, amount: val }
@@ -223,19 +359,37 @@ export default function LockerIndex({
                     }}
                     // onMax={handleMax}
                     currency={item.currencyToken}
+                    disabledCurrencys={disabledCurrencys}
                     // pair={dummyPair}
-                    showMaxButton={false}
+                    showMaxButton={true}
                     onCurrencySelect={currency => {
                       if (currency instanceof WrappedTokenInfo) {
                         const newData = { ...item, currency: currency.address, currencyToken: currency }
                         handleParameterInput(index, newData)
+                      } else if (currency instanceof Token) {
+                        const tokenInfo: TokenInfo = {
+                          chainId: currency.chainId,
+                          address: currency.address,
+                          name: currency.name ?? '',
+                          decimals: currency.decimals,
+                          symbol: currency.symbol ?? ''
+                        }
+                        const _currency = new WrappedTokenInfo(tokenInfo, [])
+                        const newData = { ...item, currency: currency.address, currencyToken: _currency }
+                        handleParameterInput(index, newData)
                       }
                     }}
                     disableCurrencySelect={false}
-                    id="stake-liquidity-token"
+                    id={'stake-liquidity-token' + index}
                     hideSelect={false}
                   />
-                </>
+                  <X
+                    className="del-input"
+                    onClick={() => {
+                      delAssetsItem(index)
+                    }}
+                  />
+                </StyledCurrencyInputPanel>
               )
             })}
           </AutoColumn>
@@ -282,7 +436,7 @@ export default function LockerIndex({
             </RadioGroup>
           </AutoColumn>
 
-          {schedule !== TimeScheduleType.Flexible && (
+          {schedule === TimeScheduleType.OneTIme && (
             <>
               <RowBetween>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -317,15 +471,49 @@ export default function LockerIndex({
           )}
 
           {schedule === TimeScheduleType.Shedule && (
-            <TextValueInput
-              value={data.unlockData.percentage}
-              onUserInput={val => {
-                setData('name', val)
-              }}
-              label="Unlock Percentage"
-              placeholder="0%"
-              hint="From 0% to 100%"
-            />
+            <>
+              <AutoColumn gap="5px">
+                <TYPE.black fontSize="14px">Number of unlocks</TYPE.black>
+                <CustomNumericalInput
+                  style={{
+                    width: 'unset',
+                    height: '60px'
+                  }}
+                  maxLength={2}
+                  isInt={true}
+                  placeholder="2 times minimum"
+                  value={data.unlockData.unlockNumbers}
+                  onUserInput={val => {
+                    const _data = { ...data.unlockData, unlockNumbers: val }
+                    setData('unlockData', _data)
+                  }}
+                />
+                <TYPE.gray fontSize="14px" color="text3">
+                  2 times minimum
+                </TYPE.gray>
+              </AutoColumn>
+
+              <AutoColumn gap="5px">
+                <TYPE.black fontSize="14px">unlock Interval</TYPE.black>
+                <CustomNumericalInput
+                  style={{
+                    width: 'unset',
+                    height: '60px'
+                  }}
+                  maxLength={3}
+                  isInt={true}
+                  placeholder="days"
+                  value={data.unlockData.unlockInterval}
+                  onUserInput={val => {
+                    const _data = { ...data.unlockData, unlockInterval: val }
+                    setData('unlockData', _data)
+                  }}
+                />
+                <TYPE.gray fontSize="14px" color="text3">
+                  days
+                </TYPE.gray>
+              </AutoColumn>
+            </>
           )}
 
           <ButtonBlack
@@ -358,8 +546,14 @@ export default function LockerIndex({
       )}
 
       {current === 5 && (
-        <LockerConfirmation>
-          <ButtonBlack onClick={onConfirm}>Confirm</ButtonBlack>
+        <LockerConfirmation dataInfo={data}>
+          <LockerConfirm
+            onConfirm={onConfirm}
+            selectAllTokens={selectAllTokens}
+            selectCurrencyBalances={selectCurrencyBalances}
+            approvalStates={approvalStates}
+            approveCallback={approveCallback}
+          />
         </LockerConfirmation>
       )}
     </>

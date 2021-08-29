@@ -9,7 +9,11 @@ export function useCheckLockerSchedule(data: CreateLockerData): boolean {
       return true
     }
 
-    if (data.unlockData.datetime && data.unlockData.percentage && data.schedule === TimeScheduleType.Shedule) {
+    if (
+      Number(data.unlockData.unlockInterval) > 0 &&
+      Number(data.unlockData.unlockNumbers) > 1 &&
+      data.schedule === TimeScheduleType.Shedule
+    ) {
       return true
     }
 

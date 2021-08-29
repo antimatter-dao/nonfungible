@@ -20,13 +20,13 @@ export function isAddress(value: any): string | false {
 
 const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
   1: '',
-  // 3: 'ropsten.',
+  3: 'ropsten.',
   56: ''
 }
 
 const ETHERSCAN_HOST: { [chainId in ChainId]: string } = {
   1: 'etherscan.io',
-  // 3: 'ropsten.',
+  3: 'etherscan.io',
   56: 'bscscan.com'
 }
 

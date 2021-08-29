@@ -1,10 +1,9 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { TYPE } from '../../theme'
 import { AutoColumn } from '../../components/Column'
 import styled from 'styled-components'
 import { RowBetween, RowFixed } from 'components/Row'
-import { CreateSpotData } from './index'
-import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
+import { CreateLockerData, CreateSpotData, TimeScheduleType } from './index'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { useWeb3React } from '@web3-react/core'
 import { useCurrentUserInfo } from 'state/userInfo/hooks'
@@ -108,7 +107,37 @@ export function SpotConfirmation({
   )
 }
 
-export function LockerConfirmation({ children }: { children?: string | JSX.Element }) {
+export function LockerConfirmation({
+  children,
+  dataInfo
+}: {
+  children?: string | JSX.Element
+  dataInfo: CreateLockerData
+}) {
+  const { account } = useWeb3React()
+  const userInfo = useCurrentUserInfo()
+
+  const unlockText: undefined | string[][] = useMemo(() => {
+    if (dataInfo.schedule === TimeScheduleType.OneTIme) {
+      const ret = [dataInfo.unlockData.datetime ? dataInfo.unlockData.datetime.toLocaleString() : '', '100%']
+      return [ret]
+    } else if (dataInfo.schedule === TimeScheduleType.Shedule) {
+      const numbers = Number(dataInfo.unlockData.unlockNumbers)
+      const rote = (100 / numbers).toFixed(2) + '%'
+      const nowTIme = Number(new Date().getTime())
+      const _result = []
+      let idx = 0
+      while (idx < numbers) {
+        idx++
+        const unLockTIme = nowTIme + idx * 86400000 * Number(dataInfo.unlockData.unlockInterval)
+        _result.push([new Date(unLockTIme).toLocaleString(), rote])
+      }
+      return _result
+    } else {
+      return undefined
+    }
+  }, [dataInfo])
+
   return (
     <AutoColumn gap="40px">
       <div>
@@ -125,53 +154,76 @@ export function LockerConfirmation({ children }: { children?: string | JSX.Eleme
           <TYPE.smallHeader color="text6">Locker Content</TYPE.smallHeader>
           <RowBetween>
             <TYPE.smallGray>Locker Type</TYPE.smallGray>
-            <RightText>ERC-721</RightText>
+            <RightText>{dataInfo.creationType}</RightText>
+          </RowBetween>
+          <RowBetween>
+            <TYPE.smallGray>Creator</TYPE.smallGray>
+            <RightText>{userInfo?.username}</RightText>
+          </RowBetween>
+          <RowBetween align="flex-start">
+            <TYPE.smallGray>Creator wallet address</TYPE.smallGray>
+            <RightText>{shortenAddress(account ?? '')}</RightText>
           </RowBetween>
           <RowBetween>
             <TYPE.smallGray>Locker Name</TYPE.smallGray>
-            <RightText>Name</RightText>
+            <RightText>{dataInfo.name}</RightText>
           </RowBetween>
           <RowBetween align="flex-start">
             <TYPE.smallGray>Description</TYPE.smallGray>
-            <RightText>Alice is a KOL focusing on defi system.</RightText>
+            <RightText>{dataInfo.message}</RightText>
           </RowBetween>
         </AutoColumn>
 
         <AutoColumn gap="12px">
           <TYPE.smallHeader color="text6">Time Schedule</TYPE.smallHeader>
-          <RowBetween>
-            <TYPE.smallGray>Unlock date</TYPE.smallGray>
-            <RightText>01.02.2021</RightText>
-          </RowBetween>
-          <RowBetween>
-            <TYPE.smallGray>Unlock time</TYPE.smallGray>
-            <RightText>00:00</RightText>
-          </RowBetween>
+          {dataInfo.schedule === TimeScheduleType.Flexible && (
+            <RowBetween>
+              <TYPE.smallGray>no lockup</TYPE.smallGray>
+            </RowBetween>
+          )}
+          {dataInfo.schedule === TimeScheduleType.OneTIme &&
+            unlockText?.map((item, index) => (
+              <AutoColumn gap="5px" key={index}>
+                <RowBetween>
+                  <TYPE.smallGray>Unlock dateTime</TYPE.smallGray>
+                  <RightText>{item[0]}</RightText>
+                </RowBetween>
+                <RowBetween>
+                  <TYPE.smallGray>Unlock percentage</TYPE.smallGray>
+                  <RightText>{item[1]}</RightText>
+                </RowBetween>
+              </AutoColumn>
+            ))}
+          {dataInfo.schedule === TimeScheduleType.Shedule &&
+            unlockText?.map((item, index) => (
+              <AutoColumn gap="5px" key={index}>
+                <RowBetween>
+                  <TYPE.smallGray>Unlock dateTime</TYPE.smallGray>
+                  <RightText>{item[0]}</RightText>
+                </RowBetween>
+                <RowBetween>
+                  <TYPE.smallGray>Unlock percentage</TYPE.smallGray>
+                  <RightText>{item[1]}</RightText>
+                </RowBetween>
+              </AutoColumn>
+            ))}
         </AutoColumn>
 
         <AutoColumn gap="12px">
           <TYPE.smallHeader color="text6">Locker Assetes</TYPE.smallHeader>
-          <RowBetween>
-            <RowFixed>
-              <ETH style={{ marginRight: 10 }} />
-              <TYPE.smallGray>YFI</TYPE.smallGray>
-            </RowFixed>
-            <RightText>100</RightText>
-          </RowBetween>
-          <RowBetween>
-            <RowFixed>
-              <ETH style={{ marginRight: 10 }} />
-              <TYPE.smallGray>YFI</TYPE.smallGray>
-            </RowFixed>
-            <RightText>100</RightText>
-          </RowBetween>
-          <RowBetween>
-            <RowFixed>
-              <ETH style={{ marginRight: 10 }} />
-              <TYPE.smallGray>YFI</TYPE.smallGray>
-            </RowFixed>
-            <RightText>100</RightText>
-          </RowBetween>
+          {dataInfo.assetsParameters
+            .filter(v => v.currencyToken)
+            .map(({ amount, currencyToken }, index) => (
+              <div key={index}>
+                <RowBetween>
+                  <RowFixed>
+                    <CurrencyLogo currency={currencyToken} style={{ marginRight: 10 }} />
+                    <TYPE.smallGray>{currencyToken?.symbol}</TYPE.smallGray>
+                  </RowFixed>
+                  <RightText>{amount}</RightText>
+                </RowBetween>
+              </div>
+            ))}
         </AutoColumn>
 
         <div style={{ height: 8 }} />

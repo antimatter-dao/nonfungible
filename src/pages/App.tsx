@@ -16,6 +16,7 @@ import SpotIndex from './SpotIndex'
 import GovernanceDetail from './NFTGovernance/NFTGovernanceDetail'
 // import Locker from './Locker'
 import CardDetail from './CardDetail'
+import LockerDetail from './LockerDetail'
 import UserLogin from '../pages/User/Login'
 import User from './User'
 import WarningModal from 'components/Modal/WarningModal'
@@ -144,6 +145,7 @@ export default function App() {
                 <Route exact strict path="/collectables" component={ComingSoon} />
                 {/* <Route exact strict path="/locker" component={Locker} /> */}
                 <Route exact strict path="/locker" component={ComingSoon} />
+                <Route exact strict path="/locker/:nftid" component={LockerDetail} />
                 {/* <Route exact strict path="/governance" component={Governance} /> */}
                 <Route exact strict path="/governance" component={ComingSoon} />
                 <Route exact strict path="/governance/:governanceIndex" component={GovernanceDetail} />

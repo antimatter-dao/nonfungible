@@ -2628,8 +2628,8 @@
   resolved "https://registry.npm.taobao.org/@uniswap/merkle-distributor/download/@uniswap/merkle-distributor-1.0.1.tgz#dc3d911f65a860fc3f0cae074bdcd08ed6a27a4d"
 
 "@uniswap/sdk@antimatter-finance/mutichains-sdk.git":
-  version "3.0.3"
-  resolved "https://codeload.github.com/antimatter-finance/mutichains-sdk/tar.gz/9850961ccb236214e2adcc3bfa8bca9ed298dde2"
+  version "3.0.5"
+  resolved "https://codeload.github.com/antimatter-finance/mutichains-sdk/tar.gz/a2e1a5c016be6d89a94ab4ca98b81a80c0f04a71"
   dependencies:
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"

@@ -1,6 +1,7 @@
 import { Contract } from '@ethersproject/contracts'
 import { abi as GOVERNANCE_ABI } from '../constants/abis/governance.json'
 import { abi as FINANCE_INDEX_ABI } from '../constants/abis/FinanceIndex.json'
+import { abi as FINANCE_LOCKER_721_ABI } from '../constants/abis/FinanceERC721.json'
 import { abi as UNI_ABI } from '@uniswap/governance/build/Uni.json'
 import { abi as STAKING_REWARDS_ABI } from '@uniswap/liquidity-staker/build/StakingRewards.json'
 import { abi as MERKLE_DISTRIBUTOR_ABI } from '@uniswap/merkle-distributor/build/MerkleDistributor.json'
@@ -12,6 +13,7 @@ import {
   ANTIMATTER_ADDRESS,
   GOVERNANCE_ADDRESS,
   INDEX_NFT_ADDRESS,
+  LOCKER_721_ADDRESS,
   MERKLE_DISTRIBUTOR_ADDRESS,
   UNI
 } from '../constants'
@@ -61,6 +63,26 @@ export function useV1ExchangeContract(address?: string, withSignerIfPossible?: b
 
 export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {
   return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible)
+}
+
+export function useMultiTokenContract(
+  tokenAddresss: (string | undefined)[],
+  ABI: any,
+  withSignerIfPossible?: boolean
+): (Contract | null)[] {
+  const { library, account } = useActiveWeb3React()
+
+  return useMemo(() => {
+    return tokenAddresss.map(address => {
+      if (!address || !ABI || !library) return null
+      try {
+        return getContract(address, ABI, library, withSignerIfPossible && account ? account : undefined)
+      } catch (error) {
+        console.error('Failed to get contract', error)
+        return null
+      }
+    })
+  }, [tokenAddresss, ABI, library, withSignerIfPossible, account])
 }
 
 export function useWETHContract(withSignerIfPossible?: boolean): Contract | null {
@@ -120,6 +142,11 @@ export function useGovernanceContract(): Contract | null {
 export function useIndexNFTContract(): Contract | null {
   const { chainId } = useActiveWeb3React()
   return useContract(INDEX_NFT_ADDRESS[chainId ?? 1], FINANCE_INDEX_ABI, true)
+}
+
+export function useLocker721NFTContract(): Contract | null {
+  const { chainId } = useActiveWeb3React()
+  return useContract(LOCKER_721_ADDRESS[chainId ?? 1], FINANCE_LOCKER_721_ABI, true)
 }
 
 export function useUniContract(): Contract | null {

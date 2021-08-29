@@ -432,7 +432,17 @@ export function CurrencyNFTInputPanel({
                   }}
                 />
                 {account && currency && showMaxButton && label !== 'To' && (
-                  <StyledBalanceMax onClick={onMax}>Max</StyledBalanceMax>
+                  <StyledBalanceMax
+                    onClick={
+                      onMax
+                        ? onMax
+                        : () => {
+                            onUserInput(selectedCurrencyBalance ? selectedCurrencyBalance.toSignificant(6) : '')
+                          }
+                    }
+                  >
+                    Max
+                  </StyledBalanceMax>
                 )}
               </>
             </InputNFTRow>

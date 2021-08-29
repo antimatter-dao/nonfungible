@@ -22,7 +22,7 @@ import { TokenAmount } from '@uniswap/sdk'
 import { useCheckSpotCreateButton } from 'hooks/useIndexCreateCallback'
 import { TokenInfo } from '@uniswap/token-lists'
 
-const StyledCurrencyInputPanel = styled.div<{ lessTwo: boolean }>`
+export const StyledCurrencyInputPanel = styled.div<{ lessTwo: boolean }>`
   padding-right: ${({ lessTwo }) => (lessTwo ? '0' : '40px')};
   position: relative;
   .del-input {

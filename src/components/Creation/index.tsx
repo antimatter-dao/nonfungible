@@ -18,6 +18,7 @@ import LockerIndex from './Locker'
 import { CardColor } from 'components/NFTCard'
 import TransactionConfirmationModal from '../TransactionConfirmationModal'
 import { useIndexCreateCall } from '../../hooks/useIndexCreateCallback'
+import { getLockerClaimParam, useLockerCreateCall } from '../../hooks/useLockerCreate'
 import { useWeb3React } from '@web3-react/core'
 import { WrappedTokenInfo } from 'state/lists/hooks'
 import { tryParseAmount } from 'state/swap/hooks'
@@ -105,7 +106,8 @@ export enum TimeScheduleType {
 
 export interface UnlockData {
   datetime: Date | null
-  percentage: string
+  unlockNumbers: string
+  unlockInterval: string
 }
 export interface AssetsParameter {
   currency: string
@@ -159,19 +161,16 @@ export const defaultLockerData: CreateLockerData = {
     {
       currency: '',
       amount: ''
-    },
-    {
-      currency: '',
-      amount: ''
     }
   ],
   schedule: TimeScheduleType.Flexible,
   unlockData: {
     datetime: null,
-    percentage: ''
+    unlockNumbers: '',
+    unlockInterval: ''
   },
   color: CardColor.PURPLE,
-  creatorId: '-'
+  creatorId: '__'
 }
 
 export default function CreationNFTModal() {
@@ -234,6 +233,13 @@ export default function CreationNFTModal() {
     toggleCreationModal()
   }, [setCreateSpotData, setCurrentStep, setCurrentStepIndexNumber, toggleCreationModal])
 
+  const lockerCommitSuccessHandler = useCallback(() => {
+    setCreateLockerData(defaultLockerData)
+    setCurrentStep(Step.Choose)
+    setCurrentStepIndexNumber(0)
+    toggleCreationModal()
+  }, [setCurrentStep, setCurrentStepIndexNumber, toggleCreationModal])
+
   const { callback } = useIndexCreateCall()
   const createSpotConfirm = useCallback(() => {
     if (!callback || !account || !createSpotData) return
@@ -264,10 +270,47 @@ export default function CreationNFTModal() {
         console.error('spo commit err', err)
       })
   }, [createSpotData, callback, account, spotCommitSuccessHandler, setAttemptingTxn, setTransactionModalOpen])
+  console.log('🚀 ~ file: index.tsx ~ line 273 ~ CreationNFTModal ~ createLockerData', createLockerData)
 
+  const { callback: lockerCreateCall } = useLockerCreateCall()
   const createLockerConfirm = useCallback(() => {
-    alert('createLockerConfirm')
-  }, [])
+    if (!lockerCreateCall || !account || !createLockerData) return
+    const metadata = {
+      // walletAddress: account,
+      description: createLockerData.message,
+      color: createLockerData.color
+    }
+    const underlyingTokens: string[] = createLockerData.assetsParameters.map(v => v.currency)
+    const underlyingAmounts: string[] = createLockerData.assetsParameters.map(v => {
+      const ret = tryParseAmount(v.amount, v.currencyToken)?.raw.toString()
+      return ret || ''
+    })
+
+    setTransactionModalOpen(true)
+    setAttemptingTxn(true)
+    lockerCreateCall(
+      {
+        name: createLockerData.name,
+        metadata: JSON.stringify(metadata),
+        underlyingTokens,
+        underlyingAmounts,
+        claimType: 0
+      },
+      getLockerClaimParam(createLockerData)
+    )
+      .then(hash => {
+        setAttemptingTxn(false)
+        setHash(hash)
+        lockerCommitSuccessHandler()
+      })
+      .catch(err => {
+        // setTransactionModalOpen(false)
+        setAttemptingTxn(false)
+        setError(true)
+        setErrorMsg(err?.message)
+        console.error('create locker commit err', err)
+      })
+  }, [account, createLockerData, lockerCreateCall, lockerCommitSuccessHandler])
 
   return (
     <>
@@ -315,9 +358,9 @@ export default function CreationNFTModal() {
                 height={60}
                 style={{ marginTop: 20 }}
                 onClick={toCreateNext}
-                disabled={currentCreation !== Step.SpotIndex}
+                disabled={currentCreation === Step.FutureIndex}
               >
-                {currentCreation === Step.SpotIndex ? 'Confirm' : 'Coming soon'}
+                {currentCreation !== Step.FutureIndex ? 'Confirm' : 'Coming soon'}
               </ButtonBlack>
             </AutoColumn>
           )}

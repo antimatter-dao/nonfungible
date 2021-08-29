@@ -84,6 +84,32 @@ export function useHasPendingApproval(tokenAddress: string | undefined, spender:
   )
 }
 
+export function useHasMultiPendingApprovals(
+  tokenAddresss: (string | undefined)[],
+  spender: string | undefined
+): boolean[] {
+  const allTransactions = useAllTransactions()
+  return useMemo(() => {
+    return tokenAddresss.map(address => {
+      return (
+        typeof address === 'string' &&
+        typeof spender === 'string' &&
+        Object.keys(allTransactions).some(hash => {
+          const tx = allTransactions[hash]
+          if (!tx) return false
+          if (tx.receipt) {
+            return false
+          } else {
+            const approval = tx.approval
+            if (!approval) return false
+            return approval.spender === spender && approval.tokenAddress === address && isTransactionRecent(tx)
+          }
+        })
+      )
+    })
+  }, [allTransactions, spender, tokenAddresss])
+}
+
 // watch for submissions to claim
 // return null if not done loading, return undefined if not found
 export function useUserHasSubmittedClaim(
