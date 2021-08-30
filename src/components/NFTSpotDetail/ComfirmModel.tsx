@@ -17,6 +17,8 @@ import IconClose from 'components/Icons/IconClose'
 import { AlertCircle } from 'react-feather'
 import { useActiveWeb3React } from '../../hooks'
 import { useToken } from 'hooks/Tokens'
+import { useMultiApproveCallback } from 'hooks/useMultiApproveCallback'
+import { LOCKER_721_ADDRESS } from 'constants/index'
 
 export const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -287,14 +289,69 @@ export function Locker721ClaimComfirmModel({
   onConfirm: () => void
   assetsParameters: AssetsParameter[]
 }) {
-  const btnDisabled: boolean = useMemo(() => {
-    if (!assetsParameters[0]) return true
-    return !assetsParameters
-      .map(item => {
-        return JSBI.GT(JSBI.BigInt(item.unClaimAmount ?? 0), JSBI.BigInt(0))
-      })
-      .reduce((pre, cur) => pre && cur)
+  const { chainId } = useActiveWeb3React()
+
+  const assetsCurrencys: (AssetsParameter & {
+    currencyAmountToken: CurrencyAmount | undefined
+  })[] = useMemo(() => {
+    return assetsParameters.map(item => {
+      const currencyAmountToken = item.currencyToken
+        ? new TokenAmount(item.currencyToken, JSBI.BigInt(item.unClaimAmount ?? 0))
+        : undefined
+      return { ...item, currencyAmountToken }
+    })
   }, [assetsParameters])
+
+  const { approvalStates, approveCalls } = useMultiApproveCallback(
+    assetsCurrencys.map(item => item.currencyAmountToken),
+    LOCKER_721_ADDRESS[chainId ?? 1]
+  )
+  const approveCallbacks = approveCalls()
+
+  const btnAmountCheck: { text: string; disabled: boolean } = useMemo(() => {
+    const ret = { text: `Can't claim`, disabled: true }
+    if (!assetsCurrencys[0]) return ret
+    const isClaimAmount = assetsCurrencys
+      .map(item => {
+        return item.currencyAmountToken ? item.currencyAmountToken.greaterThan(JSBI.BigInt(0)) : false
+      })
+      .reduce((pre, cur) => pre || cur)
+    if (!isClaimAmount) return ret
+
+    return {
+      text: 'Claim',
+      disabled: false
+    }
+  }, [assetsCurrencys])
+
+  const btnGroups: (JSX.Element | null)[] = useMemo(() => {
+    return assetsCurrencys.map((assetsCurrency, index) => {
+      const approvalState = approvalStates[index]
+      const approve = approveCallbacks[index]
+
+      if (approvalState === ApprovalState.PENDING) {
+        return (
+          <ButtonBlack key={index} disabled>
+            Allow Amitmatter to use your ${assetsCurrency.currencyToken?.symbol} <Dots />
+          </ButtonBlack>
+        )
+      }
+      if (approvalState !== ApprovalState.APPROVED) {
+        return (
+          <ButtonBlack key={index} onClick={approve}>
+            Allow Amitmatter to use your ${assetsCurrency.currencyToken?.symbol}
+          </ButtonBlack>
+        )
+      }
+
+      return (
+        <ButtonBlack key={index} onClick={onConfirm} height="60px">
+          Claim
+        </ButtonBlack>
+      )
+    })
+  }, [approvalStates, approveCallbacks, assetsCurrencys, onConfirm])
+
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss} minHeight={30} maxHeight={85} width="600px" maxWidth={600}>
       <Wrapper>
@@ -308,22 +365,22 @@ export function Locker721ClaimComfirmModel({
           </div>
           <InfoWrapper gap="10px">
             <TYPE.small>Unclaim tokens:</TYPE.small>
-            {assetsParameters.map(item => (
+            {assetsCurrencys.map(item => (
               <RowBetween style={{ alignItems: 'flex-start' }} key={item.currency}>
                 <TYPE.smallGray>
                   <ShowTokenSymbol address={item.currency} />
                 </TYPE.smallGray>
-                <RightText>
-                  {item.currencyToken && item.unClaimAmount
-                    ? new TokenAmount(item.currencyToken, JSBI.BigInt(item.unClaimAmount)).toSignificant()
-                    : '0'}
-                </RightText>
+                <RightText>{item.currencyAmountToken ? item.currencyAmountToken.toSignificant() : '0'}</RightText>
               </RowBetween>
             ))}
           </InfoWrapper>
-          <ButtonBlack onClick={onConfirm} disabled={btnDisabled} height="60px">
-            Claim
-          </ButtonBlack>
+          {btnAmountCheck.disabled ? (
+            <ButtonBlack disabled={btnAmountCheck.disabled} height="60px">
+              {btnAmountCheck.text}
+            </ButtonBlack>
+          ) : (
+            btnGroups.map(item => item)
+          )}
         </AutoColumn>
       </Wrapper>
     </Modal>

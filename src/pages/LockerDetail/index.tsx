@@ -205,6 +205,8 @@ export default function LockerDetail({
                 </StyledTabItem>
               </RowFixed>
               {account === locker721Info.creator && (
+                // locker721Info.assetsParameters[0] &&
+                // JSBI.GT(JSBI.BigInt(locker721Info.assetsParameters[0].unClaimAmount ?? 0), JSBI.BigInt(0)) && (
                 <RowFixed>
                   <ButtonBlack width="140px" height="44px" onClick={() => setClaimModal(true)}>
                     Claim Tokens

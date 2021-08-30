@@ -6,7 +6,6 @@ import { useActiveWeb3React } from './index'
 import { useMultiTokenContract } from './useContract'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import { calculateGasMargin } from 'utils'
-import { MaxUint256 } from '@ethersproject/constants'
 import { TransactionResponse } from '@ethersproject/providers'
 
 export enum ApprovalState {
@@ -85,15 +84,11 @@ export function useMultiApproveCallback(
           return
         }
 
-        let useExact = false
-        const estimatedGas = await tokenContract.estimateGas.approve(spender, MaxUint256).catch(() => {
-          // general fallback for tokens who restrict approval amounts
-          useExact = true
-          return tokenContract.estimateGas.approve(spender, amountToApprove.raw.toString())
-        })
+        // let useExact = false
+        const estimatedGas = await tokenContract.estimateGas.approve(spender, amountToApprove.raw.toString())
 
         return tokenContract
-          .approve(spender, useExact ? amountToApprove.raw.toString() : MaxUint256, {
+          .approve(spender, amountToApprove.raw.toString(), {
             gasLimit: calculateGasMargin(estimatedGas)
           })
           .then((response: TransactionResponse) => {
