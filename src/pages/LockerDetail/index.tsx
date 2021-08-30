@@ -9,7 +9,8 @@ import useTheme from 'hooks/useTheme'
 import { Hr, Paragraph } from './Paragraph'
 import NFTCard, { CardColor, NFTCardProps } from 'components/NFTCard'
 import { NFTCreatorInfo, NFTIndexInfoProps, useAssetsTokens, useNFTCreatorInfo } from 'hooks/useIndexDetail'
-import { useLocker721Info } from 'hooks/useLocker721Detail'
+import { useOwnerOf } from 'hooks/useOwnerOf'
+import { UnClaimListProps, useLocker721Info } from 'hooks/useLocker721Detail'
 import { useLockerClaim721Call } from 'hooks/useLockerClaimCallback'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
@@ -17,11 +18,11 @@ import AntimatterLogo from 'assets/svg/antimatter_logo_nft.svg'
 import { WrappedTokenInfo } from 'state/lists/hooks'
 import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
 import CurrencyLogo from 'components/CurrencyLogo'
-import { AssetsParameter } from '../../components/Creation'
+import { AssetsParameter, TimeScheduleType } from '../../components/Creation'
 import { useActiveWeb3React } from 'hooks'
 import { LOCKER_721_ADDRESS } from '../../constants'
 import { getEtherscanLink } from 'utils'
-import { Locker721ClaimComfirmModel } from 'components/NFTSpotDetail/ComfirmModel'
+import { Locker721ClaimComfirmModel, LockerShowTimeScheduleModel } from 'components/NFTSpotDetail/ComfirmModel'
 
 const Wrapper = styled.div`
   /* min-height: calc(100vh - ${({ theme }) => theme.headerHeight}); */
@@ -76,6 +77,12 @@ export const StyledLink = styled.a`
     text-decoration: underline;
   }
 `
+const StyledShowTimeBtn = styled.span`
+  color: #24ff00;
+  margin-left: 5px;
+  text-decoration: underline;
+  cursor: pointer;
+`
 
 export enum SubTabType {
   'Creater' = 'creater',
@@ -106,6 +113,7 @@ export default function LockerDetail({
   const [hash, setHash] = useState('')
   const [error, setError] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
+  const ownerOf = useOwnerOf(nftid)
 
   const [claimModal, setClaimModal] = useState(false)
 
@@ -115,7 +123,7 @@ export default function LockerDetail({
     setTransactionModalOpen(false)
   }
 
-  const { data: locker721Info } = useLocker721Info(nftid)
+  const { data: locker721Info, unClaimList } = useLocker721Info(nftid)
   const creatorInfo = useNFTCreatorInfo(locker721Info?.creator)
 
   const tokens: AssetsParameter[] = useAssetsTokens(locker721Info?.assetsParameters)
@@ -204,7 +212,7 @@ export default function LockerDetail({
                   Underlying asset
                 </StyledTabItem>
               </RowFixed>
-              {account === locker721Info.creator && (
+              {account === ownerOf && (
                 // locker721Info.assetsParameters[0] &&
                 // JSBI.GT(JSBI.BigInt(locker721Info.assetsParameters[0].unClaimAmount ?? 0), JSBI.BigInt(0)) && (
                 <RowFixed>
@@ -220,7 +228,7 @@ export default function LockerDetail({
             {currentSubTab === SubTabType.Creater ? (
               <CreaterInfo nftInfo={locker721Info} creatorInfo={creatorInfo} />
             ) : currentSubTab === SubTabType.Locker ? (
-              <IndexInfo nftInfo={locker721Info} />
+              <LockerInfo nftInfo={locker721Info} unClaimList={unClaimList} />
             ) : (
               <AssetsWrapper>
                 {tokens.map(({ amount, currencyToken }, index) => {
@@ -277,8 +285,44 @@ function CreaterInfo({
   )
 }
 
-function IndexInfo({ nftInfo }: { nftInfo: NFTIndexInfoProps }) {
+function LockerInfo({
+  nftInfo,
+  unClaimList
+}: {
+  nftInfo: NFTIndexInfoProps
+  unClaimList: (UnClaimListProps | undefined)[]
+}) {
   const { chainId } = useActiveWeb3React()
+  const [showTimeScheduleModel, setShowTimeScheduleModel] = useState(false)
+
+  const { currentScheduleType, datetimeArray } = useMemo(() => {
+    let scheduleType: TimeScheduleType = TimeScheduleType.Flexible
+    const datetimeArray: { [index: string]: UnClaimListProps[] } = {}
+    if (datetimeArray) {
+      unClaimList.forEach(item => {
+        if (!item) return
+        for (const { currencyToken } of nftInfo.assetsParameters) {
+          if (item.token === currencyToken?.address) {
+            item.currencyToken = currencyToken
+            break
+          }
+        }
+
+        if (datetimeArray[item.claimAt]) datetimeArray[item.claimAt] = [...datetimeArray[item.claimAt], item]
+        else datetimeArray[item.claimAt] = [item]
+      })
+    }
+
+    if (Object.keys(datetimeArray).length > 1) {
+      scheduleType = TimeScheduleType.Shedule
+    } else if (Object.keys(datetimeArray).length === 1 && datetimeArray['0']) {
+      scheduleType = TimeScheduleType.Flexible
+    } else {
+      scheduleType = TimeScheduleType.OneTIme
+    }
+    return { currentScheduleType: scheduleType, datetimeArray }
+  }, [unClaimList, nftInfo])
+
   return (
     <div>
       <Paragraph header="Token contract address">{LOCKER_721_ADDRESS[chainId ?? 1]}</Paragraph>
@@ -290,6 +334,26 @@ function IndexInfo({ nftInfo }: { nftInfo: NFTIndexInfoProps }) {
       <Paragraph header="Description" textWidth="387px">
         {nftInfo.description}
       </Paragraph>
+      <Paragraph header="Locker time schedule" textWidth="387px">
+        {currentScheduleType === TimeScheduleType.Flexible ? (
+          TimeScheduleType.Flexible
+        ) : currentScheduleType === TimeScheduleType.OneTIme ? (
+          <>
+            {TimeScheduleType.OneTIme}
+            <StyledShowTimeBtn onClick={() => setShowTimeScheduleModel(true)}>(view)</StyledShowTimeBtn>
+          </>
+        ) : (
+          <>
+            {TimeScheduleType.Shedule}
+            <StyledShowTimeBtn onClick={() => setShowTimeScheduleModel(true)}>(view)</StyledShowTimeBtn>
+          </>
+        )}
+      </Paragraph>
+      <LockerShowTimeScheduleModel
+        dataList={datetimeArray}
+        isOpen={showTimeScheduleModel}
+        onDismiss={() => setShowTimeScheduleModel(false)}
+      />
     </div>
   )
 }

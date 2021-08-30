@@ -15,12 +15,13 @@ interface NFTIndexInfoProps {
   creator: string
   creatorId: string
 }
-interface UnClaimListProps {
+export interface UnClaimListProps {
   token: string
   amount: string
   claimAt: string
   claimed: boolean
   canClaim: boolean
+  currencyToken?: WrappedTokenInfo
 }
 
 function toNumber(weiValue: string, token: WrappedTokenInfo | undefined) {

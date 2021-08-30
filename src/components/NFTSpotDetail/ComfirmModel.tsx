@@ -19,6 +19,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { useToken } from 'hooks/Tokens'
 import { useMultiApproveCallback } from 'hooks/useMultiApproveCallback'
 import { LOCKER_721_ADDRESS } from 'constants/index'
+import { UnClaimListProps } from 'hooks/useLocker721Detail'
 
 export const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -381,6 +382,78 @@ export function Locker721ClaimComfirmModel({
           ) : (
             btnGroups.map(item => item)
           )}
+        </AutoColumn>
+      </Wrapper>
+    </Modal>
+  )
+}
+
+function TokenItem({
+  dateitem,
+  dataList
+}: {
+  dateitem: string
+  dataList: {
+    [index: string]: UnClaimListProps[]
+  }
+}) {
+  const tokenAmounts = useMemo(() => {
+    if (!dataList[dateitem]) return []
+    return dataList[dateitem].map(item => {
+      return item.currencyToken ? new TokenAmount(item.currencyToken, item.amount) : null
+    })
+  }, [dataList, dateitem])
+
+  return (
+    <>
+      {tokenAmounts.map((item, index) => (
+        <RowBetween style={{ alignItems: 'flex-start' }} key={index}>
+          <TYPE.smallGray>{item?.currency.symbol}</TYPE.smallGray>
+          <RightText>{item ? item.toSignificant() : '0'}</RightText>
+        </RowBetween>
+      ))}
+    </>
+  )
+}
+
+export function LockerShowTimeScheduleModel({
+  isOpen,
+  onDismiss,
+  dataList
+}: {
+  isOpen: boolean
+  onDismiss: () => void
+  dataList: {
+    [index: string]: UnClaimListProps[]
+  }
+}) {
+  return (
+    <Modal isOpen={isOpen} onDismiss={onDismiss} minHeight={30} maxHeight={85} width="600px" maxWidth={600}>
+      <Wrapper>
+        <IconClose onEvent={onDismiss} style={{ top: 28, right: 28 }} />
+        <AutoColumn gap="15px">
+          <div>
+            <TYPE.largeHeader fontSize={30} color="black">
+              Locker time schedule
+            </TYPE.largeHeader>
+            {/* <TYPE.small fontSize={12}>You will claim tokens</TYPE.small> */}
+          </div>
+          <InfoWrapper gap="10px">
+            <TYPE.small>Unlock datetime:</TYPE.small>
+            {Object.keys(dataList).map(date => (
+              <div key={date}>
+                <TYPE.black fontSize={14}>{new Date(Number(date) * 1000).toLocaleString()}</TYPE.black>
+                <TokenItem dateitem={date} dataList={dataList}></TokenItem>
+              </div>
+            ))}
+            <RowBetween style={{ alignItems: 'flex-start' }}>
+              <TYPE.smallGray>{/* <ShowTokenSymbol address={item.currency} /> */}</TYPE.smallGray>
+              {/* <RightText>{item.currencyAmountToken ? item.currencyAmountToken.toSignificant() : '0'}</RightText> */}
+            </RowBetween>
+          </InfoWrapper>
+          <ButtonBlack onClick={onDismiss} height="60px">
+            Close
+          </ButtonBlack>
         </AutoColumn>
       </Wrapper>
     </Modal>
