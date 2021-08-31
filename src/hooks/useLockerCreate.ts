@@ -3,9 +3,7 @@ import { useLocker721NFTContract } from './useContract'
 import { calculateGasMargin } from '../utils'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useMemo } from 'react'
-import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
-import { TOKEN_FLUIDITY_LIMIT } from '../constants'
-import { BigNumber } from 'bignumber.js'
+import { CurrencyAmount, JSBI } from '@uniswap/sdk'
 import { CreateLockerData, TimeScheduleType } from 'components/Creation'
 import { tryParseAmount } from 'state/swap/hooks'
 import { ApprovalState } from './useApproveCallback'
@@ -148,38 +146,4 @@ export function useLockerCreateCall(): {
     },
     error: ''
   }
-}
-
-interface LockerCreateButtonProps {
-  text: string
-  disabled: boolean
-}
-export function useCheckSpotCreateButton(tokenFluiditys: (TokenAmount | null)[]): LockerCreateButtonProps {
-  return useMemo(() => {
-    const ret: LockerCreateButtonProps = {
-      text: 'Confirm',
-      disabled: false
-    }
-    if (!tokenFluiditys) {
-      ret.disabled = true
-      ret.text = 'Please waiting'
-      return ret
-    }
-    for (const item of tokenFluiditys) {
-      if (item === null) {
-        ret.disabled = true
-        ret.text = 'Please waiting'
-        return ret
-      }
-    }
-    const Insufficients = tokenFluiditys.filter((item: TokenAmount | null) => {
-      return !item || new BigNumber(item.toSignificant()).isLessThan(TOKEN_FLUIDITY_LIMIT)
-    })
-    if (Insufficients.length) {
-      ret.disabled = true
-      ret.text = 'Insufficient liquidity'
-      return ret
-    }
-    return ret
-  }, [tokenFluiditys])
 }
