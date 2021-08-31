@@ -442,7 +442,7 @@ export function LockerShowTimeScheduleModel({
             <TYPE.small>Unlock datetime:</TYPE.small>
             {Object.keys(dataList).map(date => (
               <div key={date}>
-                <TYPE.black fontSize={14}>{new Date(Number(date) * 1000).toLocaleString()}</TYPE.black>
+                <TYPE.black fontSize={14}>{new Date(Number(date) * 1000).toLocaleString('en-US')}</TYPE.black>
                 <TokenItem dateitem={date} dataList={dataList}></TokenItem>
               </div>
             ))}

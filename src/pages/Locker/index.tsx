@@ -79,7 +79,7 @@ export default function Locker() {
           </>
         ),
         item.tokenType,
-        new Date(Number(item.timestamp) * 1000).toLocaleString(),
+        new Date(Number(item.timestamp) * 1000).toLocaleString('en-US'),
         <OwnerCell name={item.username} key="1" />,
         <OpenButton
           key="2"

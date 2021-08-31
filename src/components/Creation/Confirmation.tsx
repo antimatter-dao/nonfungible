@@ -119,7 +119,7 @@ export function LockerConfirmation({
 
   const unlockText: undefined | string[][] = useMemo(() => {
     if (dataInfo.schedule === TimeScheduleType.OneTIme) {
-      const ret = [dataInfo.unlockData.datetime ? dataInfo.unlockData.datetime.toLocaleString() : '', '100%']
+      const ret = [dataInfo.unlockData.datetime ? dataInfo.unlockData.datetime.toLocaleString('en-US') : '', '100%']
       return [ret]
     } else if (dataInfo.schedule === TimeScheduleType.Shedule) {
       const numbers = Number(dataInfo.unlockData.unlockNumbers)
@@ -130,7 +130,7 @@ export function LockerConfirmation({
       while (idx < numbers) {
         idx++
         const unLockTIme = nowTIme + idx * 86400000 * Number(dataInfo.unlockData.unlockInterval)
-        _result.push([new Date(unLockTIme).toLocaleString(), rote])
+        _result.push([new Date(unLockTIme).toLocaleString('en-US'), rote])
       }
       return _result
     } else {
