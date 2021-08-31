@@ -35,6 +35,7 @@ export function useLocker721Info(
   loading: boolean
   data: undefined | NFTIndexInfoProps
   unClaimList: (UnClaimListProps | undefined)[]
+  isExist: boolean
 } {
   const contract = useLocker721NFTContract()
   const tokens = useAllTokens()
@@ -131,5 +132,5 @@ export function useLocker721Info(
     return data
   }, [data, unClaimList])
 
-  return { loading, data: nftInfo, unClaimList }
+  return { loading, data: nftInfo, unClaimList, isExist: nftIndexRes.error }
 }

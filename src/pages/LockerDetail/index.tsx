@@ -31,6 +31,11 @@ const Wrapper = styled.div`
   color: ${({ theme }) => theme.black};
 `
 
+const StyledNotExist = styled.div`
+  font-size: 20px;
+  color: #fff;
+`
+
 const InfoPanel = styled.div`
   background: #ffffff;
   border-radius: 40px;
@@ -123,7 +128,7 @@ export default function LockerDetail({
     setTransactionModalOpen(false)
   }
 
-  const { data: locker721Info, unClaimList } = useLocker721Info(nftid)
+  const { data: locker721Info, unClaimList, isExist } = useLocker721Info(nftid)
   const creatorInfo = useNFTCreatorInfo(locker721Info?.creator)
 
   const tokens: AssetsParameter[] = useAssetsTokens(locker721Info?.assetsParameters)
@@ -164,6 +169,10 @@ export default function LockerDetail({
         console.error('to claim commit', err)
       })
   }, [toClaimCallback, nftid])
+
+  if (isExist) {
+    return <StyledNotExist>NFT does not exist</StyledNotExist>
+  }
 
   if (!locker721Info) {
     return (
