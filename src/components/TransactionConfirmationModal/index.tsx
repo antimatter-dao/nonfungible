@@ -3,10 +3,10 @@ import React, { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import Modal from '../Modal'
 import { Text } from 'rebass'
-import { CloseIcon } from '../../theme/components'
+import { X } from 'react-feather'
 import { RowBetween, RowFixed } from '../Row'
 import { CheckCircle } from 'react-feather'
-import { ButtonBlack, ButtonGray } from '../Button'
+import { ButtonBlack as ButtonBlackUnstyled, ButtonGray } from '../Button'
 import { AutoColumn } from '../Column'
 import MetaMaskLogo from '../../assets/images/metamask.png'
 import { useActiveWeb3React } from '../../hooks'
@@ -14,13 +14,16 @@ import useTheme from 'hooks/useTheme'
 import useAddTokenToMetamask from 'hooks/useAddTokenToMetamask'
 import { LoadingView, SubmittedView } from 'components/ModalViews'
 // import { CrossCircle } from 'components/Icons/'
-import { TYPE } from 'theme'
+import { HideSmall, ShowSmall, TYPE } from 'theme'
 
 const Wrapper = styled.div`
   width: 100%;
   /* max-width: 480px; */
   border-radius: 42px;
   /* background: ${({ theme }) => theme.gradient1}; */
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  color: #ffffff;
+  `}
 `
 const Section = styled(AutoColumn)`
   padding: 50px;
@@ -32,14 +35,30 @@ const BottomSection = styled(Section)`
   padding: 0 3rem 2rem;
 `
 
-const Close = styled(CloseIcon)`
-  color: ${({ theme }) => theme.text2};
+const Close = styled(X)`
+  cursor: pointer;
+  color: ${({ theme }) => theme.bg1};
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  color: ${({ theme }) => theme.text1};
+  `}
 `
 
 const StyledLogo = styled.img`
   height: 16px;
   width: 16px;
   margin-left: 6px;
+`
+
+const ButtonBlack = styled(ButtonBlackUnstyled)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  background-color: #ffffff;
+  color: #000000;
+  margin-top: auto;
+  :disabled{
+    background-color: #ffffff;
+    color: #000000
+  }
+`}
 `
 
 function ConfirmationPendingContent({ onDismiss, pendingText = '' }: { onDismiss: () => void; pendingText?: string }) {
@@ -149,16 +168,23 @@ export function TransactionErrorContent({ message, onDismiss }: { message: strin
   return (
     <Wrapper>
       <Section>
-        <RowBetween>
+        <RowBetween style={{ height: 'fit-content' }}>
           <Text fontWeight={700} fontSize={30}>
             Oops!
           </Text>
           <Close onClick={onDismiss} />
         </RowBetween>
-        <AutoColumn style={{ padding: '1rem 0 2rem' }} gap="24px">
-          <TYPE.darkGray fontWeight={400} fontSize={16} style={{ width: '85%' }}>
+        <ShowSmall>
+          <Text fontWeight={400} fontSize={16}>
             {message}
-          </TYPE.darkGray>
+          </Text>
+        </ShowSmall>
+        <AutoColumn style={{ padding: '1rem 0 2rem' }} gap="24px">
+          <HideSmall>
+            <TYPE.darkGray fontWeight={400} fontSize={16} style={{ width: '85%' }}>
+              {message}
+            </TYPE.darkGray>
+          </HideSmall>
         </AutoColumn>
         <ButtonBlack onClick={onDismiss} height={60}>
           Close

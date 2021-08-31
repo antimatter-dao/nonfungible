@@ -25,6 +25,7 @@ const InputRow = styled.div<{ selected: boolean; halfWidth?: boolean; hideSelect
   height: 3rem;
   ${({ theme }) => theme.mediaWidth.upToSmall`
   width: 100%;
+  height: 48px;
 `};
 `
 
@@ -33,6 +34,9 @@ const InputNFTRow = styled(InputRow)`
   border: 1px solid rgba(0, 0, 0, 0.1);
   width: ${({ halfWidth, hideSelect }) => (hideSelect ? '100%' : halfWidth ? '48%' : '56%')}};
   height: 60px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    background-color: #ffffff;
+  `}
 `
 
 const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean }>`
@@ -65,7 +69,7 @@ const CurrencySelect = styled.button<{ selected: boolean; halfWidth?: boolean }>
   position: absolute;
   right: 0;
   width: 50%;
-  z-index: 2;
+  z-index: 3;
   color:${selected ? theme.text1 : theme.primary1}
   border: 1px solid ${selected ? theme.text4 : theme.primary1}
   :hover,:focus,:active {
@@ -82,7 +86,6 @@ const CurrencyNFTSelect = styled.button<{ selected: boolean; halfWidth?: boolean
   background-color: ${({ theme }) => theme.bg2};
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text3)};
   border-radius: 14px;
-  /* box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')}; */
   outline: none;
   cursor: pointer;
   user-select: none;
@@ -93,28 +96,24 @@ const CurrencyNFTSelect = styled.button<{ selected: boolean; halfWidth?: boolean
   border: 1px solid rgba(0, 0, 0, 0.1);
   background-color: #fff !important;
   font-weight: ${({ selected }) => (selected ? 500 : 400)};
-  /* :focus,
-  :active {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-  } */
   :hover {
     border: 1px solid ${({ selected }) => (selected ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.1)')};
   }
   ${({ theme, selected }) => theme.mediaWidth.upToSmall`
-  position: absolute;
   right: 0;
   width: 50%;
-  z-index: 2;
-  color:${selected ? theme.text1 : theme.primary1}
-  border: 1px solid ${selected ? theme.text4 : theme.primary1}
+  z-index: 3;
+  height: 48px;
+  // color:${selected ? theme.text1 : theme.primary1}
+  // border: 1px solid ${selected ? theme.text4 : theme.primary1}
   :hover,:focus,:active {
-    border: 1px solid ${selected ? theme.text4 : theme.primary1}
+    // border: 1px solid ${selected ? theme.text4 : theme.primary1}
   }
   `}
 `
 
 const CustomNumericalInput = styled(NumericalInput)`
-  background: transparent;
+  background-color: transparent;
   font-size: 16px;
 `
 
@@ -414,7 +413,7 @@ export function CurrencyNFTInputPanel({
             )}
           </LabelRow>
         )}
-        <Aligner>
+        <Aligner style={{ gap: 8 }}>
           {!hideInput && (
             <InputNFTRow
               style={hideInput ? { padding: '0', borderRadius: '8px' } : {}}

@@ -76,7 +76,7 @@ export function useLogin(): {
     if (!account || !library || !chainId) return
     if (chainId !== 1 && chainId !== 56 && chainId !== 3) return
     const userInfo = getCurrentUserInfoSync(account)
-    if (userInfo && userInfo.token && userInfo) return
+    if (userInfo && userInfo.token) return
 
     const web3 = new Web3(library.provider)
     try {

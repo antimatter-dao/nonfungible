@@ -64,7 +64,7 @@ const StyledDataCard = styled(DataCard)`
   background: none;
   background-color: ${({ theme }) => theme.bg1};
   height: fit-content;
-  z-index: 2;
+  z-index: 3;
 `
 
 const ProgressWrapper = styled.div`

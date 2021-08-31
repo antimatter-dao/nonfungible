@@ -1,6 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
 import { TableContainer, TableHead, TableCell, TableRow, TableBody, makeStyles } from '@material-ui/core'
+import useMediaWidth from 'hooks/useMediaWidth'
+import { AutoColumn } from 'components/Column'
+import { RowBetween } from 'components/Row'
+import { TYPE } from 'theme'
 
 interface StyleProps {
   isHeaderGray?: boolean
@@ -84,6 +88,15 @@ const useStyles = makeStyles({
   }
 })
 
+const Card = styled.div`
+  background: #ffffff;
+  border-radius: 30px;
+  padding: 24px;
+  > div {
+    width: 100%;
+  }
+`
+
 export default function Table({
   header,
   rows,
@@ -93,27 +106,47 @@ export default function Table({
   rows: (string | number | JSX.Element)[][]
   isHeaderGray?: boolean
 }) {
+  const match = useMediaWidth('upToSmall')
   const classes = useStyles({ isHeaderGray })
   return (
-    <TableContainer className={classes.root}>
-      <table>
-        <TableHead className={classes.tableHeader}>
-          <TableRow>
-            {header.map((string, idx) => (
-              <TableCell key={idx}>{string}</TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row, idx) => (
-            <TableRow key={row[0].toString() + idx} className={classes.tableRow}>
-              {row.map((data, idx) => (
-                <TableCell key={idx}>{data}</TableCell>
-              ))}
-            </TableRow>
+    <>
+      {match ? (
+        <>
+          {rows.map((data, index) => (
+            <Card key={index}>
+              <AutoColumn gap="16px">
+                {header.map((headerString, index) => (
+                  <RowBetween>
+                    <TYPE.darkGray>{headerString}</TYPE.darkGray>
+                    <TYPE.body color="#000000"> {data[index] ?? null}</TYPE.body>
+                  </RowBetween>
+                ))}
+              </AutoColumn>
+            </Card>
           ))}
-        </TableBody>
-      </table>
-    </TableContainer>
+        </>
+      ) : (
+        <TableContainer className={classes.root}>
+          <table>
+            <TableHead className={classes.tableHeader}>
+              <TableRow>
+                {header.map((string, idx) => (
+                  <TableCell key={idx}>{string}</TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row, idx) => (
+                <TableRow key={row[0].toString() + idx} className={classes.tableRow}>
+                  {row.map((data, idx) => (
+                    <TableCell key={idx}>{data}</TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </table>
+        </TableContainer>
+      )}
+    </>
   )
 }

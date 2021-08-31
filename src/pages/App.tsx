@@ -19,8 +19,8 @@ import CardDetail from './CardDetail'
 import LockerDetail from './LockerDetail'
 import UserLogin from '../pages/User/Login'
 import User from './User'
-import WarningModal from 'components/Modal/WarningModal'
-import { ButtonWhite } from 'components/Button'
+// import WarningModal from 'components/Modal/WarningModal'
+// import { ButtonWhite } from 'components/Button'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -68,37 +68,29 @@ const BodyWrapper = styled.div`
   justify-content: center;
   align-items: center;
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
   position: relative;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-  display: none;
-  margin-bottom: ${({ theme }) => theme.headerHeight};
-  `}
   ${({ theme }) => theme.mediaWidth.upToLarge`
   margin-bottom: ${({ theme }) => theme.headerHeight};
+  min-height: calc(100vh - ${({ theme }) => theme.headerHeight + ' - ' + theme.mobileHeaderHeight});
   `}
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  margin-top: ${({ theme }) => theme.mobileHeaderHeight};
-  `};
 `
 
-const MobileHint = styled.div`
-  display: none;
-  color: #ffffff;
-  margin: 100px auto auto;
-  width: 300px;
-  text-align: center;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-  display: block;
-  `};
-  > a {
-    text-decoration: none;
-    > button {
-      margin: 40px auto;
-    }
-  }
-`
+// const MobileHint = styled.div`
+//   display: none;
+//   color: #ffffff;
+//   margin: 100px auto auto;
+//   width: 300px;
+//   text-align: center;
+//   ${({ theme }) => theme.mediaWidth.upToMedium`
+//   display: block;
+//   `};
+//   > a {
+//     text-decoration: none;
+//     > button {
+//       margin: 40px auto;
+//     }
+//   }
+// `
 
 export const Marginer = styled.div`
   ${({ theme }) => theme.desktop};
@@ -124,18 +116,18 @@ export default function App() {
             <Header />
           </HeaderWrapper>
           <HeaderFiller />
-          <MobileHint>
+          {/* <MobileHint>
             <div>Mobile version is coming soon! Please use desktop version for now~</div>
             <a href="https://antimatter.finance/">
               <ButtonWhite width="240px" height={60}>
                 Go to homepage
               </ButtonWhite>
             </a>
-          </MobileHint>
+          </MobileHint> */}
           <BodyWrapper id="body">
             <Popups />
             <Polling />
-            <WarningModal />
+            {/* <WarningModal /> */}
             {/* <TopLevelModals /> */}
             <Web3ReactManager>
               <Switch>

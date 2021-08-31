@@ -8,7 +8,7 @@ import { darken } from 'polished'
 import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
 import { useAggregateUniBalance, useETHBalances } from '../../state/wallet/hooks'
-import { ButtonText, ExternalLink, TYPE } from '../../theme'
+import { ButtonText, ExternalLink, HideSmall, TYPE } from '../../theme'
 import Row, { RowFixed, RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
 import usePrevious from '../../hooks/usePrevious'
@@ -136,6 +136,8 @@ const AccountElement = styled.div<{ active: boolean }>`
   padding: ${({ active }) => (active ? '14px 16px' : 'unset')};
   padding-right: 0;
   height: 44px;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  width:100%`}
 `
 
 const UNIAmount = styled.div`
@@ -432,6 +434,7 @@ const NetworkCard = styled.div<{ color?: string }>`
   }
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 0
+    margin-right: 10px
   `};
 `
 
@@ -506,6 +509,7 @@ export default function Header() {
   const { library } = useWeb3React()
   const userInfo = useCurrentUserInfo()
   const { login } = useLogin()
+  const history = useHistory()
   const match = useRouteMatch('/profile')
   const toggleCreationModal = useToggleCreationModal()
   const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
@@ -521,9 +525,11 @@ export default function Header() {
   }, [userInfo, login, toggleCreationModal])
 
   const toShowUserPanel = useCallback(() => {
-    if (userInfo && userInfo.token) return
-    else login()
-  }, [userInfo, login])
+    if (userInfo && userInfo.token) {
+      history.push('/profile')
+      return
+    } else login()
+  }, [userInfo, login, history])
 
   return (
     <HeaderFrame>
@@ -615,10 +621,13 @@ export default function Header() {
                 </NetworkCard>
               )}
             </HeaderElement>
+
             {account && (
-              <ButtonOutlinedPrimary width="120px" marginRight="16px" height={44} onClick={onCreateOrLogin}>
-                Create
-              </ButtonOutlinedPrimary>
+              <HideSmall>
+                <ButtonOutlinedPrimary width="120px" marginRight="16px" height={44} onClick={onCreateOrLogin}>
+                  Create
+                </ButtonOutlinedPrimary>
+              </HideSmall>
             )}
 
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
@@ -692,7 +701,7 @@ export default function Header() {
           <Link to={'/'}>
             <StyledLogo />
           </Link>
-          <ToggleMenu />
+          <ToggleMenu onCreate={onCreateOrLogin} />
         </RowBetween>
       </MobileHeader>
 
@@ -708,9 +717,9 @@ export default function Header() {
 }
 
 function UserMenu({ account }: { account?: string | null }) {
-  const history = useHistory()
   const logout = useLogOut()
   const toggleWalletModal = useWalletModalToggle()
+  const history = useHistory()
 
   return (
     <UserMenuWrapper>

@@ -63,6 +63,11 @@ export const CloseIcon = styled(X)<{ onClick: () => void }>`
   > * {
     stroke: ${({ theme }) => theme.bg1};
   }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  > * {
+    stroke: ${({ theme }) => theme.text1};
+  }
+  `}
 `
 
 // for wrapper react feather icons
@@ -290,6 +295,9 @@ export const AnimatedWrapper = styled.div`
   justify-content: center;
   height: 100%;
   width: 100%;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  padding-bottom: ${theme.headerHeight}
+  `}
 `
 
 export const AnimatedImg = styled.div`
@@ -318,6 +326,12 @@ export const CustomLightSpinner = styled(Spinner)<{ size: string }>`
 
 export const HideSmall = styled.span`
   ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
+`
+
+export const HideMedium = styled.span`
+  ${({ theme }) => theme.mediaWidth.upToMedium`
     display: none;
   `};
 `

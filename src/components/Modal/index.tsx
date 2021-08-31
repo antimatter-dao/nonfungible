@@ -30,9 +30,17 @@ export const StyledDialogOverlay = styled(AnimatedDialogOverlay)<{
 
     height: calc(100vh - ${({ theme }) => theme.headerHeight});
     top: ${({ theme }) => theme.headerHeight};
+    ${({ theme }) => theme.mediaWidth.upToLarge`
+      height: calc(100vh - ${({ theme }) => theme.headerHeight + ' - ' + theme.mobileHeaderHeight});
+      top: ${theme.mobileHeaderHeight};
+    `}
     ${({ theme }) => theme.mediaWidth.upToSmall`
-    height: calc(100% - ${theme.headerHeight});
-    justify-content: flex-end;
+      height: 100vh;
+      top: 0;
+      bottom: ${({ theme }) => theme.headerHeight};
+      background: #000000;
+      justify-content: flex-end;
+      z-index: 12;
     `}
   }
 `
@@ -43,9 +51,8 @@ export const Wrapper = styled.div`
   justify-content: center;
   flex-direction: column;
   ${({ theme }) => theme.mediaWidth.upToSmall`          
-    margin-top: auto;
-    max-height: calc(100% - ${theme.mobileHeaderHeight});
     overflow-y: auto;
+    margin-bottom: auto;
   `}
 `
 
@@ -62,11 +69,9 @@ export const StyledDialogContent = styled(
 ).attrs({
   'aria-label': 'dialog'
 })`
-  overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
+  overflow-y: ${({ mobile }) => (mobile ? 'auto' : 'hidden')};
 
   &[data-reach-dialog-content] {
-    // margin: 0 0 2rem 0;
-    background: ${({ theme }) => theme.gradient1};
     box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
     padding: 0px;
     width: ${({ width }) => width ?? '42vw'};
@@ -75,7 +80,7 @@ export const StyledDialogContent = styled(
       css`
         min-width: ${minWidth}px;
       `}
-    overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
+    overflow-y: ${({ mobile }) => (mobile ? 'auto' : 'hidden')};
     overflow-x: hidden;
     background-color: ${({ theme }) => theme.white};
 
@@ -106,12 +111,12 @@ export const StyledDialogContent = styled(
     ${({ theme }) => theme.mediaWidth.upToSmall`
       width: 100vw;
       max-width:unset;
-      border-radius: 20px;
-      border-bottom-left-radius: unset;
-      border-bottom-right-radius: unset;
-      max-height: calc(100% - ${theme.mobileHeaderHeight});
+      min-height:unset;
+      max-height:100vh;
+      height: 100vh;
       overflow-y: auto;
-      
+      border-radius: 0;
+      background-color: #000000;
     `}
   }
 `
@@ -126,6 +131,7 @@ interface ModalProps {
   maxWidth?: number
   width?: string
   zIndex?: number
+  alignitems?: string
 }
 
 export default function Modal({
@@ -137,7 +143,8 @@ export default function Modal({
   width,
   initialFocusRef,
   zIndex,
-  children
+  children,
+  alignitems
 }: ModalProps) {
   const fadeTransition = useTransition(isOpen, null, {
     config: { duration: 200 },
@@ -170,6 +177,7 @@ export default function Modal({
               initialFocusRef={initialFocusRef}
               unstable_lockFocusAcrossFrames={false}
               zindex={zIndex}
+              alignitems={alignitems}
             >
               {/* <Filler /> */}
               <Wrapper>

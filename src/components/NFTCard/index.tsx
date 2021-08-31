@@ -93,12 +93,17 @@ const CardWrapper = styled.div<{ color: CardColor; padding?: string | number }>`
       height: 272px;
     }
   }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100%;
+    min-width: 312px;
+    height: 276px;
+  `}
 `
 
 const OutlineCard = styled.div<{ borderRadius?: string }>`
   border: 1px solid ${({ theme }) => theme.text2};
   height: 100%;
-  z-index: 2;
+  z-index: 3;
   border-radius: ${({ borderRadius }) => borderRadius ?? '20px'};
   width: 100%;
   height: 100%;
@@ -107,8 +112,16 @@ const OutlineCard = styled.div<{ borderRadius?: string }>`
   justify-content: space-between;
   padding: 24px 20px;
   & * {
-    z-index: 2;
+    z-index: 3;
   }
+  ${({ theme }) => theme.mediaWidth.upToSmall`padding-top: 20px;`}
+`
+
+const CapsuleWrapper = styled(AutoColumn)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: flex;
+    grid-gap: 8px
+  `}
 `
 
 function NFTCardBase({
@@ -154,7 +167,7 @@ export default function NFTCard({
       <TYPE.black fontWeight={700} fontSize={28} color="#000000" style={{ ...ellipsis('100%') }}>
         {name}
       </TYPE.black>
-      <AutoColumn gap="4px">
+      <CapsuleWrapper gap="4px">
         <Capsule color={color}>
           <TYPE.smallGray>{createName ? createName : 'Index ID'}:&nbsp;</TYPE.smallGray>
           <TYPE.small color="#000000"> {indexId}</TYPE.small>
@@ -163,7 +176,7 @@ export default function NFTCard({
           <TYPE.smallGray>Creator:&nbsp;</TYPE.smallGray>
           <TYPE.small color="#000000"> {creator}</TYPE.small>
         </Capsule>
-      </AutoColumn>
+      </CapsuleWrapper>
     </NFTCardBase>
   )
 }

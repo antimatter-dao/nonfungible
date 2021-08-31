@@ -1,27 +1,29 @@
 import React, { useCallback, useState } from 'react'
+import clsx from 'clsx'
+import { useWeb3React } from '@web3-react/core'
+import { makeStyles } from '@material-ui/core/styles'
+import { RadioProps } from '@material-ui/core/Radio'
+import { FormControlLabel, Radio, RadioGroup } from '@material-ui/core'
+import styled from 'styled-components'
+import { Text } from 'rebass'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useToggleCreationModal } from 'state/application/hooks'
-import styled from 'styled-components'
 import IconClose, { IconBack } from 'components/Icons/IconClose'
 import { ReactComponent as AlertCircle } from '../../assets/svg/alert_circle.svg'
 import Modal from '../Modal'
 import { AutoColumn } from 'components/Column'
-import { TYPE } from 'theme'
+import { TYPE, ShowSmall, HideSmall } from 'theme'
 import { RowFixed } from 'components/Row'
-import { ButtonBlack } from 'components/Button'
-import { FormControlLabel, Radio, RadioGroup } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import { RadioProps } from '@material-ui/core/Radio'
-import clsx from 'clsx'
+import { ButtonBlack, ButtonPrimary } from 'components/Button'
 import SpotIndex from './SpotIndex'
 import LockerIndex from './Locker'
 import { CardColor } from 'components/NFTCard'
 import TransactionConfirmationModal from '../TransactionConfirmationModal'
 import { useIndexCreateCall } from '../../hooks/useIndexCreateCallback'
 import { getLockerClaimParam, useLockerCreateCall } from '../../hooks/useLockerCreate'
-import { useWeb3React } from '@web3-react/core'
 import { WrappedTokenInfo } from 'state/lists/hooks'
 import { tryParseAmount } from 'state/swap/hooks'
+import gradient from 'assets/svg/overlay_gradient.svg'
 
 const useStyles = makeStyles({
   root: {
@@ -67,25 +69,50 @@ export const Wrapper = styled.div`
   background: ${({ theme }) => theme.text1};
   max-height: 100%;
   overflow-y: auto;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100%;
+    background: url(${gradient}) no-repeat -100px top;
+    background-size: 200%;
+    color: #ffffff;
+    padding: 65px 24px 50px;
+  `}
 `
 
 const StyledNoticeBox = styled(RowFixed)`
   background: #f7f7f7;
-  height: 44px;
   width: 100%;
   padding: 10px 16px;
   border: 1px solid rgba(0, 0, 0, 0.5);
   border-radius: 8px;
-
+  color: #000000;
   > svg {
     margin-right: 10px;
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    color: #ffffff;
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.5);
+    padding: 16px;
+    circle{
+      fill: #ffffff;
+    };
+    path{
+      fill: #000000
+    }
+  `}
 `
 export const StyledRadioGroup = styled(RadioGroup)`
   &.MuiFormGroup-root {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    &.MuiFormGroup-root {
+      grid-template-columns: auto;
+    }
+  `}
 `
 
 enum Step {
@@ -322,47 +349,72 @@ export default function CreationNFTModal() {
         width="600px"
         maxWidth={600}
         zIndex={5}
+        alignitems="flex-start"
       >
         <Wrapper>
-          {currentStep !== Step.Choose && <IconBack onEvent={handleBack} style={{ top: 28, left: 28 }} />}
-          <IconClose onEvent={toggleCreationModal} style={{ top: 28, right: 28 }} />
-
+          <HideSmall>
+            {currentStep !== Step.Choose && <IconBack onEvent={handleBack} style={{ top: 28, left: 28 }} />}
+            <IconClose onEvent={toggleCreationModal} style={{ top: 28, right: 28 }} />
+          </HideSmall>
+          <ShowSmall>
+            {currentStep !== Step.Choose && <IconBack onEvent={handleBack} style={{ top: 32, left: 28 }} />}
+            <IconClose onEvent={toggleCreationModal} style={{ top: 32, right: 28 }} />
+          </ShowSmall>
           {currentStep === Step.Choose && (
-            <AutoColumn gap="40px">
-              <AutoColumn gap="16px">
-                <TYPE.largeHeader fontSize={30} color="black">
-                  Create your financial NFT
-                </TYPE.largeHeader>
-                <StyledNoticeBox>
-                  <AlertCircle />
-                  <TYPE.body fontSize={14} color="black">
-                    Please read docs about non-fungible finance before creating.
-                  </TYPE.body>
-                </StyledNoticeBox>
+            <>
+              <AutoColumn gap="40px">
+                <AutoColumn gap="16px">
+                  <HideSmall>
+                    <TYPE.largeHeader fontSize={30} color="#000000">
+                      Create your financial NFT
+                    </TYPE.largeHeader>
+                  </HideSmall>
+                  <ShowSmall>
+                    <TYPE.largeHeader fontSize={30} color="#ffffff" style={{ marginBottom: 38 }}>
+                      Create your financial NFT
+                    </TYPE.largeHeader>
+                  </ShowSmall>
+                  <StyledNoticeBox>
+                    <AlertCircle />
+                    <Text fontSize={14}>Please read docs about non-fungible finance before creating.</Text>
+                  </StyledNoticeBox>
+                </AutoColumn>
+                <AutoColumn gap="20px">
+                  <TYPE.subHeader fontSize={16}>Select Creation Type</TYPE.subHeader>
+                  <StyledRadioGroup
+                    row
+                    aria-label="gender"
+                    name="gender1"
+                    value={currentCreation}
+                    onChange={handleCreationTypeChange}
+                  >
+                    <FormControlLabel value={Step.SpotIndex} control={<StyledRadio />} label={Step.SpotIndex} />
+                    <FormControlLabel value={Step.FutureIndex} control={<StyledRadio />} label={Step.FutureIndex} />
+                    <FormControlLabel value={Step.Locker} control={<StyledRadio />} label={Step.Locker} />
+                  </StyledRadioGroup>
+                </AutoColumn>
+                <HideSmall>
+                  <ButtonBlack
+                    height={60}
+                    style={{ marginTop: 20 }}
+                    onClick={toCreateNext}
+                    disabled={currentCreation !== Step.SpotIndex}
+                  >
+                    {currentCreation === Step.SpotIndex ? 'Confirm' : 'Coming soon'}
+                  </ButtonBlack>
+                </HideSmall>
               </AutoColumn>
-              <AutoColumn gap="20px">
-                <TYPE.subHeader fontSize={16}>Select Creation Type</TYPE.subHeader>
-                <StyledRadioGroup
-                  row
-                  aria-label="gender"
-                  name="gender1"
-                  value={currentCreation}
-                  onChange={handleCreationTypeChange}
+              <ShowSmall style={{ marginTop: 'auto' }}>
+                <ButtonPrimary
+                  height={60}
+                  style={{ marginTop: 50 }}
+                  onClick={toCreateNext}
+                  disabled={currentCreation !== Step.SpotIndex}
                 >
-                  <FormControlLabel value={Step.SpotIndex} control={<StyledRadio />} label={Step.SpotIndex} />
-                  <FormControlLabel value={Step.FutureIndex} control={<StyledRadio />} label={Step.FutureIndex} />
-                  <FormControlLabel value={Step.Locker} control={<StyledRadio />} label={Step.Locker} />
-                </StyledRadioGroup>
-              </AutoColumn>
-              <ButtonBlack
-                height={60}
-                style={{ marginTop: 20 }}
-                onClick={toCreateNext}
-                disabled={currentCreation === Step.FutureIndex}
-              >
-                {currentCreation !== Step.FutureIndex ? 'Confirm' : 'Coming soon'}
-              </ButtonBlack>
-            </AutoColumn>
+                  {currentCreation === Step.SpotIndex ? 'Confirm' : 'Coming soon'}
+                </ButtonPrimary>
+              </ShowSmall>
+            </>
           )}
 
           {currentStep === Step.SpotIndex && (

@@ -17,10 +17,38 @@ import { Dots } from 'components/swap/styleds'
 const ConfirmOrLoadingWrapper = styled.div`
   width: 100%;
   padding: 24px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  color: #ffffff
+  height: 100%;
+  `}
+`
+
+const LoadingViewGrid = styled(AutoColumn)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    height: 100%
+    margin-top: 12px
+  `}
+`
+
+const ButtonBlackStyled = styled(ButtonBlack)`
+  margin-top: 32px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  background-color: #ffffff;
+  color: #000000
+  :disabled{
+    background-color: #ffffff;
+    color: #000000
+  }
+`}
 `
 
 const ConfirmedIcon = styled(ColumnCenter)`
   padding: 0 0 28px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  path{
+    fill: #ffffff
+  }
+  `}
 `
 
 export function LoadingView({ children, onDismiss }: { children: any; onDismiss: () => void }) {
@@ -30,18 +58,19 @@ export function LoadingView({ children, onDismiss }: { children: any; onDismiss:
         <div />
         <CloseIcon onClick={onDismiss} />
       </RowBetween>
-      <AutoColumn gap="28px" justify={'center'}>
+      <LoadingViewGrid gap="28px" justify={'center'}>
         {children}
         <ConfirmedIcon>
           {/* <CustomLightSpinner src={Circle} alt="loader" size={'45px'} /> */}
           <Loader size="72px" />
         </ConfirmedIcon>
-        <ButtonBlack disabled height={60}>
-          Confirmation
-          <Dots />
-        </ButtonBlack>
+
         {/* <TYPE.smallGray>Confirm this transaction in your wallet</TYPE.smallGray> */}
-      </AutoColumn>
+      </LoadingViewGrid>
+      <ButtonBlackStyled disabled height={60}>
+        Confirmation
+        <Dots />
+      </ButtonBlackStyled>
     </ConfirmOrLoadingWrapper>
   )
 }
@@ -80,10 +109,10 @@ export function SubmittedView({
             </TYPE.main>
           </ExternalLink>
         )}
-        <ButtonBlack onClick={onDismiss} height={60}>
-          Close
-        </ButtonBlack>
       </AutoColumn>
+      <ButtonBlackStyled onClick={onDismiss} height={60}>
+        Close
+      </ButtonBlackStyled>
     </ConfirmOrLoadingWrapper>
   )
 }

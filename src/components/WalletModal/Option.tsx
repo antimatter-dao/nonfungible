@@ -34,6 +34,10 @@ const OptionCard = styled(InfoCard as any)`
     right: 30px
     position:absolute;
   }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    background-color: transparent;
+    justify-content: center;
+  `}
 `
 
 const OptionCardLeft = styled.div`
@@ -77,6 +81,9 @@ const HeaderText = styled.div`
   color: ${({ theme }) => theme.bg1};
   font-size: 1rem;
   font-weight: 500;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    color: ${({ theme }) => theme.text1};
+`}
 `
 
 const SubHeader = styled.div`

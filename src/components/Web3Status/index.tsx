@@ -69,7 +69,9 @@ const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
         border: 1px solid ${({ theme }) => darken(0.05, theme.text1)};
         color: ${({ theme }) => darken(0.05, theme.bg1)};
       }
-    `}
+    `};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  width:100%`}
 `
 
 const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`

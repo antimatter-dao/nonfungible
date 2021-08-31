@@ -18,7 +18,7 @@ interface DoubleCurrencyLogoProps {
 }
 
 const HigherLogo = styled(CurrencyLogo)`
-  z-index: 2;
+  z-index: 3;
 `
 const CoveredLogo = styled(CurrencyLogo)<{ sizeraw: number }>`
   position: absolute;

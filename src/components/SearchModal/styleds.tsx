@@ -72,6 +72,10 @@ export const MenuItem = styled(RowBetween)`
     background-color: ${({ theme, disabled }) => !disabled && theme.advancedBG};
   }
   opacity: ${({ disabled, selected }) => (disabled || selected ? 0.5 : 1)};
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    color: #ffffff;
+    border-bottom:  1px solid ${theme.bg4};
+  `};
 `
 
 export const SearchInput = styled.input`
@@ -126,6 +130,9 @@ export const SearchNFTInput = styled.input`
     border: 1px solid ${({ theme }) => theme.primary1};
     outline: none;
   }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    background: #ffffff;
+  `}
 `
 
 export const Separator = styled.div`

@@ -1,11 +1,11 @@
 import React, { useCallback, useState, useMemo, useEffect } from 'react'
-import styled from 'styled-components'
 import { useHistory, useParams, useLocation } from 'react-router-dom'
+import styled from 'styled-components'
+import { Text } from 'rebass'
 import { AutoColumn } from 'components/Column'
-import AppBody from 'pages/AppBody'
 import { AutoRow, RowBetween, RowFixed } from 'components/Row'
-import { ButtonBlack, ButtonOutlinedBlack } from 'components/Button'
-import { AnimatedImg, AnimatedWrapper, TYPE } from 'theme'
+import { ButtonBlack, ButtonOutlinedBlack, ButtonOutlinedWhite } from 'components/Button'
+import { AnimatedImg, AnimatedWrapper, HideSmall, TYPE, ShowSmall } from 'theme'
 import CopyHelper from 'components/AccountDetails/Copy'
 import ProfileFallback from 'assets/images/profile-fallback.png'
 import NFTCard from 'components/NFTCard'
@@ -21,6 +21,7 @@ import { useCurrentUserInfo, useLogOut } from 'state/userInfo/hooks'
 import { usePositionList, useIndexList, useMyLockerList } from 'hooks/useMyList'
 import Pagination from 'components/Pagination'
 import Loader from 'assets/svg/antimatter_background_logo_dark.svg'
+import LoaderWhite from 'assets/svg/antimatter_background_logo.svg'
 import ClaimModal from 'components/claim/MatterClaimModal'
 import { useCreatorFee } from 'hooks/useMatterClaim'
 import { CurrencyAmount, JSBI } from '@uniswap/sdk'
@@ -61,17 +62,37 @@ const ContentWrapper = styled.div`
   grid-template-columns: repeat(auto-fill, 280px);
   padding-bottom: 52px;
   justify-content: center;
-  ${({ theme }) => theme.mediaWidth.upToLarge`padding: 30px`}
-  ${({ theme }) => theme.mediaWidth.upToSmall`padding: 10px`}
+  ${({ theme }) => theme.mediaWidth.upToLarge`padding: 0`}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 10px;
+    grid-template-columns: 100%;
+  `}
 `
 
 const Wrapper = styled.div`
-  padding: 78px 0;
+  padding: 78px 0 88px;
   width: 90vw;
   max-width: 1284px;
   display: flex;
   justify-content: center;
-  min-height: 100vh;
+  min-height: calc(100vh - ${({ theme }) => theme.headerHeight});
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  padding: 0 0 40px;
+  color: #ffffff
+  width: 100%;
+  `}
+`
+
+const AppBody = styled.div`
+  width: 100%;
+  background: #ffffff;
+  border-radius: 32px;
+  padding: 52px;
+  max-width: 1284px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  background: transparent;
+  padding: 32px 24px;
+  `}
 `
 
 const ProfileImg = styled.div<{ url?: string }>`
@@ -90,6 +111,10 @@ const Capsule = styled.p`
   font-size: 12px;
   font-weight: 400;
   margin-left: 12px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  border-color: #ffffff;
+  color: #ffffff
+  `}
 `
 
 const Synopsis = styled.p`
@@ -97,10 +122,20 @@ const Synopsis = styled.p`
   overflow-wrap: anywhere;
   margin-top: 30px;
   width: 100%;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  text-align: center;
+  max-width: unset;
+  `}
 `
 
 const SwitchTabWrapper = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.text2};
+  white-space: nowrap;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    border-color:${theme.text5};
+    overflow-x: auto;
+    overflow-y: hidden;
+    `};
 `
 
 const Tab = styled.button<{ selected: boolean }>`
@@ -118,6 +153,61 @@ const Tab = styled.button<{ selected: boolean }>`
   &:hover {
     color: #000000;
   }
+  ${({ theme, selected }) => theme.mediaWidth.upToSmall`
+  border-color: ${selected ? '#ffffff' : 'transparent'};
+  color: ${selected ? '#ffffff' : theme.text5};
+  &:hover {
+    color: #ffffff;
+  }
+  `}
+`
+
+const ButtonOutlined = styled(ButtonOutlinedWhite)`
+  color: #ffffff;
+  * {
+    fill: #ffffff;
+  }
+`
+
+const HeaderWrapper = styled(AutoColumn)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    justify-content: center
+  `}
+`
+
+const ProfileWrapper = styled(AutoRow)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+    width: auto
+  `}
+`
+
+const AddressWrapper = styled(AutoRow)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    justify-content: center;
+  `}
+`
+
+const ClaimWrapper = styled(RowBetween)`
+  justify-content: flex-end;
+  margin-bottom: -20px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  margin-bottom: 20px;
+  justify-content: center;
+`}
+`
+
+const Divider = styled.div`
+  width: 80px;
+  height: 0;
+  border-bottom: 1px solid ${({ theme }) => theme.text4};
+  margin: 20px auto 0;
+`
+
+const NameWrapper = styled(RowFixed)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin: 0 auto;
+  `}
 `
 
 // function ActionButton({ onClick }: { onClick: () => void }) {
@@ -176,7 +266,7 @@ export default function User() {
   const [currentTab, setCurrentTab] = useState(UserInfoTabs.POSITION)
   const [showSetting, setShowSetting] = useState(false)
   const userInfo = useCurrentUserInfo()
-  const { data: positionCardList, page: positionPage, loading: positionIsLoading } = usePositionList(userInfo)
+  const { data: positionCardList, loading: positionIsLoading, page: positionPage } = usePositionList(userInfo)
   const { data: indexList, page: indexPage, loading: indexIsLoading } = useIndexList(userInfo)
   const { data: myLockerList, page: myLockerPage, loading: myLockerIsLoading } = useMyLockerList(userInfo)
 
@@ -230,36 +320,45 @@ export default function User() {
     <>
       <ProfileSetting isOpen={showSetting} onDismiss={handleHideSetting} userInfo={userInfo} />
       <Wrapper>
-        <AppBody maxWidth="1284px" style={{ width: '100%', padding: 52 }} isCard>
+        <AppBody>
           <AutoColumn gap="40px">
-            <AutoColumn>
+            <HeaderWrapper>
               <RowBetween>
-                <AutoRow gap="12px" style={{ width: 'auto' }}>
+                <ShowSmall />
+                <ProfileWrapper gap="12px">
                   <ProfileImg />
                   <AutoColumn>
-                    <RowFixed>
-                      <TYPE.black fontSize={28}>{userInfo?.username}</TYPE.black>
+                    <NameWrapper>
+                      <Text fontSize={28} fontWeight={500}>
+                        {userInfo?.username}
+                      </Text>
                       <Capsule>#{userInfo?.id}</Capsule>
-                    </RowFixed>
+                    </NameWrapper>
                     <TYPE.darkGray fontWeight={400}>
-                      <AutoRow>
+                      <AddressWrapper>
                         {userInfo?.account} <CopyHelper toCopy={userInfo?.account ?? ''} />
-                      </AutoRow>
+                      </AddressWrapper>
                     </TYPE.darkGray>
                   </AutoColumn>
-                </AutoRow>
-                <RowFixed>
-                  <ButtonOutlinedBlack width="134px" marginRight="12px" onClick={handleShowSetting}>
-                    <Settings style={{ marginRight: 15 }} />
-                    Settings
-                  </ButtonOutlinedBlack>
-                  <ButtonOutlinedBlack width="134px" onClick={handleLogOut}>
-                    <LogOut style={{ marginRight: 15 }} /> Log Out
-                  </ButtonOutlinedBlack>
-                </RowFixed>
+                </ProfileWrapper>
+                <ShowSmall />
+                <HideSmall>
+                  <RowFixed>
+                    <ButtonOutlinedBlack width="134px" marginRight="12px" onClick={handleShowSetting}>
+                      <Settings style={{ marginRight: 15 }} />
+                      Settings
+                    </ButtonOutlinedBlack>
+                    <ButtonOutlinedBlack width="134px" onClick={handleLogOut}>
+                      <LogOut style={{ marginRight: 15 }} /> Log Out
+                    </ButtonOutlinedBlack>
+                  </RowFixed>
+                </HideSmall>
               </RowBetween>
+              <ShowSmall>
+                <Divider />
+              </ShowSmall>
               <Synopsis>{userInfo?.bio}</Synopsis>
-              <RowBetween style={{ justifyContent: 'flex-end', marginBottom: '-20px' }}>
+              <ClaimWrapper>
                 <AutoColumn gap="8px" justify="end">
                   <TYPE.darkGray style={{ display: 'flex', alignItems: 'center' }}>
                     Unclaim Fees: <TYPE.black fontSize={20}> {claimFee ?? '-'}</TYPE.black>
@@ -274,17 +373,39 @@ export default function User() {
                     Claim Fees
                   </ButtonBlack>
                 </AutoColumn>
-              </RowBetween>
-            </AutoColumn>
+              </ClaimWrapper>
+              <ShowSmall style={{ justifyContent: 'center' }}>
+                <RowFixed>
+                  <ButtonOutlined width="134px" marginRight="12px" onClick={handleShowSetting}>
+                    <Settings style={{ marginRight: 15 }} />
+                    Settings
+                  </ButtonOutlined>
+                  <ButtonOutlined width="134px" onClick={handleLogOut}>
+                    <LogOut style={{ marginRight: 15 }} /> Log Out
+                  </ButtonOutlined>
+                </RowFixed>
+              </ShowSmall>
+            </HeaderWrapper>
             <SwitchTab onTabClick={handleTabClick} currentTab={currentTab} />
             {((currentTab === UserInfoTabs.INDEX && indexIsLoading) ||
               (currentTab === UserInfoTabs.POSITION && positionIsLoading) ||
               (currentTab === UserInfoTabs.LOCKER && myLockerIsLoading)) && (
-              <AnimatedWrapper style={{ marginTop: 40 }}>
-                <AnimatedImg>
-                  <img src={Loader} alt="loading-icon" />
-                </AnimatedImg>
-              </AnimatedWrapper>
+              <>
+                <HideSmall>
+                  <AnimatedWrapper style={{ marginTop: 40 }}>
+                    <AnimatedImg>
+                      <img src={Loader} alt="loading-icon" />
+                    </AnimatedImg>
+                  </AnimatedWrapper>
+                </HideSmall>
+                <ShowSmall>
+                  <AnimatedWrapper style={{ marginTop: 40 }}>
+                    <AnimatedImg>
+                      <img src={LoaderWhite} alt="loading-icon" />
+                    </AnimatedImg>
+                  </AnimatedWrapper>
+                </ShowSmall>
+              </>
             )}
             {!positionIsLoading && currentTab === UserInfoTabs.POSITION /*|| currentTab === Tabs.LOCKER*/ && (
               <>
