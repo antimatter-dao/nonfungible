@@ -350,7 +350,7 @@ export default function User() {
                   <>
                     <ContentWrapper>
                       {myLockerList.map(item => {
-                        if (!item || !item.indexId) return null
+                        if (!item || item.indexId === undefined) return null
                         const { color, address, icons, indexId, creator, name, id } = item
                         return (
                           <NFTCard

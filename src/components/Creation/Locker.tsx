@@ -443,6 +443,7 @@ export default function LockerIndex({
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                   <StyledDateBox>
                     <KeyboardDatePicker
+                      disablePast
                       margin="normal"
                       id="date-picker-dialog"
                       label="Unlock Date"
@@ -501,8 +502,8 @@ export default function LockerIndex({
                     width: 'unset',
                     height: '60px'
                   }}
-                  maxLength={3}
-                  isInt={true}
+                  maxLength={4}
+                  // isInt={true}
                   placeholder="days"
                   value={data.unlockData.unlockInterval}
                   onUserInput={val => {
