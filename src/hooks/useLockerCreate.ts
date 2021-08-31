@@ -1,6 +1,6 @@
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { useLocker721NFTContract } from './useContract'
-// import { calculateGasMargin } from '../utils'
+import { calculateGasMargin } from '../utils'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useMemo } from 'react'
 import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
@@ -129,29 +129,22 @@ export function useLockerCreateCall(): {
       const _claimParam = claimParam.map(item => Object.values(item))
       console.log(
         '🚀 ~ file: useLockerCreate.ts ~ line 97 ~ onCreate ~ _createParam',
+        _createParam,
+        _claimParam,
         JSON.stringify(_createParam),
         JSON.stringify(_claimParam)
       )
 
-      return contract
-        .create(_createParam, _claimParam, { value: null, gasLimit: '3500000' })
-        .then((response: TransactionResponse) => {
-          addTransaction(response, {
-            summary: `Create Locker`
+      return contract.estimateGas.create(_createParam, _claimParam, {}).then(estimatedGasLimit => {
+        return contract
+          .create(_createParam, _claimParam, { gasLimit: calculateGasMargin(estimatedGasLimit) })
+          .then((response: TransactionResponse) => {
+            addTransaction(response, {
+              summary: `Create Locker`
+            })
+            return response.hash
           })
-          return response.hash
-        })
-
-      // return contract.estimateGas.create(_createParam, _claimParam, {}).then(estimatedGasLimit => {
-      //   return contract
-      //     .create(_createParam, _claimParam, { gasLimit: calculateGasMargin(estimatedGasLimit) })
-      //     .then((response: TransactionResponse) => {
-      //       addTransaction(response, {
-      //         summary: `Create Locker`
-      //       })
-      //       return response.hash
-      //     })
-      // })
+      })
     },
     error: ''
   }

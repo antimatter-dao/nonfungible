@@ -21,7 +21,11 @@ export default function Login() {
 
   useEffect(() => {
     const currentAccount = store.getState().currentAccount
-    if ((chainId === 1 || chainId === 56) && currentAccount.chainId && currentAccount.chainId !== chainId) {
+    if (
+      (chainId === 1 || chainId === 56 || chainId === 3) &&
+      currentAccount.chainId &&
+      currentAccount.chainId !== chainId
+    ) {
       window.location.href = '#/'
       window.location.reload()
     }

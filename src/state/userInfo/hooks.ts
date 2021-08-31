@@ -74,7 +74,7 @@ export function useLogin(): {
 
   const login = useCallback(async () => {
     if (!account || !library || !chainId) return
-    if (chainId !== 1 && chainId !== 56) return
+    if (chainId !== 1 && chainId !== 56 && chainId !== 3) return
     const userInfo = getCurrentUserInfoSync(account)
     if (userInfo && userInfo.token && userInfo) return
 
@@ -120,7 +120,7 @@ export function useLogOut() {
 
   return useCallback(async () => {
     if (!account || !chainId) return
-    if (chainId !== 1 && chainId !== 56) return
+    if (chainId !== 1 && chainId !== 56 && chainId !== 3) return
     const userInfo = getCurrentUserInfoSync(account)
     if (userInfo && userInfo.token) {
       dispatch(removeUserInfo({ address: account }))
