@@ -111,16 +111,11 @@ export function useCurrencyBalances(
   return useMemo(
     () =>
       currencies?.map(currency => {
-        if (!account || !currency) {
-          console.log('11111111')
-        }
         if (!account || !currency) return undefined
         if (currency instanceof Token || currency instanceof WrappedTokenInfo) {
-          console.log('tokenBalances[currency.address]', tokenBalances[currency.address])
           return tokenBalances[currency.address]
         }
         if (currency === ETHER) return ethBalance[account]
-        console.log('fdsagdasgdsagdsa')
         return undefined
       }) ?? [],
     [account, currencies, ethBalance, tokenBalances]

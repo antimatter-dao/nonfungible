@@ -274,7 +274,6 @@ export default function LockerIndex({
   const approveCallback = approveCalls()
 
   const selectCurrencyBalances = useCurrencyBalances(account ?? undefined, selectAllCurrencys)
-  console.log('🚀 ~ file: Locker.tsx ~ line 277 ~ selectCurrencyBalances', selectCurrencyBalances)
 
   return (
     <>
