@@ -112,7 +112,7 @@ export const StyledDialogContent = styled(
       width: 100vw;
       max-width:unset;
       min-height:unset;
-      max-height:unset;
+      max-height:100vh;
       height: 100vh;
       overflow-y: auto;
       border-radius: 0;

@@ -8,6 +8,7 @@ import { AutoColumn } from 'components/Column'
 import { ReactComponent as Menu } from '../../assets/svg/menu.svg'
 import arrowUpUrl from 'assets/svg/arrow_up.svg'
 import { ExternalLink } from 'theme'
+import { StyledDialogOverlay } from 'components/Modal'
 
 const ToggleMenuButton = styled(Base)`
   background: none;
@@ -17,18 +18,18 @@ const ToggleMenuButton = styled(Base)`
     border: none;
   }
 `
-const TogggleMenuWrapper = styled.div`
-  z-index: 100;
-  position: absolute;
-  left: 0;
-  width: 100vw;
-  background: #000000;
-  top: 0;
-  height: 100vh;
-  border: 1px solid ${({ theme }) => theme.bg3};
-  border-bottom: none;
-  overflow-y: auto;
-`
+// const TogggleMenuWrapper = styled.div`
+//   z-index: 100;
+//   position: absolute;
+//   left: 0;
+//   width: 100vw;
+//   background: #000000;
+//   top: 0;
+//   height: 100vh;
+//   border: 1px solid ${({ theme }) => theme.bg3};
+//   border-bottom: none;
+//   overflow-y: auto;
+// `
 
 const TabMobile = styled(NavLink)<{ isSubTab?: boolean }>`
   font-size: 28px;
@@ -133,11 +134,11 @@ export default function ToggleMenu({ onCreate }: { onCreate: () => void }) {
         <Menu style={{ height: 30, width: 24 }} />
       </ToggleMenuButton>
       {isOpen && (
-        <TogggleMenuWrapper>
+        <StyledDialogOverlay>
           <CloseButton onClick={handleClose}>
             <X size={24} />
           </CloseButton>
-          <AutoColumn style={{ marginTop: 148 }}>
+          <AutoColumn style={{ marginTop: 148, width: '100vw', alignSelf: 'flex-start' }}>
             {tabs.map(({ title, route, subTab }) =>
               subTab ? (
                 <ToggleTab key={title} title={title}>
@@ -164,7 +165,7 @@ export default function ToggleMenu({ onCreate }: { onCreate: () => void }) {
             )}
             <CreateButton onClick={handleCreate}>+ Create</CreateButton>
           </AutoColumn>
-        </TogggleMenuWrapper>
+        </StyledDialogOverlay>
       )}
     </>
   )

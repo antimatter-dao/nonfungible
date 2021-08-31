@@ -72,6 +72,10 @@ export const MenuItem = styled(RowBetween)`
     background-color: ${({ theme, disabled }) => !disabled && theme.advancedBG};
   }
   opacity: ${({ disabled, selected }) => (disabled || selected ? 0.5 : 1)};
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    color: #ffffff;
+    border-bottom:  1px solid ${theme.bg4};
+  `};
 `
 
 export const SearchInput = styled.input`

@@ -32,6 +32,9 @@ const StyledBalanceText = styled(Text)`
   overflow: hidden;
   max-width: 5rem;
   text-overflow: ellipsis;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    color: #ffffff
+  `};
 `
 
 const Tag = styled.div`
