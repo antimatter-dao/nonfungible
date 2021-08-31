@@ -26,6 +26,9 @@ export function useMultiApproveCallback(
   const { account } = useActiveWeb3React()
 
   const tokens = amountToApproves.map(amountToApprove => {
+    if (!(amountToApprove instanceof TokenAmount)) {
+      console.log('gjkashgkfjasklgjlkfsajglkfdnjklnvbdfskjlhgfkdlhs ,', amountToApprove, amountToApprove)
+    }
     return amountToApprove instanceof TokenAmount ? amountToApprove.token : undefined
   })
 

@@ -55,11 +55,17 @@ export const getLockerClaimParam = (data: CreateLockerData): Locker721CreateClai
     const nowTIme = parseInt(Number(new Date().getTime() / 1000).toString())
     while (idx < numbers) {
       idx++
+      const thisIndex = idx
       const unLockTIme = nowTIme + idx * 86400 * Number(data.unlockData.unlockInterval)
       const _item = data.assetsParameters.map(item => {
         const _allAmount = tryParseAmount(item.amount, item.currencyToken)?.raw.toString() ?? ''
         let _amount = _allAmount
-        if (_allAmount) {
+        if (_allAmount && thisIndex === numbers && thisIndex > 1) {
+          _amount = JSBI.subtract(
+            JSBI.BigInt(_allAmount),
+            JSBI.multiply(JSBI.divide(JSBI.BigInt(_allAmount), JSBI.BigInt(numbers)), JSBI.BigInt(numbers - 1))
+          ).toString()
+        } else if (_allAmount) {
           _amount = JSBI.divide(JSBI.BigInt(_allAmount), JSBI.BigInt(numbers)).toString()
         }
         return {

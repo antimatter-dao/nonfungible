@@ -354,6 +354,7 @@ export default function User() {
                         const { color, address, icons, indexId, creator, name, id } = item
                         return (
                           <NFTCard
+                            createName="Locker ID"
                             id={id}
                             color={color}
                             address={address}

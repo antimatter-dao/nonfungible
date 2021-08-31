@@ -375,7 +375,7 @@ export function NFTCardPanel({
           Preview
         </TYPE.black>
         <StyledCard>
-          <NFTCard noBorderArea={true} {...cardData} />
+          <NFTCard createName="Locker ID" noBorderArea={true} {...cardData} />
         </StyledCard>
       </AutoColumn>
     </AutoRow>

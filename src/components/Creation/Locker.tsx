@@ -279,7 +279,7 @@ export default function LockerIndex({
     <>
       {current === 1 && (
         <AutoColumn gap="40px">
-          <CreationHeader indexArr={indexArr} current={current}>
+          <CreationHeader title="Locker" indexArr={indexArr} current={current}>
             Locker Content
           </CreationHeader>
           <AutoColumn>
@@ -342,8 +342,8 @@ export default function LockerIndex({
 
       {current === 2 && (
         <AutoColumn gap="40px">
-          <CreationHeader indexArr={indexArr} current={current}>
-            Locker Assetes
+          <CreationHeader title="Locker" indexArr={indexArr} current={current}>
+            Locker Assets
           </CreationHeader>
 
           <AutoColumn gap="10px">
@@ -407,7 +407,7 @@ export default function LockerIndex({
 
       {current === 3 && (
         <AutoColumn gap="40px">
-          <CreationHeader indexArr={indexArr} current={current}>
+          <CreationHeader title="Locker" indexArr={indexArr} current={current}>
             Locker Time Schedule
           </CreationHeader>
           <AutoColumn gap="10px">
@@ -495,7 +495,7 @@ export default function LockerIndex({
               </AutoColumn>
 
               <AutoColumn gap="5px">
-                <TYPE.black fontSize="14px">unlock Interval</TYPE.black>
+                <TYPE.black fontSize="14px">Unlock Interval</TYPE.black>
                 <CustomNumericalInput
                   style={{
                     width: 'unset',
@@ -503,7 +503,7 @@ export default function LockerIndex({
                   }}
                   maxLength={4}
                   // isInt={true}
-                  placeholder="days"
+                  placeholder="Days"
                   value={data.unlockData.unlockInterval}
                   onUserInput={val => {
                     const _data = { ...data.unlockData, unlockInterval: val }
@@ -511,7 +511,7 @@ export default function LockerIndex({
                   }}
                 />
                 <TYPE.gray fontSize="14px" color="text3">
-                  days
+                  Days
                 </TYPE.gray>
               </AutoColumn>
             </>
@@ -531,7 +531,7 @@ export default function LockerIndex({
 
       {current === 4 && (
         <AutoColumn gap="40px">
-          <CreationHeader current={current} indexArr={indexArr}>
+          <CreationHeader title="Locker" current={current} indexArr={indexArr}>
             NFT Cover Background
           </CreationHeader>
           <NFTCardPanel

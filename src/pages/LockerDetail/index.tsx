@@ -197,7 +197,7 @@ export default function LockerDetail({
       <Wrapper>
         <RowBetween style={{ marginTop: 10 }} align="flex-start">
           <StyledNFTCard>
-            <NFTCard {...currentCard} />
+            <NFTCard createName="Locker ID" {...currentCard} />
           </StyledNFTCard>
           <InfoPanel>
             <RowBetween style={{ marginBottom: 10 }}>

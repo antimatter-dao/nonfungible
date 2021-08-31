@@ -178,7 +178,7 @@ export function LockerConfirmation({
           <TYPE.smallHeader color="text6">Time Schedule</TYPE.smallHeader>
           {dataInfo.schedule === TimeScheduleType.Flexible && (
             <RowBetween>
-              <TYPE.smallGray>no lockup</TYPE.smallGray>
+              <TYPE.smallGray>No lockup</TYPE.smallGray>
             </RowBetween>
           )}
           {dataInfo.schedule === TimeScheduleType.OneTIme &&

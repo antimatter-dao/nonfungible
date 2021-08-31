@@ -145,8 +145,9 @@ export default function NFTCard({
   color,
   address,
   noBorderArea,
-  onClick
-}: NFTCardProps & { onClick?: () => void }) {
+  onClick,
+  createName
+}: NFTCardProps & { onClick?: () => void; createName?: string }) {
   return (
     <NFTCardBase noBorderArea={noBorderArea} color={color} address={address} onClick={onClick}>
       <CurrencyLogosOverlay icons={icons} />
@@ -155,7 +156,7 @@ export default function NFTCard({
       </TYPE.black>
       <AutoColumn gap="4px">
         <Capsule color={color}>
-          <TYPE.smallGray>Index ID:&nbsp;</TYPE.smallGray>
+          <TYPE.smallGray>{createName ? createName : 'Index ID'}:&nbsp;</TYPE.smallGray>
           <TYPE.small color="#000000"> {indexId}</TYPE.small>
         </Capsule>
         <Capsule color={color}>
