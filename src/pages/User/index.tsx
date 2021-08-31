@@ -18,7 +18,7 @@ import { ReactComponent as Settings } from 'assets/svg/settings.svg'
 import { ReactComponent as LogOut } from 'assets/svg/log_out.svg'
 import ProfileSetting from './ProfileSetting'
 import { useCurrentUserInfo, useLogOut } from 'state/userInfo/hooks'
-import { usePositionList, useIndexList } from 'hooks/useMyList'
+import { usePositionList, useIndexList, useMyLockerList } from 'hooks/useMyList'
 import Pagination from 'components/Pagination'
 import Loader from 'assets/svg/antimatter_background_logo_dark.svg'
 import ClaimModal from 'components/claim/MatterClaimModal'
@@ -27,14 +27,15 @@ import { CurrencyAmount, JSBI } from '@uniswap/sdk'
 
 export enum UserInfoTabs {
   POSITION = 'my_position',
-  INDEX = 'my_index'
-  // LOCKER = 'My Locker',
+  INDEX = 'my_index',
+  LOCKER = 'my_locker'
   // ACTIVITY = 'Activity'
 }
 
 export const UserInfoTabRoute = {
   [UserInfoTabs.POSITION]: 'My Position',
-  [UserInfoTabs.INDEX]: 'My Index'
+  [UserInfoTabs.INDEX]: 'My Index',
+  [UserInfoTabs.LOCKER]: 'My Locker'
 }
 
 // enum Actions {
@@ -177,6 +178,8 @@ export default function User() {
   const userInfo = useCurrentUserInfo()
   const { data: positionCardList, page: positionPage, loading: positionIsLoading } = usePositionList(userInfo)
   const { data: indexList, page: indexPage, loading: indexIsLoading } = useIndexList(userInfo)
+  const { data: myLockerList, page: myLockerPage, loading: myLockerIsLoading } = useMyLockerList(userInfo)
+
   const logout = useLogOut()
   const claimFee = useCreatorFee()
   const [claimModal, setClaimModal] = useState(false)
@@ -275,7 +278,8 @@ export default function User() {
             </AutoColumn>
             <SwitchTab onTabClick={handleTabClick} currentTab={currentTab} />
             {((currentTab === UserInfoTabs.INDEX && indexIsLoading) ||
-              (currentTab === UserInfoTabs.POSITION && positionIsLoading)) && (
+              (currentTab === UserInfoTabs.POSITION && positionIsLoading) ||
+              (currentTab === UserInfoTabs.LOCKER && myLockerIsLoading)) && (
               <AnimatedWrapper style={{ marginTop: 40 }}>
                 <AnimatedImg>
                   <img src={Loader} alt="loading-icon" />
@@ -335,6 +339,45 @@ export default function User() {
                     setPage={indexPage.setCurrentPage}
                     isLightBg
                   />
+                )}
+              </>
+            )}
+            {!myLockerIsLoading && currentTab === UserInfoTabs.LOCKER /*|| currentTab === Tabs.LOCKER*/ && (
+              <>
+                {myLockerList.length === 0 ? (
+                  <span>You have no NFT at the moment</span>
+                ) : (
+                  <>
+                    <ContentWrapper>
+                      {myLockerList.map(item => {
+                        if (!item || !item.indexId) return null
+                        const { color, address, icons, indexId, creator, name, id } = item
+                        return (
+                          <NFTCard
+                            id={id}
+                            color={color}
+                            address={address}
+                            icons={icons}
+                            indexId={indexId}
+                            key={indexId}
+                            creator={creator}
+                            name={name}
+                            onClick={() => {
+                              history.push(`/locker/${indexId}`)
+                            }}
+                          />
+                        )
+                      })}
+                    </ContentWrapper>
+                    {myLockerPage.totalPages !== 0 && (
+                      <Pagination
+                        page={myLockerPage.currentPage}
+                        count={myLockerPage.totalPages}
+                        setPage={myLockerPage.setCurrentPage}
+                        isLightBg
+                      />
+                    )}
+                  </>
                 )}
               </>
             )}

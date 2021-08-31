@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { AutoColumn } from 'components/Column'
 import { CardColor } from 'components/NFTCard'
@@ -8,7 +8,11 @@ import { ButtonOutlinedBlack, ButtonPrimary } from 'components/Button'
 import Table, { OwnerCell } from 'components/Table'
 import { ReactComponent as Created } from 'assets/svg/created.svg'
 import { ReactComponent as Transfer } from 'assets/svg/transfer.svg'
-import { ReactComponent as Unlock } from 'assets/svg/unlock.svg'
+// import { ReactComponent as Unlock } from 'assets/svg/unlock.svg'
+import { Link, useHistory } from 'react-router-dom'
+import { useCurrentUserInfo } from 'state/userInfo/hooks'
+import { LockerIndexEventType, useLockerIndexData } from '../../hooks/useLockerIndex'
+import Pagination from 'components/Pagination'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -19,7 +23,7 @@ const Wrapper = styled.div`
 const CardWrapper = styled.div`
   display: grid;
   grid-gap: 26px;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr;
 `
 
@@ -53,26 +57,62 @@ const OpenButton = styled(ButtonOutlinedBlack)`
 `
 
 export default function Locker() {
+  const userInfo = useCurrentUserInfo()
+  const history = useHistory()
+  const {
+    data,
+    page: { currentPage, totalPages, setCurrentPage }
+  } = useLockerIndexData()
+
+  const tableData = useMemo(() => {
+    return data.list.map(item => {
+      return [
+        item.eventType === LockerIndexEventType.Created ? (
+          <>
+            <Created />
+            Created
+          </>
+        ) : (
+          <>
+            <Transfer />
+            Transfer
+          </>
+        ),
+        item.tokenType,
+        new Date(Number(item.timestamp) * 1000).toLocaleString(),
+        <OwnerCell name={item.username} key="1" />,
+        <OpenButton
+          key="2"
+          onClick={() => {
+            history.push(`/locker/${item.indexId}`)
+          }}
+        >
+          Open
+        </OpenButton>
+      ]
+    })
+  }, [data.list, history])
+
   return (
     <Wrapper>
       <AutoColumn gap="72px">
         <CardWrapper>
-          <Card
+          {/* <Card
             color={CardColor.BLUE}
             title="Total value Locked"
             value={
               <>
-                12345&nbsp;<span style={{ fontSize: 18 }}>$</span>
+                -&nbsp;<span style={{ fontSize: 18 }}>$</span>
               </>
             }
-          />
-          <Card color={CardColor.RED} title="Number of lockers created" value={<>123</>} />
+          /> */}
+          <Card color={CardColor.RED} title="Number of lockers created" value={<>{data.lockerCreatedCount}</>} />
           <Card
             color={CardColor.GREEN}
             title="Number of owners"
             value={
               <>
-                123&nbsp;<span style={{ fontSize: 18 }}>Addresses</span>
+                {data.ownerCount}&nbsp;<span style={{ fontSize: 18 }}>Addresses</span>
               </>
             }
           />
@@ -82,41 +122,19 @@ export default function Locker() {
             <TYPE.body fontWeight={500} fontSize={30}>
               Activity
             </TYPE.body>
-            <ButtonPrimary width="160px">My Locker</ButtonPrimary>
+            {userInfo && userInfo.token && (
+              <Link to="/profile/my_locker" style={{ textDecoration: 'none' }}>
+                <ButtonPrimary width="160px">My Locker</ButtonPrimary>
+              </Link>
+            )}
           </RowBetween>
-          <Table
-            header={['Event', 'Token type', 'Date', 'Owner', '']}
-            rows={[
-              [
-                <>
-                  <Created />
-                  Created
-                </>,
-                'erc-721',
-                '00:00 02.13.2021',
-                <OwnerCell name="Jack" key="1" />
-              ],
-              [
-                <>
-                  <Unlock />
-                  Unlock
-                </>,
-                'erc-721',
-                '00:00 02.13.2021',
-                <OwnerCell name="Jack" key="1" />,
-                <OpenButton key="1">Open</OpenButton>
-              ],
-              [
-                <>
-                  <Transfer />
-                  Transfer
-                </>,
-                'erc-721',
-                '00:00 02.13.2021',
-                <OwnerCell name="Jack" key="1" />,
-                <OpenButton key="2">Open</OpenButton>
-              ]
-            ]}
+          <Table header={['Event', 'Token type', 'Date', 'Owner', '']} rows={tableData} />
+          <Pagination
+            page={currentPage}
+            count={totalPages}
+            setPage={page => {
+              setCurrentPage(page)
+            }}
           />
         </AutoColumn>
       </AutoColumn>

@@ -14,7 +14,7 @@ import { RedirectPathToSwapOnly } from './SpotIndex/redirects'
 // import Governance from './NFTGovernance'
 import SpotIndex from './SpotIndex'
 import GovernanceDetail from './NFTGovernance/NFTGovernanceDetail'
-// import Locker from './Locker'
+import Locker from './Locker'
 import CardDetail from './CardDetail'
 import LockerDetail from './LockerDetail'
 import UserLogin from '../pages/User/Login'
@@ -143,8 +143,7 @@ export default function App() {
                 <Route exact strict path="/spot_index" component={SpotIndex} />
                 <Route exact strict path="/spot_detail/:nftid" component={CardDetail} />
                 <Route exact strict path="/collectables" component={ComingSoon} />
-                {/* <Route exact strict path="/locker" component={Locker} /> */}
-                <Route exact strict path="/locker" component={ComingSoon} />
+                <Route exact strict path="/locker" component={Locker} />
                 <Route exact strict path="/locker/:nftid" component={LockerDetail} />
                 {/* <Route exact strict path="/governance" component={Governance} /> */}
                 <Route exact strict path="/governance" component={ComingSoon} />

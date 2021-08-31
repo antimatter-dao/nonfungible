@@ -4,10 +4,16 @@ import { useEffect, useMemo, useState, useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { useSingleContractMultipleData } from 'state/multicall/hooks'
 import { saveUserInfo, UserInfo } from 'state/userInfo/actions'
-import { positionListFetch, indexListFetch, userInfoFetch, UserInfoQuery } from 'utils/option/httpFetch'
+import {
+  positionListFetch,
+  indexListFetch,
+  userInfoFetch,
+  UserInfoQuery,
+  myLockerListFetch
+} from 'utils/option/httpFetch'
 import { formatNFTCardDetail } from 'utils/option/nftUtils'
 import { useAllTokens } from './Tokens'
-import { useIndexNFTContract } from './useContract'
+import { useIndexNFTContract, useLocker721NFTContract } from './useContract'
 
 interface MyListItem {
   creater: string
@@ -139,4 +145,63 @@ export function useUserInfoUpdate(userInfo: UserInfo | undefined) {
   return useMemo(() => {
     return { updateUserInfoCallback: callback }
   }, [callback])
+}
+
+export function useMyLockerList(
+  userInfo: UserInfo | undefined
+): {
+  loading: boolean
+  page: {
+    totalPages: number
+    currentPage: number
+    setCurrentPage: (page: number) => void
+  }
+  data: NFTCardProps[]
+} {
+  const [myLockerDataList, setMyLockerDataList] = useState<any[]>([])
+  const [myLockerIdList, setMyLockerIdList] = useState<string[][]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [firstLoading, setFirstLoading] = useState<boolean>(true)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [totalPages, setTotalPages] = useState<number>(0)
+
+  const tokens = useAllTokens()
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        setIsLoading(true)
+        const _lockerList = await myLockerListFetch(userInfo?.token, userInfo?.account, currentPage, 10)
+        setIsLoading(false)
+        const IdList = (_lockerList as any)?.list.map((item: any) => [item.indexId ?? 0])
+        IdList && setMyLockerIdList(IdList)
+        _lockerList && setMyLockerDataList((_lockerList as any)?.list ?? [])
+        _lockerList && setTotalPages((_lockerList as any)?.pages ?? 0)
+      } catch (error) {
+        console.error('fetch useMyLockerList', error)
+      }
+    })()
+  }, [currentPage, userInfo])
+
+  const contract = useLocker721NFTContract()
+  const lockerListRes = useSingleContractMultipleData(contract, 'getPool', myLockerIdList)
+
+  const resList = useMemo(() => {
+    return lockerListRes.map(({ result }, idx) => {
+      return {
+        ...formatNFTCardDetail(myLockerIdList[idx][0], result ? result[0] : undefined, tokens),
+        creator: myLockerDataList[idx]?.username ?? ''
+      } as NFTCardProps
+    })
+  }, [myLockerDataList, myLockerIdList, lockerListRes, tokens])
+
+  useEffect(() => {
+    if (resList.length) setFirstLoading(false)
+  }, [resList])
+
+  const res = useMemo(
+    () => ({ page: { totalPages, currentPage, setCurrentPage }, loading: isLoading || firstLoading, data: resList }),
+    [currentPage, firstLoading, isLoading, resList, totalPages]
+  )
+  return res
 }

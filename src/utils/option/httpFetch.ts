@@ -1,8 +1,8 @@
 import store from 'state'
 import { getCurrentUserInfoSync, clearLoginStoreSync } from 'state/userInfo/hooks'
 
-const domain = 'https://nftapi.antimatter.finance'
-// const domain = 'https://test-nftapi.antimatter.finance'
+// const domain = 'https://nftapi.antimatter.finance'
+const domain = 'https://test-nftapi.antimatter.finance'
 const headers = { 'content-type': 'application/json', accept: 'application/json' }
 
 interface LoginRes {
@@ -169,5 +169,36 @@ export function getNFTTransferRecords(nftId: string): Promise<any> {
     body: requestBodyGenerator(param),
     headers: headers
   })
+  return promiseGenerator(request)
+}
+
+export function getLockerIndexEventRecord(curPage: string | number): Promise<any> {
+  const param = {
+    curPage,
+    pageSize: '12'
+  }
+  const request = new Request(`${domain}/app/getEventRecord`, {
+    method: 'POST',
+    body: requestBodyGenerator(param),
+    headers: headers
+  })
+  return promiseGenerator(request)
+}
+
+export function myLockerListFetch(
+  token: string | undefined,
+  address: string | undefined,
+  currentPage: number,
+  pageSize: number
+) {
+  if (!token || !address) {
+    return
+  }
+  const request = new Request(`${domain}/app/getLockedPositionList`, {
+    method: 'POST',
+    headers: { ...headers, token },
+    body: requestBodyGenerator({ address, curPage: currentPage, pageSize })
+  })
+
   return promiseGenerator(request)
 }

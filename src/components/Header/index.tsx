@@ -731,6 +731,9 @@ function UserMenu({ account }: { account?: string | null }) {
           <UserMenuItem onClick={() => history.push('/profile/' + UserInfoTabs.INDEX)}>
             {UserInfoTabRoute[UserInfoTabs.INDEX]}
           </UserMenuItem>
+          <UserMenuItem onClick={() => history.push('/profile/' + UserInfoTabs.LOCKER)}>
+            {UserInfoTabRoute[UserInfoTabs.LOCKER]}
+          </UserMenuItem>
           <UserMenuItem onClick={toggleWalletModal}>Wallet</UserMenuItem>
           <UserMenuItem onClick={() => history.push('/profile/settings')}>Settings</UserMenuItem>
         </AutoColumn>
