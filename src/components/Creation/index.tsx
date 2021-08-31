@@ -398,9 +398,9 @@ export default function CreationNFTModal() {
                     height={60}
                     style={{ marginTop: 20 }}
                     onClick={toCreateNext}
-                    disabled={currentCreation !== Step.SpotIndex}
+                    disabled={currentCreation === Step.FutureIndex}
                   >
-                    {currentCreation === Step.SpotIndex ? 'Confirm' : 'Coming soon'}
+                    {currentCreation !== Step.FutureIndex ? 'Confirm' : 'Coming soon'}
                   </ButtonBlack>
                 </HideSmall>
               </AutoColumn>
@@ -409,9 +409,9 @@ export default function CreationNFTModal() {
                   height={60}
                   style={{ marginTop: 50 }}
                   onClick={toCreateNext}
-                  disabled={currentCreation !== Step.SpotIndex}
+                  disabled={currentCreation === Step.FutureIndex}
                 >
-                  {currentCreation === Step.SpotIndex ? 'Confirm' : 'Coming soon'}
+                  {currentCreation !== Step.FutureIndex ? 'Confirm' : 'Coming soon'}
                 </ButtonPrimary>
               </ShowSmall>
             </>
