@@ -520,56 +520,6 @@ export default function CardDetail({
                       </ButtonBlack>
                     </BuyPannel>
                   )}
-                  {currentTradeTab === TradeTabType.Buy && (
-                    <BuyPannel>
-                      <AutoColumn gap="8px" style={{ width: '100%' }}>
-                        <TYPE.black color="black">Amount </TYPE.black>
-                        <CustomNumericalInput
-                          style={{
-                            width: 'unset',
-                            height: '60px'
-                          }}
-                          maxLength={6}
-                          isInt={true}
-                          placeholder="0"
-                          value={buyAmount}
-                          onUserInput={val => {
-                            setBuyAmount(val)
-                          }}
-                        />
-                      </AutoColumn>
-                      <AutoColumn gap="8px" style={{ width: '100%' }}>
-                        <RowBetween>
-                          <TYPE.black color="black">Payment Currency </TYPE.black>
-                          <SettingsTab onlySlippage={true} />
-                        </RowBetween>
-                        <CurrencyETHShow />
-                      </AutoColumn>
-                      {account ? (
-                        <ButtonBlack
-                          onClick={() => {
-                            setBuyConfirmModal(true)
-                            setTimeout(() => {
-                              setBuyConfirmNoticeModal(true)
-                            }, 500)
-                          }}
-                          height={60}
-                          disabled={!Number(buyAmount) || !thisNFTethAmount}
-                        >
-                          Buy
-                        </ButtonBlack>
-                      ) : (
-                        <ButtonBlack
-                          onClick={() => {
-                            toggleWalletModal()
-                          }}
-                          height={60}
-                        >
-                          Connect Wallet
-                        </ButtonBlack>
-                      )}
-                    </BuyPannel>
-                  )}
 
                   {currentTradeTab === TradeTabType.Sell && (
                     <BuyPannel>

@@ -450,7 +450,7 @@ export function NFTCardPanel({
     <CardPanelWrapper justify="space-between">
       <AutoColumn gap="12px">
         <HideSmall>
-          <TYPE.black fontSize={14}>Select backgroud color</TYPE.black>
+          <TYPE.black fontSize={14}>Select background color</TYPE.black>
         </HideSmall>
         <ShowSmall>
           <TYPE.darkGray fontSize={14}>Select backgroud color</TYPE.darkGray>
