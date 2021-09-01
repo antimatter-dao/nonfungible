@@ -309,22 +309,6 @@ export function Locker721ClaimComfirmModel({
   )
   const approveCallbacks = approveCalls()
 
-  const btnAmountCheck: { text: string; disabled: boolean } = useMemo(() => {
-    const ret = { text: `Can't claim`, disabled: true }
-    if (!assetsCurrencys[0]) return ret
-    const isClaimAmount = assetsCurrencys
-      .map(item => {
-        return item.currencyAmountToken ? item.currencyAmountToken.greaterThan(JSBI.BigInt(0)) : false
-      })
-      .reduce((pre, cur) => pre || cur)
-    if (!isClaimAmount) return ret
-
-    return {
-      text: 'Claim',
-      disabled: false
-    }
-  }, [assetsCurrencys])
-
   const btnGroups: (JSX.Element | null)[] = useMemo(() => {
     return assetsCurrencys.map((assetsCurrency, index) => {
       const approvalState = approvalStates[index]
@@ -345,13 +329,28 @@ export function Locker721ClaimComfirmModel({
         )
       }
 
-      return (
-        <ButtonBlack key={index} onClick={onConfirm} height="60px">
-          Claim
-        </ButtonBlack>
-      )
+      return null
     })
-  }, [approvalStates, approveCallbacks, assetsCurrencys, onConfirm])
+  }, [approvalStates, approveCallbacks, assetsCurrencys])
+
+  const btnAmountCheck: { text: string; disabled: boolean } = useMemo(() => {
+    const ret = { text: `Can't claim`, disabled: true }
+    if (!assetsCurrencys[0]) return ret
+    const isClaimAmount = assetsCurrencys
+      .map(item => {
+        return item.currencyAmountToken ? item.currencyAmountToken.greaterThan(JSBI.BigInt(0)) : false
+      })
+      .reduce((pre, cur) => pre || cur)
+    if (!isClaimAmount) return ret
+
+    const _btnGroupsIsPass = btnGroups.map(item => item === null).reduce((pre, cur) => pre && cur)
+    if (!_btnGroupsIsPass) return ret
+
+    return {
+      text: 'Claim',
+      disabled: false
+    }
+  }, [assetsCurrencys, btnGroups])
 
   return (
     <Modal isOpen={isOpen} onDismiss={onDismiss} minHeight={30} maxHeight={85} width="600px" maxWidth={600}>
@@ -375,13 +374,10 @@ export function Locker721ClaimComfirmModel({
               </RowBetween>
             ))}
           </InfoWrapper>
-          {btnAmountCheck.disabled ? (
-            <ButtonBlack disabled={btnAmountCheck.disabled} height="60px">
-              {btnAmountCheck.text}
-            </ButtonBlack>
-          ) : (
-            btnGroups.map(item => item)
-          )}
+          {btnGroups.map(item => item)}
+          <ButtonBlack disabled={btnAmountCheck.disabled} onClick={onConfirm} height="60px">
+            {btnAmountCheck.text}
+          </ButtonBlack>
         </AutoColumn>
       </Wrapper>
     </Modal>

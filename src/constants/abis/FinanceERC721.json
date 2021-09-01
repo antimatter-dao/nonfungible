@@ -60,7 +60,38 @@
           "type": "address"
         },
         {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "nftId",
+          "type": "uint256"
+        },
+        {
           "indexed": false,
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "Claimed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "indexed": true,
           "internalType": "uint256",
           "name": "nftId",
           "type": "uint256"
@@ -507,6 +538,11 @@
         {
           "internalType": "string",
           "name": "symbol",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_baseURI",
           "type": "string"
         }
       ],

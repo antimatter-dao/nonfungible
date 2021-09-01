@@ -7,6 +7,7 @@ import { useMultiTokenContract } from './useContract'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import { calculateGasMargin } from 'utils'
 import { TransactionResponse } from '@ethersproject/providers'
+import { BigNumber } from 'ethers'
 
 export enum ApprovalState {
   UNKNOWN,
@@ -26,9 +27,6 @@ export function useMultiApproveCallback(
   const { account } = useActiveWeb3React()
 
   const tokens = amountToApproves.map(amountToApprove => {
-    if (!(amountToApprove instanceof TokenAmount)) {
-      console.log('gjkashgkfjasklgjlkfsajglkfdnjklnvbdfskjlhgfkdlhs ,', amountToApprove, amountToApprove)
-    }
     return amountToApprove instanceof TokenAmount ? amountToApprove.token : undefined
   })
 
@@ -88,7 +86,18 @@ export function useMultiApproveCallback(
         }
 
         // let useExact = false
-        const estimatedGas = await tokenContract.estimateGas.approve(spender, amountToApprove.raw.toString())
+        const estimatedGas = await tokenContract.estimateGas
+          .approve(spender, amountToApprove.raw.toString())
+          .catch(error => {
+            console.log(
+              error,
+              'estimatedGas error, args is: ',
+              spender,
+              amountToApprove.raw.toString(),
+              amountToApprove
+            )
+            return BigNumber.from('1')
+          })
 
         return tokenContract
           .approve(spender, amountToApprove.raw.toString(), {

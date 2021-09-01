@@ -159,7 +159,7 @@ export function useMyLockerList(
   data: NFTCardProps[]
 } {
   const [myLockerDataList, setMyLockerDataList] = useState<any[]>([])
-  const [myLockerIdList, setMyLockerIdList] = useState<string[][]>([])
+  const [myLockerIdList, setMyLockerIdList] = useState<string[][] | undefined>(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [firstLoading, setFirstLoading] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState<number>(1)
@@ -184,20 +184,20 @@ export function useMyLockerList(
   }, [currentPage, userInfo])
 
   const contract = useLocker721NFTContract()
-  const lockerListRes = useSingleContractMultipleData(contract, 'getPool', myLockerIdList)
+  const lockerListRes = useSingleContractMultipleData(contract, 'getPool', myLockerIdList ?? [])
 
   const resList = useMemo(() => {
     return lockerListRes.map(({ result }, idx) => {
       return {
-        ...formatNFTCardDetail(myLockerIdList[idx][0], result ? result[0] : undefined, tokens),
+        ...formatNFTCardDetail(myLockerIdList ? myLockerIdList[idx][0] : '', result ? result[0] : undefined, tokens),
         creator: myLockerDataList[idx]?.username ?? ''
       } as NFTCardProps
     })
   }, [myLockerDataList, myLockerIdList, lockerListRes, tokens])
 
   useEffect(() => {
-    if (resList.length) setFirstLoading(false)
-  }, [resList])
+    if (resList.length || myLockerIdList?.length === 0) setFirstLoading(false)
+  }, [resList, myLockerIdList])
 
   const res = useMemo(
     () => ({ page: { totalPages, currentPage, setCurrentPage }, loading: isLoading || firstLoading, data: resList }),

@@ -160,6 +160,7 @@ export default function LockerDetail({
       .then(hash => {
         setAttemptingTxn(false)
         setHash(hash)
+        setClaimModal(false)
       })
       .catch(err => {
         // setTransactionModalOpen(false)

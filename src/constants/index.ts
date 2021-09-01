@@ -133,7 +133,7 @@ export const INDEX_NFT_ADDRESS: { [chainId in ChainId]: string } = {
 export const LOCKER_721_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '',
   [ChainId.ROPSTEN]: '0x8375fF3EF40df501c703DA5d617B04329c20df9a',
-  [ChainId.BSC]: ''
+  [ChainId.BSC]: '0x08A9c8E8EC6fE2633c488F9F60960aEd4DA60c47'
 }
 export const CHAIN_ETH_NAME: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: 'ETH',
