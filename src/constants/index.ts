@@ -7,12 +7,14 @@ import { OptionTypeData } from '../state/market/hooks'
 export const ROUTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
   [ChainId.ROPSTEN]: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+  [ChainId.RINKEBY]: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
   [ChainId.BSC]: '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 }
 
 export const ANTIMATTER_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '0x60d0769c4940cA58648C0AA34ecdf390a10F272e',
   [ChainId.ROPSTEN]: '0x60d0769c4940cA58648C0AA34ecdf390a10F272e',
+  [ChainId.RINKEBY]: '0x60d0769c4940cA58648C0AA34ecdf390a10F272e',
   [ChainId.BSC]: '0x60d0769c4940cA58648C0AA34ecdf390a10F272e'
 }
 
@@ -93,6 +95,23 @@ export const MATTER_OPTION: { [chainId in ChainId]: OptionTypeData | null } = {
     currencySymbol: 'DAI',
     currencyDecimals: '18'
   },
+  [ChainId.RINKEBY]: {
+    id: '0',
+    callAddress: '0xF87aC9826e7CBceAE26E5Febaedc1e70e864F9A6',
+    putAddress: '0xD8760634Ee64139637010Ca9efb9810BF3Fc90AD',
+    callBalance: '',
+    putBalance: '',
+    callTotal: '',
+    putTotal: '',
+    underlying: '0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F',
+    currency: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+    priceFloor: '1000000',
+    priceCap: '100000000',
+    underlyingSymbol: 'MATTER',
+    underlyingDecimals: '18',
+    currencySymbol: 'DAI',
+    currencyDecimals: '18'
+  },
   [ChainId.BSC]: {
     id: '0',
     callAddress: '0xF87aC9826e7CBceAE26E5Febaedc1e70e864F9A6',
@@ -128,16 +147,19 @@ export const GOVERNANCE_ADDRESS = '0xDf7d362D1E3e5Db29C0B0A1ae75064523C2B2D9f'
 export const INDEX_NFT_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '0xD12D12AaCad77D54421A2c2AD723e259Bf390488',
   [ChainId.ROPSTEN]: '0x53E416C1Bd19bAA9EE334061d900f58A12BB64e4',
+  [ChainId.RINKEBY]: '',
   [ChainId.BSC]: '0x6d31E526208c423C29e021282b3F0fE13EF9d064'
 }
 export const LOCKER_721_ADDRESS: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: '',
   [ChainId.ROPSTEN]: '0x8375fF3EF40df501c703DA5d617B04329c20df9a',
+  [ChainId.RINKEBY]: '0x49db762E1bF8240218E03Ba989499bE1aCD20784',
   [ChainId.BSC]: '0x08A9c8E8EC6fE2633c488F9F60960aEd4DA60c47'
 }
 export const CHAIN_ETH_NAME: { [chainId in ChainId]: string } = {
   [ChainId.MAINNET]: 'ETH',
   [ChainId.ROPSTEN]: 'ETH',
+  [ChainId.RINKEBY]: 'ETH',
   [ChainId.BSC]: 'BNB'
 }
 export const MATTER_ADDRESS = '0x9b99cca871be05119b2012fd4474731dd653febe'
@@ -157,6 +179,7 @@ export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 export const UNI: { [chainId in ChainId]: Token } = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'MATTER', 'Matter'),
   [ChainId.ROPSTEN]: new Token(ChainId.ROPSTEN, UNI_ADDRESS, 18, 'MATTER', 'Matter'),
+  [ChainId.RINKEBY]: new Token(ChainId.RINKEBY, UNI_ADDRESS, 18, 'MATTER', 'Matter'),
   [ChainId.BSC]: new Token(ChainId.BSC, UNI_ADDRESS, 18, 'MATTER', 'Matter')
 }
 
@@ -174,6 +197,7 @@ export const MERKLE_DISTRIBUTOR_ADDRESS: { [chainId in ChainId]?: string } = {
 const WETH_ONLY: ChainTokenList = {
   [ChainId.MAINNET]: [WETH[ChainId.MAINNET]],
   [ChainId.ROPSTEN]: [WETH[ChainId.ROPSTEN]],
+  [ChainId.RINKEBY]: [WETH[ChainId.RINKEBY]],
   [ChainId.BSC]: [WETH[ChainId.BSC]]
 }
 
