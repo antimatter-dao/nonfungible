@@ -317,14 +317,14 @@ export function Locker721ClaimComfirmModel({
       if (approvalState === ApprovalState.PENDING) {
         return (
           <ButtonBlack key={index} disabled>
-            Allow Amitmatter to use your ${assetsCurrency.currencyToken?.symbol} <Dots />
+            Allow Amitmatter to use your {assetsCurrency.currencyToken?.symbol} <Dots />
           </ButtonBlack>
         )
       }
       if (approvalState !== ApprovalState.APPROVED) {
         return (
           <ButtonBlack key={index} onClick={approve}>
-            Allow Amitmatter to use your ${assetsCurrency.currencyToken?.symbol}
+            Allow Amitmatter to use your {assetsCurrency.currencyToken?.symbol}
           </ButtonBlack>
         )
       }
@@ -333,8 +333,8 @@ export function Locker721ClaimComfirmModel({
     })
   }, [approvalStates, approveCallbacks, assetsCurrencys])
 
-  const btnAmountCheck: { text: string; disabled: boolean } = useMemo(() => {
-    const ret = { text: `Can't claim`, disabled: true }
+  const btnAmountCheck: { text: string; disabled: boolean; isApprove: boolean } = useMemo(() => {
+    const ret = { text: `Can't claim`, disabled: true, isApprove: false }
     if (!assetsCurrencys[0]) return ret
     const isClaimAmount = assetsCurrencys
       .map(item => {
@@ -344,11 +344,14 @@ export function Locker721ClaimComfirmModel({
     if (!isClaimAmount) return ret
 
     const _btnGroupsIsPass = btnGroups.map(item => item === null).reduce((pre, cur) => pre && cur)
-    if (!_btnGroupsIsPass) return ret
+    if (!_btnGroupsIsPass) {
+      return { text: `Please approve`, disabled: true, isApprove: true }
+    }
 
     return {
       text: 'Claim',
-      disabled: false
+      disabled: false,
+      isApprove: false
     }
   }, [assetsCurrencys, btnGroups])
 
@@ -374,10 +377,13 @@ export function Locker721ClaimComfirmModel({
               </RowBetween>
             ))}
           </InfoWrapper>
-          {btnGroups.map(item => item)}
-          <ButtonBlack disabled={btnAmountCheck.disabled} onClick={onConfirm} height="60px">
-            {btnAmountCheck.text}
-          </ButtonBlack>
+          {btnAmountCheck.isApprove ? (
+            btnGroups.map(item => item)
+          ) : (
+            <ButtonBlack disabled={btnAmountCheck.disabled} onClick={onConfirm} height="60px">
+              {btnAmountCheck.text}
+            </ButtonBlack>
+          )}
         </AutoColumn>
       </Wrapper>
     </Modal>

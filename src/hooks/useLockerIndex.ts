@@ -4,7 +4,8 @@ import { getLockerIndexEventRecord } from '../utils/option/httpFetch'
 
 export enum LockerIndexEventType {
   Created = 1,
-  Transfer = 2
+  Transfer = 2,
+  Claim = 3
 }
 export enum StatusType {
   Normal = 0,

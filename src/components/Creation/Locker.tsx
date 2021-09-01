@@ -112,14 +112,14 @@ function LockerConfirm({
       if (approvalState === ApprovalState.PENDING) {
         return (
           <ButtonBlack key={index} disabled>
-            Allow Amitmatter to use your ${currencyBalances.currency.symbol} <Dots />
+            Allow Amitmatter to use your {currencyBalances.currency.symbol} <Dots />
           </ButtonBlack>
         )
       }
       if (approvalState !== ApprovalState.APPROVED) {
         return (
           <ButtonBlack key={index} onClick={approve}>
-            Allow Amitmatter to use your ${currencyBalances.currency.symbol}
+            Allow Amitmatter to use your {currencyBalances.currency.symbol}
           </ButtonBlack>
         )
       }

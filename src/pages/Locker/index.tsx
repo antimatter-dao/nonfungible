@@ -7,6 +7,7 @@ import { RowBetween } from 'components/Row'
 import { ButtonOutlinedBlack, ButtonPrimary } from 'components/Button'
 import Table, { OwnerCell } from 'components/Table'
 import { ReactComponent as Created } from 'assets/svg/created.svg'
+import { ReactComponent as Claim } from 'assets/svg/claim.svg'
 import { ReactComponent as Transfer } from 'assets/svg/transfer.svg'
 // import { ReactComponent as Unlock } from 'assets/svg/unlock.svg'
 import { Link, useHistory } from 'react-router-dom'
@@ -65,36 +66,43 @@ export default function Locker() {
   } = useLockerIndexData()
 
   const tableData = useMemo(() => {
-    return data.list.map(item => {
-      return [
-        item.eventType === LockerIndexEventType.Created ? (
-          <>
-            <Created />
-            Created
-          </>
-        ) : (
-          <>
-            <Transfer />
-            Transfer
-          </>
-        ),
-        item.tokenType,
-        new Date(Number(item.timestamp) * 1000).toLocaleString('en-US'),
-        <OwnerCell name={item.username} key="1" />,
-        item.status === 0 ? (
-          <OpenButton
-            key="2"
-            onClick={() => {
-              history.push(`/locker/${item.indexId}`)
-            }}
-          >
-            Open
-          </OpenButton>
-        ) : (
-          <></>
-        )
-      ]
-    })
+    return data.list
+      .filter(i => i.eventType !== LockerIndexEventType.Claim)
+      .map(item => {
+        return [
+          item.eventType === LockerIndexEventType.Created ? (
+            <>
+              <Created />
+              Created
+            </>
+          ) : item.eventType === LockerIndexEventType.Transfer ? (
+            <>
+              <Transfer />
+              Transfer
+            </>
+          ) : (
+            <>
+              <Claim />
+              Claim
+            </>
+          ),
+          item.tokenType,
+          new Date(Number(item.timestamp) * 1000).toLocaleString('en-US'),
+          <OwnerCell name={item.username} key="1" />,
+          item.status === 0 ? (
+            <OpenButton
+              key="2"
+              onClick={() => {
+                history.push(`/locker/${item.indexId}`)
+              }}
+            >
+              Open
+            </OpenButton>
+          ) : (
+            <></>
+          )
+        ]
+      })
   }, [data.list, history])
 
   return (
