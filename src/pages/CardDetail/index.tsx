@@ -117,7 +117,7 @@ const StyledNFTCard = styled.div`
   transform-origin: 0 0;
   transform: scale(1.29);
   width: 361.2px;
-  height: 490.2px;
+  /* height: 490.2px; */
   flex-shrink: 0;
   ${({ theme }) => theme.mediaWidth.upToSmall`
   transform: unset;
@@ -226,7 +226,7 @@ const StyledArrowLeftCircle = styled(ArrowLeftCircle)`
 `
 
 const ContentWrapper = styled(RowBetween)`
-  margin-top: 70px;
+  margin-top: 30px;
   align-items: flex-start;
   grid-gap: 8px;
   ${({ theme }) => theme.mediaWidth.upToMedium`

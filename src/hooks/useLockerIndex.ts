@@ -6,6 +6,10 @@ export enum LockerIndexEventType {
   Created = 1,
   Transfer = 2
 }
+export enum StatusType {
+  Normal = 0,
+  Destroy = 1
+}
 
 export interface LockerIndexData {
   eventType: LockerIndexEventType
@@ -13,6 +17,7 @@ export interface LockerIndexData {
   timestamp: string
   username: string
   indexId: number
+  status: StatusType
 }
 
 export function useLockerIndexData(): {
@@ -49,7 +54,8 @@ export function useLockerIndexData(): {
               tokenType: item.tokenType === 1 ? LockerType.ERC721 : LockerType.ERC1155,
               timestamp: item.timestamp,
               username: item.username,
-              indexId: item.indexId
+              indexId: item.indexId,
+              status: item.status
             }
           })
           setLockerListData(_list)

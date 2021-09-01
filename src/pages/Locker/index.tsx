@@ -81,14 +81,18 @@ export default function Locker() {
         item.tokenType,
         new Date(Number(item.timestamp) * 1000).toLocaleString('en-US'),
         <OwnerCell name={item.username} key="1" />,
-        <OpenButton
-          key="2"
-          onClick={() => {
-            history.push(`/locker/${item.indexId}`)
-          }}
-        >
-          Open
-        </OpenButton>
+        item.status === 0 ? (
+          <OpenButton
+            key="2"
+            onClick={() => {
+              history.push(`/locker/${item.indexId}`)
+            }}
+          >
+            Open
+          </OpenButton>
+        ) : (
+          <></>
+        )
       ]
     })
   }, [data.list, history])
