@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import styled from 'styled-components'
 import { AutoColumn } from 'components/Column'
 import { CardColor } from 'components/NFTCard'
@@ -10,8 +10,8 @@ import { ReactComponent as Created } from 'assets/svg/created.svg'
 import { ReactComponent as Claim } from 'assets/svg/claim.svg'
 import { ReactComponent as Transfer } from 'assets/svg/transfer.svg'
 // import { ReactComponent as Unlock } from 'assets/svg/unlock.svg'
-import { Link, useHistory } from 'react-router-dom'
-import { useCurrentUserInfo } from 'state/userInfo/hooks'
+import { useHistory } from 'react-router-dom'
+import { useLogin, useCurrentUserInfo } from 'state/userInfo/hooks'
 import { LockerIndexEventType, useLockerIndexData } from '../../hooks/useLockerIndex'
 import Pagination from 'components/Pagination'
 
@@ -19,6 +19,12 @@ const Wrapper = styled.div`
   width: 100%;
   margin-bottom: auto;
   padding: 80px 124px;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+  padding: 40px;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  padding: 24px;
+  `}
 `
 
 const CardWrapper = styled.div`
@@ -26,6 +32,10 @@ const CardWrapper = styled.div`
   grid-gap: 26px;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  grid-template-columns: 100%;
+  grid-template-rows: 1fr,1fr,1fr;
+  `}
 `
 
 const StyledCard = styled.div<{ color: CardColor }>`
@@ -50,20 +60,34 @@ const StyledCard = styled.div<{ color: CardColor }>`
     opacity: 0.9;
     transform: translateY(-70%);
   }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100%;
+  `}
 `
 
 const OpenButton = styled(ButtonOutlinedBlack)`
   width: 100px;
   padding: 12px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100%;
+  `}
 `
 
 export default function Locker() {
   const userInfo = useCurrentUserInfo()
+  const { login } = useLogin()
   const history = useHistory()
   const {
     data,
     page: { currentPage, totalPages, setCurrentPage }
   } = useLockerIndexData()
+
+  const handleLockerClick = useCallback(() => {
+    if (userInfo && userInfo.token) {
+      history.push('/profile/my_locker')
+      return
+    } else login()
+  }, [userInfo, login, history])
 
   const tableData = useMemo(() => {
     return data.list
@@ -72,17 +96,17 @@ export default function Locker() {
         return [
           item.eventType === LockerIndexEventType.Created ? (
             <>
-              <Created />
+              <Created style={{ marginRight: 10 }} />
               Created
             </>
           ) : item.eventType === LockerIndexEventType.Transfer ? (
             <>
-              <Transfer />
+              <Transfer style={{ marginRight: 10 }} />
               Transfer
             </>
           ) : (
             <>
-              <Claim />
+              <Claim style={{ marginRight: 10 }} />
               Claim
             </>
           ),
@@ -135,9 +159,9 @@ export default function Locker() {
               Activity
             </TYPE.body>
             {userInfo && userInfo.token && (
-              <Link to="/profile/my_locker" style={{ textDecoration: 'none' }}>
-                <ButtonPrimary width="160px">My Locker</ButtonPrimary>
-              </Link>
+              <ButtonPrimary width="160px" onClick={handleLockerClick}>
+                My Locker
+              </ButtonPrimary>
             )}
           </RowBetween>
           <Table header={['Event', 'Token type', 'Date', 'Owner', '']} rows={tableData} />
