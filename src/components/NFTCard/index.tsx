@@ -67,7 +67,6 @@ const CardWrapper = styled.div<{ color: CardColor; padding?: string | number }>`
     background: ${({ theme, color }) => theme[color]};
     filter: blur(100px);
     border-radius: 160px;
-    transition: 0.5s;
     z-index: 1;
   }
   :after {
@@ -80,7 +79,6 @@ const CardWrapper = styled.div<{ color: CardColor; padding?: string | number }>`
     background: ${({ theme, color }) => theme[color]};
     filter: blur(100px);
     border-radius: 120px;
-    transition: 0.5s;
     z-index: 1;
   }
   :hover {
