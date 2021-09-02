@@ -27,10 +27,10 @@ export const Timer = ({ timer, onZero }: { timer: number; onZero: () => void }) 
 
   useEffect(() => {
     if (!time) {
+      console.log(999)
       onZero()
     }
   }, [time, onZero])
-  console.log(toDeltaTimer(time))
 
   return <>{toDeltaTimer(time)}</>
 }

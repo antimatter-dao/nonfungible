@@ -2,9 +2,11 @@ import React, { useState, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { saturate, darken, opacify, adjustHue, transparentize } from 'polished'
 import { CardColor } from '.'
-import { Timer } from 'components/Timer/intex'
+import { Timer } from 'components/Timer'
 import useTheme from 'hooks/useTheme'
 import { TYPE } from 'theme/'
+
+type WhenTimerEndInSeconds = number
 
 export const StyledCapsule = styled.div<{ color: string; padding?: string }>`
   padding: ${({ padding }) => padding ?? '6px 10px'}
@@ -30,7 +32,13 @@ export function Capsule({ color, children }: { color: CardColor; children: React
   return <StyledCapsule color={theme[color]}>{children}</StyledCapsule>
 }
 
-export function TimerCapsule({ color = CardColor.GREEN, timeLeft }: { color?: CardColor; timeLeft: number }) {
+export function TimerCapsule({
+  color = CardColor.GREEN,
+  timeLeft
+}: {
+  color?: CardColor
+  timeLeft: WhenTimerEndInSeconds
+}) {
   const [isClosed, setIsClosed] = useState(!timeLeft)
 
   const theme = useTheme()

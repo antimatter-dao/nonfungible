@@ -25,6 +25,7 @@ import LoaderWhite from 'assets/svg/antimatter_background_logo.svg'
 import ClaimModal from 'components/claim/MatterClaimModal'
 import { useCreatorFee } from 'hooks/useMatterClaim'
 import { CurrencyAmount, JSBI } from '@uniswap/sdk'
+import { SwitchTabWrapper, Tab } from 'components/SwitchTab'
 
 export enum UserInfoTabs {
   POSITION = 'my_position',
@@ -125,40 +126,6 @@ const Synopsis = styled.p`
   ${({ theme }) => theme.mediaWidth.upToSmall`
   text-align: center;
   max-width: unset;
-  `}
-`
-
-const SwitchTabWrapper = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.text2};
-  white-space: nowrap;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    border-color:${theme.text5};
-    overflow-x: auto;
-    overflow-y: hidden;
-    `};
-`
-
-const Tab = styled.button<{ selected: boolean }>`
-  border: none;
-  background: none;
-  padding: 14px 0;
-  margin-right: 40px;
-  font-size: 16px;
-  font-weight: 700;
-  color: ${({ selected, theme }) => (selected ? '#000000' : theme.text2)};
-  border-bottom: 3px solid ${({ selected }) => (selected ? '#000000' : 'transparent')};
-  margin-bottom: -1px;
-  transition: 0.3s;
-  cursor: pointer;
-  &:hover {
-    color: #000000;
-  }
-  ${({ theme, selected }) => theme.mediaWidth.upToSmall`
-  border-color: ${selected ? '#ffffff' : 'transparent'};
-  color: ${selected ? '#ffffff' : theme.text5};
-  &:hover {
-    color: #ffffff;
-  }
   `}
 `
 
