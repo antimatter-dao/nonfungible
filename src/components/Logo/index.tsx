@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { HelpCircle } from 'react-feather'
+// import { HelpCircle } from 'react-feather'
 import { ImageProps } from 'rebass'
+import DefaultImg from '../../assets/images/smile_face.png'
 
 const BAD_SRCS: { [tokenAddress: string]: true } = {}
 
@@ -30,5 +31,5 @@ export default function Logo({ srcs, alt, ...rest }: LogoProps) {
     )
   }
 
-  return <HelpCircle {...rest} />
+  return <img src={DefaultImg} {...rest} alt={alt} />
 }

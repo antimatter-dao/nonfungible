@@ -15,8 +15,8 @@ const Wrapper = styled(AutoColumn)`
   padding: 24px 28px 0;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  max-height: 40vh;
-  overflow-y: auto;
+  /* max-height: 40vh; */
+  /* overflow-y: auto; */
   grid-row-gap: 20px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
   background: #ffffff
@@ -29,6 +29,15 @@ const RightText = styled(TYPE.small)`
   text-align: right;
   align-self: flex-start;
   word-break: break-all;
+`
+const StyledHeader = styled.div`
+  position: sticky;
+  background: #fff;
+  top: 0;
+  z-index: 2;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  background: #000
+  `}
 `
 
 export function SpotConfirmation({
@@ -45,22 +54,24 @@ export function SpotConfirmation({
   const userInfo = useCurrentUserInfo()
   return (
     <AutoColumn gap="40px">
-      <HideSmall>
-        <TYPE.largeHeader fontSize={30} color="black">
-          Confirmation
-        </TYPE.largeHeader>
-        <TYPE.small fontSize={12} color="text4">
-          Please review the following information
-        </TYPE.small>
-      </HideSmall>
-      <ShowSmall>
-        <TYPE.largeHeader fontSize={30} color="text1">
-          Confirmation
-        </TYPE.largeHeader>
-        <TYPE.small fontSize={12} color="text1" style={{ marginTop: 12 }}>
-          Please review the following information
-        </TYPE.small>
-      </ShowSmall>
+      <StyledHeader>
+        <HideSmall>
+          <TYPE.largeHeader fontSize={30} color="black">
+            Confirmation
+          </TYPE.largeHeader>
+          <TYPE.small fontSize={12} color="text4">
+            Please review the following information
+          </TYPE.small>
+        </HideSmall>
+        <ShowSmall>
+          <TYPE.largeHeader fontSize={30} color="text1">
+            Confirmation
+          </TYPE.largeHeader>
+          <TYPE.small fontSize={12} color="text1" style={{ marginTop: 12 }}>
+            Please review the following information
+          </TYPE.small>
+        </ShowSmall>
+      </StyledHeader>
 
       <Wrapper>
         <AutoColumn gap="12px">

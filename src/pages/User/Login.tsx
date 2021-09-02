@@ -1,4 +1,5 @@
 import { useWeb3React } from '@web3-react/core'
+import { SUPPORTED_CHAINIDS } from 'connectors'
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import store from 'state'
@@ -22,7 +23,7 @@ export default function Login() {
   useEffect(() => {
     const currentAccount = store.getState().currentAccount
     if (
-      (chainId === 1 || chainId === 56 || chainId === 3) &&
+      SUPPORTED_CHAINIDS.includes(Number(chainId ?? 0)) &&
       currentAccount.chainId &&
       currentAccount.chainId !== chainId
     ) {

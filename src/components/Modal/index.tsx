@@ -50,6 +50,7 @@ export const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  height: 100%;
   ${({ theme }) => theme.mediaWidth.upToSmall`          
     overflow-y: auto;
     margin-bottom: auto;
@@ -104,6 +105,7 @@ export const StyledDialogContent = styled(
       `}
     display: flex;
     border-radius: 42px;
+    margin: 0 auto;
     ${({ theme }) => theme.mediaWidth.upToMedium`
       width: 65vw;
       margin: 0;
