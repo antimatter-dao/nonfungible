@@ -22,14 +22,16 @@ const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
   1: '',
   3: 'ropsten.',
   4: 'rinkeby.',
-  56: ''
+  56: '',
+  [ChainId.FANTOM]: ''
 }
 
 const ETHERSCAN_HOST: { [chainId in ChainId]: string } = {
   1: 'etherscan.io',
   3: 'etherscan.io',
   4: 'etherscan.io',
-  56: 'bscscan.com'
+  56: 'bscscan.com',
+  [ChainId.FANTOM]: 'ftmscan.com'
 }
 
 export function getEtherscanLink(

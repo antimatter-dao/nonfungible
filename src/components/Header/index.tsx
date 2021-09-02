@@ -25,6 +25,7 @@ import Copy from 'components/AccountDetails/Copy'
 import { UserInfoTabRoute, UserInfoTabs } from 'pages/User'
 import { ChevronDown } from 'react-feather'
 import { ReactComponent as BSCInvert } from '../../assets/svg/binance.svg'
+import { ReactComponent as FTMInvert } from '../../assets/svg/fantom.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { useWeb3React } from '@web3-react/core'
 import { Modal } from '@material-ui/core'
@@ -59,10 +60,16 @@ const NetworkInfo: {
     title: 'ETH'
   },
   56: {
-    color: '#F0B90B',
+    color: '#f8d76b',
     icon: <BSCInvert />,
     link: 'https://app.antimatter.finance',
     title: 'BSC'
+  },
+  250: {
+    color: '#29516e',
+    icon: <FTMInvert />,
+    link: 'https://app.antimatter.finance',
+    title: 'FTM'
   }
 }
 
@@ -74,12 +81,12 @@ const HeaderFrame = styled.div`
   flex-direction: row;
   width: 100%;
   top: 0;
-  height: ${({ theme }) => theme.headerHeight}
+  height: ${({ theme }) => theme.headerHeight};
   position: relative;
   border-bottom: 1px solid ${({ theme }) => theme.text5};
   padding: 21px 0 0;
   z-index: 6;
-  background-color:${({ theme }) => theme.bg1}
+  background-color: ${({ theme }) => theme.bg1};
   ${({ theme }) => theme.mediaWidth.upToLarge`
     grid-template-columns: 1fr;
     padding: 0 1rem;
@@ -561,7 +568,9 @@ export default function Header() {
             <HeaderElement show={!!account}>
               {chainId && NetworkInfo[chainId] && (
                 <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
-                  {NetworkInfo[chainId as number]?.icon} {NetworkInfo[chainId].title}
+                  {NetworkInfo[chainId as number]?.icon}
+                  <span style={{ width: 5 }}></span>
+                  {NetworkInfo[chainId].title}
                   <ChevronDown size={18} style={{ marginLeft: '5px' }} />
                   <div className="dropdown_wrapper">
                     <Dropdown>
@@ -601,6 +610,29 @@ export default function Header() {
                                     }
                                   ]
                                 })
+                              } else if (
+                                info.title === 'FTM' &&
+                                chainId !== 250 &&
+                                library &&
+                                library.provider &&
+                                library.provider.request
+                              ) {
+                                library.provider.request({
+                                  method: 'wallet_addEthereumChain',
+                                  params: [
+                                    {
+                                      chainId: `0x${Number(250).toString(16)}`,
+                                      chainName: 'Fantom Opera',
+                                      nativeCurrency: {
+                                        name: 'FTM',
+                                        symbol: 'FTM',
+                                        decimals: 18
+                                      },
+                                      rpcUrls: ['https://rpc.ftm.tools/'],
+                                      blockExplorerUrls: ['https://ftmscan.com/']
+                                    }
+                                  ]
+                                })
                               } else if (chainId !== 1 && info.title === 'ETH') {
                                 setNetNotice(true)
                               }
@@ -631,7 +663,7 @@ export default function Header() {
             )}
 
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-              {chainId !== ChainId.BSC && !!account && aggregateBalance && (
+              {chainId === ChainId.MAINNET && !!account && aggregateBalance && (
                 <UNIWrapper>
                   <UNIAmount style={{ pointerEvents: 'none' }}>
                     {account && (
@@ -654,7 +686,7 @@ export default function Header() {
                   </UNIAmount>
                 </UNIWrapper>
               )}
-              {chainId === ChainId.BSC && !!account && ETHBalance && (
+              {chainId !== ChainId.MAINNET && !!account && ETHBalance && (
                 <UNIWrapper>
                   <UNIAmount style={{ pointerEvents: 'none' }}>
                     {account && (
@@ -673,7 +705,7 @@ export default function Header() {
                         />
                       </TYPE.gray>
                     )}
-                    BNB
+                    {NetworkInfo[chainId ?? 1].title}
                   </UNIAmount>
                 </UNIWrapper>
               )}
