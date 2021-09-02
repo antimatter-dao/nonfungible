@@ -46,7 +46,7 @@ import { ReactComponent as BNBIcon } from '../../assets/svg/bnb_icon.svg'
 import { ReactComponent as ETHIcon } from '../../assets/svg/eth_logo.svg'
 import { getEtherscanLink } from 'utils'
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   /* min-height: calc(100vh - ${({ theme }) => theme.headerHeight}); */
   width: 1192px;
   margin: auto;
@@ -89,7 +89,7 @@ const StyledCurrencyShow = styled.div`
   align-items: center;
 `
 
-const InfoPanel = styled.div`
+export const InfoPanel = styled.div`
   background: #ffffff;
   border-radius: 40px;
   width: 69%;
@@ -113,11 +113,11 @@ const InfoPanel = styled.div`
   border-radius: 30px;
 `}
 `
-const StyledNFTCard = styled.div`
+export const StyledNFTCard = styled.div`
   transform-origin: 0 0;
   transform: scale(1.29);
   width: 361.2px;
-  /* height: 490.2px; */
+  height: 490.2px;
   flex-shrink: 0;
   ${({ theme }) => theme.mediaWidth.upToSmall`
   transform: unset;
@@ -126,7 +126,7 @@ const StyledNFTCard = styled.div`
   `}
 `
 
-const StyledAvatar = styled.div<{ wh?: string }>`
+export const StyledAvatar = styled.div<{ wh?: string }>`
   width: ${({ wh }) => (wh ? wh : '36px')};
   height: ${({ wh }) => (wh ? wh : '36px')};
   flex-shrink: 0;
@@ -172,7 +172,7 @@ const MarketPrice = styled(RowBetween)`
   padding: 10px 20px;
 `
 
-const TokenWrapper = styled.div`
+export const TokenWrapper = styled.div`
   width: 320px;
   padding: 22px 0;
   display: flex;
@@ -182,7 +182,7 @@ const TokenWrapper = styled.div`
     width; 100%;
   `}
 `
-const AssetsWrapper = styled.div`
+export const AssetsWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-column-gap: 40px;

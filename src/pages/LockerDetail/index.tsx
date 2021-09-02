@@ -23,12 +23,18 @@ import { useActiveWeb3React } from 'hooks'
 import { LOCKER_721_ADDRESS } from '../../constants'
 import { getEtherscanLink } from 'utils'
 import { Locker721ClaimComfirmModel, LockerShowTimeScheduleModel } from 'components/NFTSpotDetail/ComfirmModel'
+import { Wrapper, InfoPanel, StyledNFTCard, StyledAvatar, TokenWrapper, AssetsWrapper } from 'pages/CardDetail'
 
-const Wrapper = styled.div`
-  /* min-height: calc(100vh - ${({ theme }) => theme.headerHeight}); */
-  width: 1192px;
-  margin: auto;
-  color: ${({ theme }) => theme.black};
+export const ContentWrapper = styled(RowBetween)`
+  margin-top: 30px;
+  align-items: flex-start;
+  grid-gap: 8px;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0;
+  min-width: 312px;
+  `}
 `
 
 const StyledNotExist = styled.div`
@@ -36,45 +42,6 @@ const StyledNotExist = styled.div`
   color: #fff;
 `
 
-const InfoPanel = styled.div`
-  background: #ffffff;
-  border-radius: 40px;
-  width: 69%;
-  padding: 26px 52px;
-  min-height: 490px;
-  max-height: 490px;
-`
-const StyledNFTCard = styled.div`
-  transform-origin: 0 0;
-  transform: scale(1.29);
-`
-
-const StyledAvatar = styled.div<{ wh?: string }>`
-  width: ${({ wh }) => (wh ? wh : '36px')};
-  height: ${({ wh }) => (wh ? wh : '36px')};
-  flex-shrink: 0;
-  margin-right: 12px;
-  > * {
-    border-radius: 50%;
-    width: 100%;
-    height: 100%;
-  }
-`
-
-const TokenWrapper = styled.div`
-  width: 320px;
-  padding: 22px 0;
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-`
-const AssetsWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-column-gap: 40px;
-  grid-template-rows: repeat(4, 1fr);
-  height: 388px;
-`
 export const StyledLink = styled.a`
   text-decoration: none;
   color: inherit;
@@ -196,7 +163,7 @@ export default function LockerDetail({
         <div style={{ width: 110 }} />
       </RowBetween>
       <Wrapper>
-        <RowBetween style={{ marginTop: 10 }} align="flex-start">
+        <ContentWrapper>
           <StyledNFTCard>
             <NFTCard createName="Locker ID" {...currentCard} />
           </StyledNFTCard>
@@ -247,7 +214,7 @@ export default function LockerDetail({
               </AssetsWrapper>
             )}
           </InfoPanel>
-        </RowBetween>
+        </ContentWrapper>
       </Wrapper>
 
       <TransactionConfirmationModal

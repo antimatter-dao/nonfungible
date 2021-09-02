@@ -31,6 +31,14 @@ const ToggleMenuButton = styled(Base)`
 //   overflow-y: auto;
 // `
 
+const Overlay = styled(StyledDialogOverlay)`
+  &[data-reach-dialog-overlay] {
+    z-index: 11;
+    top: 0;
+    height: 100vh;
+  }
+`
+
 const TabMobile = styled(NavLink)<{ isSubTab?: boolean }>`
   font-size: 28px;
   font-weight: 500;
@@ -134,7 +142,7 @@ export default function ToggleMenu({ onCreate }: { onCreate: () => void }) {
         <Menu style={{ height: 30, width: 24 }} />
       </ToggleMenuButton>
       {isOpen && (
-        <StyledDialogOverlay>
+        <Overlay>
           <CloseButton onClick={handleClose}>
             <X size={24} />
           </CloseButton>
@@ -165,7 +173,7 @@ export default function ToggleMenu({ onCreate }: { onCreate: () => void }) {
             )}
             <CreateButton onClick={handleCreate}>+ Create</CreateButton>
           </AutoColumn>
-        </StyledDialogOverlay>
+        </Overlay>
       )}
     </>
   )

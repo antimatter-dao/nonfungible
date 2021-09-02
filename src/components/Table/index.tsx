@@ -97,6 +97,19 @@ const Card = styled.div`
   }
 `
 
+const CardRow = styled(RowBetween)`
+  grid-template-columns: auto 100%;
+  > div:first-child {
+    white-space: nowrap;
+  }
+  > div:last-child {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+`
+
 export default function Table({
   header,
   rows,
@@ -116,10 +129,10 @@ export default function Table({
             <Card key={index}>
               <AutoColumn gap="16px">
                 {header.map((headerString, index) => (
-                  <RowBetween>
+                  <CardRow>
                     <TYPE.darkGray>{headerString}</TYPE.darkGray>
                     <TYPE.body color="#000000"> {data[index] ?? null}</TYPE.body>
-                  </RowBetween>
+                  </CardRow>
                 ))}
               </AutoColumn>
             </Card>
