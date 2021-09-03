@@ -1,26 +1,52 @@
-import React from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { TYPE } from 'theme'
 import { ReactComponent as BoxBottom } from 'assets/svg/box_bottom.svg'
 import BoxSlabUrl from 'assets/svg/box_slab.svg'
-import AppBody from 'pages/AppBody'
-import { TimerCapsule } from 'components/NFTCard/Capsule'
-import { HideMedium } from 'theme'
-import { RowBetween } from 'components/Row'
+import { HideMedium, AnimatedImg, AnimatedWrapper } from 'theme'
 import { AutoColumn } from 'components/Column'
-import { ButtonBlack } from 'components/Button'
-import { OutlineCard } from 'components/Card'
 import { SwitchTabWrapper, Tab } from 'components/SwitchTab'
 import gradient from 'assets/svg/overlay_gradient.svg'
+import DefaultBox from './DefaultBox'
+import { LoadingView } from 'components/ModalViews'
+import { RowFixed } from 'components/Row'
+import Loader from 'assets/svg/antimatter_background_logo.svg'
 
 const Wrapper = styled.div`
   width: 100%;
   margin-top: 60px;
   min-height: ${({ theme }) => `calc(100vh - ${theme.headerHeight})`};
-  background #000000 url(${gradient}) 0 50px no-repeat;
+  background #000000 url(${gradient}) -50px 50px no-repeat;
   display: flex;
   align-items: center;
-  flex-direction: column; 
+  flex-direction: column;
+  padding: 40px
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+  margin-top: 0;
+  background-position: -100px bottom;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  padding: 24px
+  `}
+`
+
+const AppBody = styled.div`
+  max-width: 520px;
+  width: 100%;
+  margin-bottom: 100px;
+  padding: 40px;
+  background: #ffffff;
+  border-radius: 30px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  margin-bottom: 52px;
+  padding: 24px 20px;
+  .title{
+    font-size: 24px;
+  };
+  .phase{
+    font-size: 16px
+  }
+  `}
 `
 
 const FormWrapper = styled.div`
@@ -30,6 +56,11 @@ const FormWrapper = styled.div`
   justify-content: space-between;
   margin-top: 80px;
   align-items: center
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  justify-content: center;
+  margin-bottom: auto;
+  margin-top: 24px;
+  `}
 `
 
 const bounceAnimation = keyframes`
@@ -72,15 +103,78 @@ max-width: 1240px;
 `
 
 const CardGrid = styled.div`
+  margin-top: 60px;
+  width: 100%;
   display: grid;
+  grid-gap: 28px;
+  row-gap: 32px
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  grid-template-columns: 1fr 1fr 1fr;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  grid-gap: 16px;
+  grid-template-columns: 1fr 1fr;
+  `}
 `
 
+const CardImgWrapper = styled(AutoColumn)`
+  grid-gap: 8px;
+  span:first-child {
+    color: #ffffff;
+    font-size: 20px;
+  }
+  span:last-child {
+    color: ${({ theme }) => theme.text3};
+    font-size: 14px;
+  }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  span:first-child {  font-size: 16px;}
+  span:last-child { font-size: 12px;}
+   `}
+`
+
+const CardImg = styled.img`
+  border-radius: 30px;
+  width: 100%;
+  height: auto;
+`
+
+const generateImages = (onLastLoad: () => void) => {
+  const arr = []
+  let i = 0
+  while (i <= 65) {
+    arr.push(
+      <CardImgWrapper key={i}>
+        <CardImg src={`/images/doll/${i}.png`} onLoad={i === 65 ? onLastLoad : undefined} alt={''} />
+        <RowFixed>
+          <span>#{i + 1}&nbsp;</span>
+          <span>/66</span>
+        </RowFixed>
+      </CardImgWrapper>
+    )
+    i++
+  }
+
+  return arr
+}
+
 export default function Box() {
+  const [attemptingTxn] = useState(false)
+  const [hash] = useState('')
+  const [imgLoaded, setImgLoaded] = useState(false)
+
+  const handleLoad = useCallback(() => {
+    console.log(9999)
+    setImgLoaded(true)
+  }, [])
+  const images = useMemo(() => generateImages(handleLoad), [handleLoad])
+
   return (
     <Wrapper>
-      <TYPE.largeHeader color="#ffffff" fontSize={48} style={{ width: '100%' }} textAlign="center">
+      <TYPE.monument style={{ width: '100%' }} textAlign="center">
         Art meets Finance
-      </TYPE.largeHeader>
+      </TYPE.monument>
       <FormWrapper>
         <HideMedium>
           <AnimationWrapper>
@@ -89,30 +183,17 @@ export default function Box() {
             <AnimatedSlab src={BoxSlabUrl} alt="" />
           </AnimationWrapper>
         </HideMedium>
-        <AppBody maxWidth="520px" style={{ marginBottom: 100, padding: 36 }}>
-          <AutoColumn gap="46px">
-            <div>
-              <RowBetween>
-                <TYPE.black fontWeight={700} fontSize={30}>
-                  Antimatter NFT
+        <AppBody>
+          {!attemptingTxn && !hash && <DefaultBox />}
+          {attemptingTxn && !hash && (
+            <LoadingView>
+              <AutoColumn>
+                <TYPE.black fontWeight={700} fontSize={30} className="title">
+                  Approve for spending limitAntimatter NFT
                 </TYPE.black>
-                <TYPE.black fontWeight={400} fontSize={24}>
-                  Phase #1
-                </TYPE.black>
-              </RowBetween>
-              <TimerCapsule timeLeft={1630577914} />
-            </div>
-            <div>
-              <OutlineCard color="#dddddd">
-                <RowBetween>
-                  <TYPE.black fontWeight={400}>Price per Box</TYPE.black>
-                  <TYPE.black fontWeight={400}>10 MATTER</TYPE.black>
-                </RowBetween>
-              </OutlineCard>
-              <TYPE.smallGray marginTop="8px">1 box for 1 contract address</TYPE.smallGray>
-            </div>
-            <ButtonBlack>Buy</ButtonBlack>
-          </AutoColumn>
+              </AutoColumn>
+            </LoadingView>
+          )}
         </AppBody>
       </FormWrapper>
       <CardWrapper>
@@ -120,8 +201,18 @@ export default function Box() {
           <Tab key={'live'} onClick={() => {}} selected={true} isWhite>
             Live Box
           </Tab>
-          <CardGrid></CardGrid>
         </SwitchTabWrapper>
+        {!imgLoaded && (
+          <AnimatedWrapper style={{ marginTop: 100 }}>
+            <AnimatedImg>
+              <img src={Loader} alt="loading-icon" />
+            </AnimatedImg>
+          </AnimatedWrapper>
+        )}
+        <CardGrid style={{ display: imgLoaded ? 'inherit' : 'none' }}>
+          {images}
+          <img />
+        </CardGrid>
       </CardWrapper>
     </Wrapper>
   )

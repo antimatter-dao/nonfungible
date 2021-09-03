@@ -14,7 +14,9 @@ export const StyledCapsule = styled.div<{ color: string; padding?: string }>`
   overflow: hidden;
   position: relative;
   width: max-content;
+  min-width: 118px;
   display: flex;
+  white-space: nowrap;
   :before {
     content: '';
     position: absolute;
@@ -54,7 +56,7 @@ export function TimerCapsule({
 
   return (
     <StyledCapsule color={isClosed ? transparentize(0.3, theme.red1) : theme[color]} padding="7px 14px">
-      <TYPE.small color={isClosed ? theme.red1 : saturatedColor} width="90px" textAlign="center">
+      <TYPE.small color={isClosed ? theme.red1 : saturatedColor} textAlign="center">
         {isClosed ? 'Closed' : <Timer timer={timeLeft} onZero={handleOnZero} />}
       </TYPE.small>
     </StyledCapsule>

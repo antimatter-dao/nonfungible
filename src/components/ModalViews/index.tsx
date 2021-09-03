@@ -51,7 +51,7 @@ const ConfirmedIcon = styled(ColumnCenter)`
   `}
 `
 
-export function LoadingView({ children, onDismiss }: { children: any; onDismiss: () => void }) {
+export function LoadingView({ children, onDismiss }: { children: any; onDismiss?: () => void }) {
   return (
     <ConfirmOrLoadingWrapper>
       <RowBetween>

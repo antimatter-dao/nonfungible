@@ -9,6 +9,7 @@ import CurvedText from './CurvedText'
 import { RowBetween } from 'components/Row'
 import { Capsule, TimerCapsule } from './Capsule'
 import { ellipsis } from 'polished'
+export { default as NFTArtCard } from './NFTArtCard'
 
 export enum CardColor {
   RED = 'pastelRed',
