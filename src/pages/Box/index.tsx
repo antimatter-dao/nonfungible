@@ -165,7 +165,6 @@ export default function Box() {
   const [imgLoaded, setImgLoaded] = useState(false)
 
   const handleLoad = useCallback(() => {
-    console.log(9999)
     setImgLoaded(true)
   }, [])
   const images = useMemo(() => generateImages(handleLoad), [handleLoad])

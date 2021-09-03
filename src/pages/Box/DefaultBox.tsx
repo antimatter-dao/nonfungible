@@ -4,7 +4,7 @@ import { TYPE } from 'theme'
 import { /* ButtonBlack,*/ Base } from 'components/Button'
 import { OutlineCard } from 'components/Card'
 import { RowBetween } from 'components/Row'
-import { TimerCapsule } from 'components/NFTCard/Capsule'
+// import { TimerCapsule } from 'components/NFTCard/Capsule'
 import { Dots } from 'components/swap/styleds'
 
 export default function DefaultBox() {
