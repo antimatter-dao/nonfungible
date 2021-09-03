@@ -25,7 +25,7 @@ const StyledCard = styled.div`
 export default function NFTArtCard({ imgSrc }: { imgSrc: string }) {
   return (
     <StyledCard>
-      <img src={imgSrc}></img>
+      <img src={imgSrc} alt=""></img>
       <RowBetween>
         <RowFixed>
           <TYPE.black fontSize={20} fontWeight={400}>

@@ -82,8 +82,8 @@ const AnimatedLight = styled.div`
   filter: blur(200px);
   border-radius: 50%;
   transform-origin: 50% 50%;
-  animation: ${breatheAnimation} 1.6s infinite alternate ease-out;
-  animation-delay: 0.3s;
+  animation: ${breatheAnimation} 1.6s infinite alternate cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation-delay: 0.5s;
 `
 
 const AnimatedSlab = styled.img`
@@ -209,10 +209,7 @@ export default function Box() {
             </AnimatedImg>
           </AnimatedWrapper>
         )}
-        <CardGrid style={{ display: imgLoaded ? 'inherit' : 'none' }}>
-          {images}
-          <img />
-        </CardGrid>
+        <CardGrid style={{ display: imgLoaded ? 'inherit' : 'none' }}>{images}</CardGrid>
       </CardWrapper>
     </Wrapper>
   )
