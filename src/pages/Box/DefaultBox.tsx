@@ -21,13 +21,13 @@ export default function DefaultBox() {
             Phase #1
           </TYPE.black>
         </RowBetween>
-        <TimerCapsule timeLeft={1630877914} />
+        {/* <TimerCapsule timeLeft={1630877914} /> */}
       </div>
       <div>
         <OutlineCard color="#dddddd">
           <RowBetween>
             <TYPE.black fontWeight={400}>Price per Box</TYPE.black>
-            <TYPE.black fontWeight={400}>10 MATTER</TYPE.black>
+            <TYPE.black fontWeight={400}>2000 MATTER</TYPE.black>
           </RowBetween>
         </OutlineCard>
         <TYPE.smallGray marginTop="8px">1 box for 1 contract address</TYPE.smallGray>
