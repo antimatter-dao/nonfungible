@@ -1,4 +1,4 @@
-import { AutoRow, RowBetween, RowFixed } from 'components/Row'
+import { AutoRow, RowBetween } from 'components/Row'
 import React, { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { HideSmall, ShowSmall, TYPE } from 'theme'
 import styled from 'styled-components'
@@ -49,7 +49,7 @@ export const IndexIcon = styled.div<{ current?: boolean }>`
   text-align: center;
   text-transform: capitalize;
   border-radius: 50%;
-  margin-left: 16px;
+  margin-left: 10px;
   flex-shrink: 0;
   color: ${({ current }) => (current ? 'black' : 'rgba(0, 0, 0, 0.2)')};
   ${({ theme, current }) => theme.mediaWidth.upToSmall`
@@ -131,6 +131,15 @@ const BackgroundItem = styled.div<{ selected?: boolean; color: CardColor }>`
   ${({ theme }) => theme.mediaWidth.upToSmall`
   width: 56px;
   height: 56px;`}
+`
+const CreationTitleBox = styled.div`
+  position: sticky;
+  background: #fff;
+  top: 0;
+  z-index: 2;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  background: #000;
+  `}
 `
 
 const ButtonBlack = styled(ButtonBlackDesktop)`
@@ -430,7 +439,7 @@ export default function SpotIndex({
 
       {current === 4 && (
         <SpotConfirmation dataInfo={data} tokenFluiditys={tokenFluiditys}>
-          <ButtonBlack onClick={onConfirm} disabled={spotCreateButton.disabled} height={60}>
+          <ButtonBlack onClick={onConfirm} style={{ marginTop: 0 }} disabled={spotCreateButton.disabled} height={60}>
             {spotCreateButton.text}
           </ButtonBlack>
         </SpotConfirmation>
@@ -497,15 +506,15 @@ export function CreationHeader({
   indexArr?: number[]
 }) {
   return (
-    <div>
+    <CreationTitleBox>
       <TYPE.smallGray fontSize="12px">{title}</TYPE.smallGray>
       <RowBetween>
         <TYPE.mediumHeader fontSize="30px">{children}</TYPE.mediumHeader>
-        <RowFixed>
+        <div style={{ display: 'flex' }}>
           <IndexIconGroup indexArr={indexArr} current={current} />
-        </RowFixed>
+        </div>
       </RowBetween>
-    </div>
+    </CreationTitleBox>
   )
 }
 
