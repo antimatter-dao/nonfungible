@@ -1,4 +1,5 @@
 import React, { useCallback, useState, useMemo, useEffect } from 'react'
+import { CurrencyAmount, JSBI } from '@uniswap/sdk'
 import { useHistory, useParams, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { Text } from 'rebass'
@@ -8,7 +9,7 @@ import { ButtonBlack, ButtonOutlinedBlack, ButtonOutlinedWhite } from 'component
 import { AnimatedImg, AnimatedWrapper, HideSmall, TYPE, ShowSmall } from 'theme'
 import CopyHelper from 'components/AccountDetails/Copy'
 import ProfileFallback from 'assets/images/profile-fallback.png'
-import NFTCard from 'components/NFTCard'
+import NFTCard /*, { NFTArtCard }*/ from 'components/NFTCard'
 import Table /*, { OwnerCell }*/ from 'components/Table'
 // import { ReactComponent as Buy } from 'assets/svg/buy.svg'
 // import { ReactComponent as Send } from 'assets/svg/send.svg'
@@ -24,12 +25,13 @@ import Loader from 'assets/svg/antimatter_background_logo_dark.svg'
 import LoaderWhite from 'assets/svg/antimatter_background_logo.svg'
 import ClaimModal from 'components/claim/MatterClaimModal'
 import { useCreatorFee } from 'hooks/useMatterClaim'
-import { CurrencyAmount, JSBI } from '@uniswap/sdk'
+import { SwitchTabWrapper, Tab } from 'components/SwitchTab'
 
 export enum UserInfoTabs {
   POSITION = 'my_position',
   INDEX = 'my_index',
   LOCKER = 'my_locker'
+  // NFT = 'my_nfts'
   // ACTIVITY = 'Activity'
 }
 
@@ -37,6 +39,7 @@ export const UserInfoTabRoute = {
   [UserInfoTabs.POSITION]: 'My Position',
   [UserInfoTabs.INDEX]: 'My Index',
   [UserInfoTabs.LOCKER]: 'My Locker'
+  // [UserInfoTabs.NFT]: 'My NFTs'
 }
 
 // enum Actions {
@@ -68,6 +71,25 @@ const ContentWrapper = styled.div`
     grid-template-columns: 100%;
   `}
 `
+
+// const ArtContentWrapper = styled.div`
+//   position: relative;
+//   margin: auto;
+//   display: grid;
+//   width: 100%;
+//   grid-gap: 12px;
+//   grid-template-columns: repeat(auto-fill, 280px);
+//   padding-bottom: 52px;
+//   justify-content: center;
+//   ${({ theme }) => theme.mediaWidth.upToLarge`padding: 0`}
+//   ${({ theme }) => theme.mediaWidth.upToSmall`
+//   grid-template-columns: 1fr 1fr;
+// `}
+//   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+//   padding: 10px;
+//   grid-template-columns: 100%;
+// `}
+// `
 
 const Wrapper = styled.div`
   padding: 78px 0 88px;
@@ -125,40 +147,6 @@ const Synopsis = styled.p`
   ${({ theme }) => theme.mediaWidth.upToSmall`
   text-align: center;
   max-width: unset;
-  `}
-`
-
-const SwitchTabWrapper = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.text2};
-  white-space: nowrap;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    border-color:${theme.text5};
-    overflow-x: auto;
-    overflow-y: hidden;
-    `};
-`
-
-const Tab = styled.button<{ selected: boolean }>`
-  border: none;
-  background: none;
-  padding: 14px 0;
-  margin-right: 40px;
-  font-size: 16px;
-  font-weight: 700;
-  color: ${({ selected, theme }) => (selected ? '#000000' : theme.text2)};
-  border-bottom: 3px solid ${({ selected }) => (selected ? '#000000' : 'transparent')};
-  margin-bottom: -1px;
-  transition: 0.3s;
-  cursor: pointer;
-  &:hover {
-    color: #000000;
-  }
-  ${({ theme, selected }) => theme.mediaWidth.upToSmall`
-  border-color: ${selected ? '#ffffff' : 'transparent'};
-  color: ${selected ? '#ffffff' : theme.text5};
-  &:hover {
-    color: #ffffff;
-  }
   `}
 `
 
@@ -503,6 +491,30 @@ export default function User() {
                 )}
               </>
             )}
+            {/* {currentTab === UserInfoTabs.NFT && (
+              <> */}
+            {/* {positionCardList.length === 0 ? (
+                  <span>You have no NFT at the moment</span>
+                ) : (
+                  <> */}
+            {/* <ArtContentWrapper>
+                  <NFTArtCard imgSrc="" />
+                  <NFTArtCard imgSrc="" />
+                  <NFTArtCard imgSrc="" />
+                  <NFTArtCard imgSrc="" />
+                </ArtContentWrapper> */}
+            {/* {positionPage.totalPages !== 0 && (
+                      <Pagination
+                        page={positionPage.currentPage}
+                        count={positionPage.totalPages}
+                        setPage={positionPage.setCurrentPage}
+                        isLightBg
+                      />
+                    )}
+                  </>
+                )} */}
+            {/* </>
+            )} */}
 
             {/* {currentTab === Tabs.ACTIVITY && (
                 <Table

@@ -1,9 +1,9 @@
-<svg width="619" height="800" viewBox="0 0 619 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="619" height="1000" viewBox="0 0 619 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g opacity="0.5" filter="url(#filter0_f)">
-<ellipse cx="-11" cy="423" rx="232" ry="121" transform="rotate(-90 -11 423)" fill="#66D7FA"/>
+<ellipse cx="-11" cy="423" rx="232" ry="121" transform="rotate(-90 -11 423)" fill="#66D7FA" opacity="0.5"/>
 </g>
 <g opacity="0.5" filter="url(#filter1_f)">
-<ellipse cx="93.5" cy="713" rx="232" ry="225.5" transform="rotate(-90 93.5 713)" fill="#B8A0F7"/>
+<ellipse cx="93.5" cy="713" rx="232" ry="225.5" transform="rotate(-90 93.5 713)" fill="#B8A0F7" opacity="0.5"/>
 </g>
 <defs>
 <filter id="filter0_f" x="-432" y="-109" width="842" height="1064" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">

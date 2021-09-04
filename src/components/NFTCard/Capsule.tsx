@@ -2,9 +2,11 @@ import React, { useState, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { saturate, darken, opacify, adjustHue, transparentize } from 'polished'
 import { CardColor } from '.'
-import { Timer } from 'components/Timer/intex'
+import { Timer } from 'components/Timer'
 import useTheme from 'hooks/useTheme'
 import { TYPE } from 'theme/'
+
+type WhenTimerEndInSeconds = number
 
 export const StyledCapsule = styled.div<{ color: string; padding?: string }>`
   padding: ${({ padding }) => padding ?? '6px 10px'}
@@ -12,7 +14,9 @@ export const StyledCapsule = styled.div<{ color: string; padding?: string }>`
   overflow: hidden;
   position: relative;
   width: max-content;
+  min-width: 118px;
   display: flex;
+  white-space: nowrap;
   :before {
     content: '';
     position: absolute;
@@ -30,7 +34,13 @@ export function Capsule({ color, children }: { color: CardColor; children: React
   return <StyledCapsule color={theme[color]}>{children}</StyledCapsule>
 }
 
-export function TimerCapsule({ color = CardColor.GREEN, timeLeft }: { color?: CardColor; timeLeft: number }) {
+export function TimerCapsule({
+  color = CardColor.GREEN,
+  timeLeft
+}: {
+  color?: CardColor
+  timeLeft: WhenTimerEndInSeconds
+}) {
   const [isClosed, setIsClosed] = useState(!timeLeft)
 
   const theme = useTheme()
@@ -46,7 +56,7 @@ export function TimerCapsule({ color = CardColor.GREEN, timeLeft }: { color?: Ca
 
   return (
     <StyledCapsule color={isClosed ? transparentize(0.3, theme.red1) : theme[color]} padding="7px 14px">
-      <TYPE.small color={isClosed ? theme.red1 : saturatedColor} width="90px" textAlign="center">
+      <TYPE.small color={isClosed ? theme.red1 : saturatedColor} textAlign="center">
         {isClosed ? 'Closed' : <Timer timer={timeLeft} onZero={handleOnZero} />}
       </TYPE.small>
     </StyledCapsule>
