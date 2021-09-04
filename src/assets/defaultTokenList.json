@@ -387,6 +387,38 @@
       "decimals": 18,
       "chainId": 3,
       "logoURI": "ipfs://QmXttGpZrECX5qCyXbBQiqgQNytVGeZW5Anewvh2jc4psg"
+    },
+    {
+      "name": "Wrapped Fantom",
+      "symbol": "WFTM",
+      "address": "0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83",
+      "chainId": 250,
+      "decimals": 18,
+      "logoURI": "https://assets.spookyswap.finance/tokens/FTM.png"
+    },
+    {
+      "chainId": 250,
+      "address": "0x6a07A792ab2965C72a5B8088d3a069A7aC3a993B",
+      "name": "Aave",
+      "symbol": "Aave",
+      "decimals": 18,
+      "logoURI": "https://assets.coingecko.com/coins/images/12645/large/AAVE.png"
+    },
+    {
+      "chainId": 250,
+      "address": "0x049d68029688eabf473097a2fc38ef61633a3c7a",
+      "name": "Frapped USDT",
+      "symbol": "fUSDT",
+      "decimals": 6,
+      "logoURI": "https://assets.coingecko.com/coins/images/325/large/Tether-logo.png"
+    },
+    {
+      "chainId": 250,
+      "address": "0x27f26f00e1605903645bbabc0a73e35027dccd45",
+      "name": "fBNB",
+      "symbol": "FBNB",
+      "decimals": 18,
+      "logoURI": "https://assets.coingecko.com/coins/images/825/large/binance-coin-logo.png"
     }
   ],
   "version": {
