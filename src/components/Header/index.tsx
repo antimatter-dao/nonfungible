@@ -25,7 +25,6 @@ import Copy from 'components/AccountDetails/Copy'
 import { UserInfoTabRoute, UserInfoTabs } from 'pages/User'
 import { ChevronDown } from 'react-feather'
 import { ReactComponent as BSCInvert } from '../../assets/svg/binance.svg'
-import { ReactComponent as FTMInvert } from '../../assets/svg/fantom.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { useWeb3React } from '@web3-react/core'
 import { Modal } from '@material-ui/core'
@@ -67,7 +66,7 @@ const NetworkInfo: {
   },
   250: {
     color: '#29516e',
-    icon: <FTMInvert />,
+    icon: <img src="https://assets.spookyswap.finance/tokens/FTM.png" alt="" width="24px" style={{ marginRight: 5 }} />,
     link: 'https://app.antimatter.finance',
     title: 'FTM'
   }
