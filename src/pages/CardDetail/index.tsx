@@ -719,6 +719,14 @@ function CurrencyETHShow() {
     <StyledCurrencyShow>
       {chainId === 56 ? (
         <BNBIcon width="20px" height="20px" style={{ marginRight: 8 }} />
+      ) : chainId === 250 ? (
+        <img
+          src={'https://assets.spookyswap.finance/tokens/FTM.png'}
+          width="20px"
+          height="20px"
+          alt="ftm"
+          style={{ marginRight: 8 }}
+        />
       ) : (
         <ETHIcon width="20px" height="20px" style={{ marginRight: 8 }} />
       )}
