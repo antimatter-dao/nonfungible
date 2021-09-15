@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsReporter'
@@ -103,6 +103,12 @@ export const Marginer = styled.div`
 // }
 
 export default function App() {
+  useEffect(() => {
+    const el = document.querySelector('.loader-container')
+    if (el) {
+      el.remove()
+    }
+  }, [])
   return (
     <Suspense fallback={null}>
       <Route component={GoogleAnalyticsReporter} />

@@ -704,7 +704,7 @@ export default function Header() {
                         />
                       </TYPE.gray>
                     )}
-                    {NetworkInfo[chainId ?? 1].title}
+                    {NetworkInfo[chainId ?? 1] ? NetworkInfo[chainId ?? 1].title : ''}
                   </UNIAmount>
                 </UNIWrapper>
               )}

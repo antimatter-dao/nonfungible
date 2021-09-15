@@ -7,7 +7,7 @@ import useNFTList from 'hooks/useNFTList'
 import CurrencyLogo from 'components/CurrencyLogo'
 import Pagination from 'components/Pagination'
 import { AnimatedImg, AnimatedWrapper, HideSmall, TYPE, ShowSmall } from 'theme'
-import Loader from 'assets/svg/antimatter_background_logo.svg'
+import Loader from 'assets/svg/antimatter_icon.svg'
 import { SportIndexSearchProps } from 'utils/option/httpFetch'
 import { useToken } from 'hooks/Tokens'
 
@@ -132,7 +132,7 @@ export default function SpotIndex() {
           <Search onSearch={handleSearch} />
         </HideSmall>
         {showLoading && loading ? (
-          <AnimatedWrapper style={{ marginTop: 80 }}>
+          <AnimatedWrapper style={{ marginTop: 100, opacity: 0.8 }}>
             <AnimatedImg>
               <img src={Loader} alt="loading-icon" />
             </AnimatedImg>
