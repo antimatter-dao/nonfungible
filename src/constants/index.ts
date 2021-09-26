@@ -184,6 +184,8 @@ export const CHAIN_ETH_NAME: { [chainId in ChainId]: string } = {
   [ChainId.BSC]: 'BNB',
   [ChainId.FANTOM]: 'FTM'
 }
+
+export const BLIND_BOX_ADDRESS = '0x3ff9C28cce2805Dd69eec2113a6853d4F49976A8'
 export const MATTER_ADDRESS = '0x9b99cca871be05119b2012fd4474731dd653febe'
 
 export const INDEX_NFT_BUY_FEE = '5000000000000000'

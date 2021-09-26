@@ -11,8 +11,14 @@ import DefaultBox from './DefaultBox'
 import { LoadingView } from 'components/ModalViews'
 import { RowFixed } from 'components/Row'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
+import { useBlindBox } from 'hooks/useBlindBox'
+import { useActiveWeb3React } from 'hooks/index'
+import { useApproveCallback } from 'hooks/useApproveCallback'
+import { JSBI } from '@uniswap/sdk'
+import { BLIND_BOX_ADDRESS, Matter } from 'constants/index'
+import { tryParseAmount } from 'state/swap/hooks'
 
-const Wrapper = styled.div`
+const Wrapper = styled.div` 
   width: 100%;
   margin-top: 60px;
   min-height: ${({ theme }) => `calc(100vh - ${theme.headerHeight})`};
@@ -160,14 +166,33 @@ const generateImages = (onLastLoad: () => void) => {
 }
 
 export default function Box() {
+  const { account } = useActiveWeb3React()
   const [attemptingTxn] = useState(false)
   const [hash] = useState('')
   const [imgLoaded, setImgLoaded] = useState(false)
+  const { remainingNFT, participated } = useBlindBox(account)
 
   const handleLoad = useCallback(() => {
     setImgLoaded(true)
   }, [])
   const images = useMemo(() => generateImages(handleLoad), [handleLoad])
+
+  const [approval, approveCallback] = useApproveCallback(
+    tryParseAmount(JSBI.BigInt('2000').toString(), Matter),
+    BLIND_BOX_ADDRESS
+  )
+  console.log(111111, approval)
+  const handleApprove = useCallback(() => {
+    const res = approveCallback()
+    res.then(r => {
+      console.log(101010, r)
+    })
+  }, [approveCallback])
+
+  const handleDraw = useCallback(() => {
+    console.log(121212, 'draw')
+    return
+  }, [])
 
   return (
     <Wrapper>
@@ -183,7 +208,16 @@ export default function Box() {
           </AnimationWrapper>
         </HideMedium>
         <AppBody>
-          {!attemptingTxn && !hash && <DefaultBox />}
+          {!attemptingTxn && !hash && (
+            <DefaultBox
+              remainingNFT={remainingNFT}
+              participated={participated}
+              approval={approval}
+              onApprove={handleApprove}
+              onDraw={handleDraw}
+              account={account}
+            />
+          )}
           {attemptingTxn && !hash && (
             <LoadingView>
               <AutoColumn>

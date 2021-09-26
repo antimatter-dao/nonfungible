@@ -14,6 +14,7 @@ import {
   GOVERNANCE_ADDRESS,
   INDEX_NFT_ADDRESS,
   LOCKER_721_ADDRESS,
+  BLIND_BOX_ADDRESS,
   MERKLE_DISTRIBUTOR_ADDRESS,
   UNI
 } from '../constants'
@@ -28,6 +29,7 @@ import ERC20_ABI from '../constants/abis/erc20.json'
 import { MIGRATOR_ABI, MIGRATOR_ADDRESS } from '../constants/abis/migrator'
 import UNISOCKS_ABI from '../constants/abis/unisocks.json'
 import WETH_ABI from '../constants/abis/weth.json'
+import BLIND_BOX_ABI from '../constants/abis/blindBox.json'
 import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { V1_EXCHANGE_ABI, V1_FACTORY_ABI, V1_FACTORY_ADDRESSES } from '../constants/v1'
 import { getContract } from '../utils'
@@ -174,4 +176,8 @@ export function useSocksController(): Contract | null {
     UNISOCKS_ABI,
     false
   )
+}
+
+export function useBlindBoxContract(): Contract | null {
+  return useContract(BLIND_BOX_ADDRESS, BLIND_BOX_ABI, true)
 }
