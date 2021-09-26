@@ -19,7 +19,7 @@ export const StyledDialogOverlay = styled(AnimatedDialogOverlay)<{
   zindex?: number
 }>`
   &[data-reach-dialog-overlay] {
-    z-index: ${({ zindex }) => zindex ?? 2};
+    z-index: ${({ zindex }) => zindex ?? 5};
     overflow: ${({ overflow }) => overflow ?? 'hidden'};
 
     display: flex;
