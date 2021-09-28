@@ -419,6 +419,22 @@
       "symbol": "FBNB",
       "decimals": 18,
       "logoURI": "https://assets.coingecko.com/coins/images/825/large/binance-coin-logo.png"
+    },
+    {
+      "chainId": 43114,
+      "address": "0x408D4cD0ADb7ceBd1F1A1C33A0Ba2098E1295bAB",
+      "name": "WBTC",
+      "symbol": "WBTC",
+      "decimals": 8,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/icons/master/token/btc.jpg"
+    },
+    {
+      "chainId": 43114,
+      "address": "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70",
+      "name": "DAI",
+      "symbol": "DAI",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/sushiswap/logos/main/network/ethereum/0x6B175474E89094C44Da98b954EedeAC495271d0F.jpg"
     }
   ],
   "version": {
