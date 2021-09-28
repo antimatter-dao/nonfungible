@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
+import styled from 'styled-components'
 import { ButtonPrimary } from 'components/Button'
 import { AutoColumn, ColumnCenter } from 'components/Column'
 import Modal from '.'
@@ -10,6 +11,18 @@ import { transparentize } from 'polished'
 import Card from '../Card'
 
 const STORAGE_KEY = 'isWarningModalShown'
+
+const Wapper = styled(AutoColumn)`
+  margin: 32px;
+  overflow: auto;
+  background: #ffffff;
+  border-radius: 30px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    max-height: 80vh
+    padding: 20px
+    margin: 40px 0;
+  `}
+`
 
 export default function WarningModal() {
   const theme = useTheme()
@@ -43,19 +56,14 @@ export default function WarningModal() {
         setIsOpen(true)
         return
       }
+      setIsOpen(true)
     }
   }, [])
   return (
     <>
       {isOpen && (
         <Modal maxWidth={608} isOpen={isOpen} onDismiss={() => {}}>
-          <AutoColumn
-            gap="24px"
-            style={{
-              margin: 32,
-              overflow: 'auto'
-            }}
-          >
+          <Wapper gap="24px">
             <ColumnCenter>
               <div /> <TYPE.mediumHeader style={{ textAlign: 'center' }}>Warning!</TYPE.mediumHeader>
               {/*<X onClick={handleClose} style={{ cursor: 'pointer' }} />*/}
@@ -399,10 +407,10 @@ export default function WarningModal() {
               Please read all and scroll down to bottom to confirm{' '}
             </TYPE.small>
 
-            <ButtonPrimary disabled={!confirmed} onClick={handleClose}>
+            <ButtonPrimary disabled={!confirmed} onClick={handleClose} style={{ maxHeight: 49 }}>
               Next
             </ButtonPrimary>
-          </AutoColumn>
+          </Wapper>
         </Modal>
       )}
     </>
