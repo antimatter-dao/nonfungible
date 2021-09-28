@@ -387,7 +387,7 @@ export default function WarningModal() {
                   </li>
                 </ul>
               </TYPE.body>
-              <TYPE.body>The project is in beta, use at your own risk.</TYPE.body>
+              <TYPE.body color="#000000">The project is in beta, use at your own risk.</TYPE.body>
             </Card>
 
             <AutoRow style={{ cursor: 'pointer', width: '100%' }}>
@@ -403,8 +403,8 @@ export default function WarningModal() {
               </TYPE.body>
             </AutoRow>
 
-            <TYPE.small style={{ marginTop: -20 }} color={theme.red1}>
-              Please read all and scroll down to bottom to confirm{' '}
+            <TYPE.small style={{ marginTop: -20 }} color={enableCheck ? 'transparent' : theme.red1}>
+              Please read all and scroll down to bottom to confirm
             </TYPE.small>
 
             <ButtonPrimary disabled={!confirmed} onClick={handleClose} style={{ maxHeight: 49 }}>
