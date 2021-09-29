@@ -56,7 +56,6 @@ export default function WarningModal() {
         setIsOpen(true)
         return
       }
-      setIsOpen(true)
     }
   }, [])
   return (
