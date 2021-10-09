@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
+import styled from 'styled-components'
 import { ButtonPrimary } from 'components/Button'
 import { AutoColumn, ColumnCenter } from 'components/Column'
 import Modal from '.'
@@ -11,6 +12,18 @@ import Card from '../Card'
 
 const STORAGE_KEY = 'isWarningModalShown'
 
+const Wapper = styled(AutoColumn)`
+  margin: 32px;
+  overflow: auto;
+  background: #ffffff;
+  border-radius: 30px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    max-height: 80vh
+    padding: 20px
+    margin: 40px 0;
+  `}
+`
+
 export default function WarningModal() {
   const theme = useTheme()
   const [isOpen, setIsOpen] = useState(false)
@@ -18,8 +31,6 @@ export default function WarningModal() {
   const [enableCheck, setEnableCheck] = useState(false)
 
   const confirmRef = useRef<HTMLDivElement>()
-
-  const isDev = process.env.NODE_ENV === 'development'
 
   const handleClose = useCallback(() => {
     setIsOpen(false)
@@ -49,15 +60,9 @@ export default function WarningModal() {
   }, [])
   return (
     <>
-      {!isDev && (
+      {isOpen && (
         <Modal maxWidth={608} isOpen={isOpen} onDismiss={() => {}}>
-          <AutoColumn
-            gap="24px"
-            style={{
-              margin: 32,
-              overflow: 'auto'
-            }}
-          >
+          <Wapper gap="24px">
             <ColumnCenter>
               <div /> <TYPE.mediumHeader style={{ textAlign: 'center' }}>Warning!</TYPE.mediumHeader>
               {/*<X onClick={handleClose} style={{ cursor: 'pointer' }} />*/}
@@ -74,7 +79,7 @@ export default function WarningModal() {
               overflow={'auto'}
               style={{ backgroundColor: transparentize(0.8, theme.primary1) }}
             >
-              <TYPE.body>
+              <TYPE.body color="#000000">
                 Please note.The dapp is only open to non-U.S. persons and entities. All registrants must meet
                 eligibility requirements to participate.
                 <br />
@@ -381,7 +386,7 @@ export default function WarningModal() {
                   </li>
                 </ul>
               </TYPE.body>
-              {/* <TYPE.body>The project is in beta, use at your own risk.</TYPE.body> */}
+              {/* <TYPE.body color="#000000">The project is in beta, use at your own risk.</TYPE.body> */}
             </Card>
 
             <AutoRow style={{ cursor: 'pointer', width: '100%' }}>
@@ -395,7 +400,7 @@ export default function WarningModal() {
               <TYPE.body
                 ml="10px"
                 fontSize="16px"
-                color={enableCheck ? theme.primary1 : theme.primary4}
+                color={enableCheck ? theme.bg1 : theme.bg5}
                 fontWeight={500}
                 onClick={() => setConfirmed(!confirmed)}
               >
@@ -404,13 +409,13 @@ export default function WarningModal() {
             </AutoRow>
 
             {/* <TYPE.small style={{ marginTop: -20 }} color={enableCheck ? 'transparent' : theme.red1}>
-              Please read all and scroll down to bottom to confirm{' '}
+              Please read all and scroll down to bottom to confirm
             </TYPE.small> */}
 
-            <ButtonPrimary disabled={!confirmed} onClick={handleClose}>
+            <ButtonPrimary disabled={!confirmed} onClick={handleClose} style={{ maxHeight: 49 }}>
               Next
             </ButtonPrimary>
-          </AutoColumn>
+          </Wapper>
         </Modal>
       )}
     </>
