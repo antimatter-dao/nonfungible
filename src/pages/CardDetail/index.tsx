@@ -727,6 +727,14 @@ function CurrencyETHShow() {
           alt="ftm"
           style={{ marginRight: 8 }}
         />
+      ) : chainId === 43114 ? (
+        <img
+          src={'https://raw.githubusercontent.com/sushiswap/icons/master/token/avax.jpg'}
+          width="20px"
+          height="20px"
+          alt="ftm"
+          style={{ marginRight: 8 }}
+        />
       ) : (
         <ETHIcon width="20px" height="20px" style={{ marginRight: 8 }} />
       )}
