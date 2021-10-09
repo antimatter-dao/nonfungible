@@ -49,8 +49,8 @@ export default function WarningModal() {
   }, [])
   return (
     <>
-      {isDev && (
-        <Modal zIndex={999} maxWidth={608} isOpen={isOpen} onDismiss={() => {}}>
+      {!isDev && (
+        <Modal maxWidth={608} isOpen={isOpen} onDismiss={() => {}}>
           <AutoColumn
             gap="24px"
             style={{
@@ -74,7 +74,7 @@ export default function WarningModal() {
               overflow={'auto'}
               style={{ backgroundColor: transparentize(0.8, theme.primary1) }}
             >
-              <TYPE.body color="#333">
+              <TYPE.body>
                 Please note.The dapp is only open to non-U.S. persons and entities. All registrants must meet
                 eligibility requirements to participate.
                 <br />
