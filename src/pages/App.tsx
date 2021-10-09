@@ -20,7 +20,7 @@ import LockerDetail from './LockerDetail'
 import UserLogin from '../pages/User/Login'
 import User from './User'
 import Box from './Box'
-// import WarningModal from 'components/Modal/WarningModal'
+import WarningModal from 'components/Modal/WarningModal'
 // import { ButtonWhite } from 'components/Button'
 
 const AppWrapper = styled.div`
@@ -133,7 +133,7 @@ export default function App() {
           <BodyWrapper id="body">
             <Popups />
             <Polling />
-            {/* <WarningModal /> */}
+            <WarningModal />
             {/* <TopLevelModals /> */}
             <Web3ReactManager>
               <Switch>
