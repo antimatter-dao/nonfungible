@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
 import styled from 'styled-components'
-import { ButtonPrimary } from 'components/Button'
+import { ButtonBlack } from 'components/Button'
 import { AutoColumn, ColumnCenter } from 'components/Column'
 import Modal from '.'
 import { TYPE } from 'theme'
@@ -412,9 +412,9 @@ export default function WarningModal() {
               Please read all and scroll down to bottom to confirm
             </TYPE.small> */}
 
-            <ButtonPrimary disabled={!confirmed} onClick={handleClose} style={{ maxHeight: 49 }}>
+            <ButtonBlack disabled={!confirmed} onClick={handleClose} style={{ maxHeight: 49 }}>
               Next
-            </ButtonPrimary>
+            </ButtonBlack>
           </Wapper>
         </Modal>
       )}

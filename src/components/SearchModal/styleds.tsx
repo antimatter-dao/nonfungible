@@ -54,6 +54,11 @@ export const Checkbox = styled.input`
   border: 1px solid ${({ theme }) => theme.red3};
   height: 20px;
   margin: 0;
+  &:focus,
+  &:focus-visible {
+    border: none;
+    outline: none;
+  }
 `
 
 export const PaddedColumn = styled(AutoColumn)`

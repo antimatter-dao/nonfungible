@@ -23,7 +23,8 @@ const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
   3: 'ropsten.',
   4: 'rinkeby.',
   56: '',
-  [ChainId.FANTOM]: ''
+  [ChainId.FANTOM]: '',
+  [ChainId.AVALANCHE]: ''
 }
 
 const ETHERSCAN_HOST: { [chainId in ChainId]: string } = {
@@ -31,7 +32,8 @@ const ETHERSCAN_HOST: { [chainId in ChainId]: string } = {
   3: 'etherscan.io',
   4: 'etherscan.io',
   56: 'bscscan.com',
-  [ChainId.FANTOM]: 'ftmscan.com'
+  [ChainId.FANTOM]: 'ftmscan.com',
+  [ChainId.AVALANCHE]: 'cchain.explorer.avax.network'
 }
 
 export function getEtherscanLink(
