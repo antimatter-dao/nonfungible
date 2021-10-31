@@ -8,46 +8,21 @@ export function useBlindBox(
 ): {
   remainingNFT: any
   participated: boolean
-  drawCallback: null | (() => Promise<string | null>)
+  drawCallback: null | ((...args: any) => Promise<any>)
 } {
   const contract = useBlindBoxContract()
   const remainingNFTRes = useSingleCallResult(contract, 'getGiftLength')
   const participatedRes = useSingleCallResult(contract, 'participated', [address ?? undefined])
   const remainingNFT = remainingNFTRes?.result
   const participated = participatedRes?.result
-  // useEffect(() => {
-  //   ;(async () => {
-  //     if (!contract) return
-  //     try {
-  //       const remainingNFTres = contract.getGiftLength()
-  //       console.log(remainingNFTres)
-  //     } catch (error) {
-  //       console.error(error)
-  //     }
-  //   })()
-  // }, [contract])
 
   const drawCallback = useCallback(
     async function onSwap(): Promise<string | null> {
       if (!contract) return null
-      return contract
-        .draw(null, {
-          from: address
-        })
-        .then((response: any) => {
-          console.log(777, response)
-        })
-        .catch((error: any) => {
-          if (error?.code === 4001) {
-            throw new Error('Transaction rejected.')
-          } else {
-            throw new Error(`Draw failed: ${error.message}`)
-          }
-        })
+      return contract.draw
     },
-    [address, contract]
+    [contract]
   )
-  console.log(999, remainingNFT, participated)
 
   const result = useMemo(
     () => ({

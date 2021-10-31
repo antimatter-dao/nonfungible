@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { TYPE } from 'theme'
 import { ReactComponent as BoxBottom } from 'assets/svg/box_bottom.svg'
@@ -8,18 +8,22 @@ import { AutoColumn } from 'components/Column'
 import { SwitchTabWrapper, Tab } from 'components/SwitchTab'
 import gradient from 'assets/svg/overlay_gradient.svg'
 import DefaultBox from './DefaultBox'
-import { LoadingView } from 'components/ModalViews'
 import { RowFixed } from 'components/Row'
 import Loader from 'assets/svg/antimatter_background_logo.svg'
 import { useBlindBox } from 'hooks/useBlindBox'
 import { useActiveWeb3React } from 'hooks/index'
-import { useApproveCallback } from 'hooks/useApproveCallback'
-import { JSBI } from '@uniswap/sdk'
-import { BLIND_BOX_ADDRESS, Matter } from 'constants/index'
+import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
+import { JSBI, Token } from '@uniswap/sdk'
+import { BLIND_BOX_ADDRESS } from 'constants/index'
 import { tryParseAmount } from 'state/swap/hooks'
+import WaitingModal from './WaitingModal'
+import { Dots } from 'components/swap/styleds'
+import { useTransaction, useTransactionAdder } from 'state/transactions/hooks'
+import { useHistory } from 'react-router'
 
 const Wrapper = styled.div` 
   width: 100%;
+  color: #000000;
   margin-top: 60px;
   min-height: ${({ theme }) => `calc(100vh - ${theme.headerHeight})`};
   background #000000 url(${gradient}) -50px 50px no-repeat;
@@ -167,32 +171,55 @@ const generateImages = (onLastLoad: () => void) => {
 
 export default function Box() {
   const { account } = useActiveWeb3React()
-  const [attemptingTxn] = useState(false)
-  const [hash] = useState('')
+  const [attemptingTxn, setAttemptingTxn] = useState(false)
+  const [hash, setHash] = useState('')
   const [imgLoaded, setImgLoaded] = useState(false)
-  const { remainingNFT, participated } = useBlindBox(account)
+  const { remainingNFT, participated, drawCallback } = useBlindBox(account)
+  const history = useHistory()
+  const addTxn = useTransactionAdder()
+  const txn = useTransaction(hash)
+
+  useEffect(() => {
+    txn && txn.receipt && txn.receipt.status === 1 && setAttemptingTxn(false)
+  }, [txn])
 
   const handleLoad = useCallback(() => {
     setImgLoaded(true)
   }, [])
+
   const images = useMemo(() => generateImages(handleLoad), [handleLoad])
 
   const [approval, approveCallback] = useApproveCallback(
-    tryParseAmount(JSBI.BigInt('2000').toString(), Matter),
+    tryParseAmount(
+      JSBI.BigInt('2000').toString(),
+      new Token(4, '0x3b557e654b64d57634bff210e9dc0e64053cddbf', 18, 'ABC')
+    ),
     BLIND_BOX_ADDRESS
   )
-  console.log(111111, approval)
+
   const handleApprove = useCallback(() => {
-    const res = approveCallback()
-    res.then(r => {
-      console.log(101010, r)
-    })
+    approveCallback()
   }, [approveCallback])
 
   const handleDraw = useCallback(() => {
-    console.log(121212, 'draw')
+    setAttemptingTxn(true)
+    drawCallback &&
+      drawCallback({
+        from: account
+      })
+        .then((response: any) => {
+          setHash(response.hash)
+          addTxn(response, { summary: 'draw NFT' })
+        })
+        .catch((error: any) => {
+          if (error?.code === 4001) {
+            throw new Error('Transaction rejected.')
+          } else {
+            throw new Error(`Draw failed: ${error.message}`)
+          }
+        })
     return
-  }, [])
+  }, [account, addTxn, drawCallback])
 
   return (
     <Wrapper>
@@ -208,7 +235,18 @@ export default function Box() {
           </AnimationWrapper>
         </HideMedium>
         <AppBody>
-          {!attemptingTxn && !hash && (
+          {approval === ApprovalState.PENDING && (
+            <WaitingModal
+              title="Approve for spending limit"
+              buttonText={
+                <RowFixed>
+                  Approving
+                  <Dots />
+                </RowFixed>
+              }
+            />
+          )}
+          {approval !== ApprovalState.PENDING && !attemptingTxn && !hash && !participated && (
             <DefaultBox
               remainingNFT={remainingNFT}
               participated={participated}
@@ -218,20 +256,39 @@ export default function Box() {
               account={account}
             />
           )}
-          {attemptingTxn && !hash && (
-            <LoadingView>
-              <AutoColumn>
-                <TYPE.black fontWeight={700} fontSize={30} className="title">
-                  Approve for spending limitAntimatter NFT
-                </TYPE.black>
-              </AutoColumn>
-            </LoadingView>
+          {approval !== ApprovalState.PENDING && attemptingTxn && (
+            <WaitingModal
+              title="Please interact with your wallet and wait for purchase"
+              buttonText={
+                <RowFixed>
+                  Waiting for confirmation
+                  <Dots />
+                </RowFixed>
+              }
+            />
+          )}
+
+          {participated && !attemptingTxn && (
+            <WaitingModal
+              title="Congratulations!"
+              subTitle="You have successfully mint an Antimatter Collectible"
+              icon={
+                <svg width="68" height="68" viewBox="0 0 68 68" fill="none">
+                  <circle cx="34" cy="34" r="32" stroke="#B2F355" strokeWidth="4" />
+                  <path d="M20 30L33 43L49 25" stroke="#B2F355" strokeWidth="4" />
+                </svg>
+              }
+              buttonText="Check My NFTs"
+              onClick={() => {
+                history.push('/profile/my_locker')
+              }}
+            />
           )}
         </AppBody>
       </FormWrapper>
       <CardWrapper>
         <SwitchTabWrapper isWhite>
-          <Tab key={'live'} onClick={() => {}} selected={true} isWhite>
+          <Tab key={'live'} selected={true} isWhite>
             Live Box
           </Tab>
         </SwitchTabWrapper>
