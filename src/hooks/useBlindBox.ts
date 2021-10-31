@@ -1,5 +1,5 @@
 import { JSBI } from '@uniswap/sdk'
-import { useMemo, useCallback, useState } from 'react'
+import { useMemo, useCallback, useState, useEffect } from 'react'
 import { useBlindBoxContract } from './useContract'
 import { useSingleCallResult, useSingleContractMultipleData } from 'state/multicall/hooks'
 import { useActiveWeb3React } from 'hooks'
@@ -56,14 +56,32 @@ export function useMyBlindBox() {
   const myIds = useMemo(() => {
     return ownerRes
       .map((item, index) => {
-        if (!item.loading) setLoading(false)
         return item.result?.[0] === account ? index + 1 : undefined
       })
       .filter(item => item !== undefined)
   }, [account, ownerRes])
 
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 1000)
+  }, [])
+
+  const tokenURIs = useSingleContractMultipleData(
+    contract,
+    'tokenURI',
+    myIds.map(id => [id])
+  )
+
+  const ret = useMemo(() => {
+    return myIds.map((id, index) => {
+      return {
+        id,
+        tokenURI: tokenURIs?.[index].result?.[0].toString()
+      }
+    })
+  }, [myIds, tokenURIs])
+
   return {
     loading,
-    myIds
+    ret
   }
 }

@@ -22,6 +22,7 @@ import { useTransaction, useTransactionAdder } from 'state/transactions/hooks'
 import { useHistory } from 'react-router'
 import { useBlindBoxContract } from 'hooks/useContract'
 import { useTokenBalance } from 'state/wallet/hooks'
+import { useCurrentUserInfo, useLogin } from 'state/userInfo/hooks'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -229,6 +230,16 @@ export default function Box() {
     return
   }, [account, addTxn, contract])
 
+  const userInfo = useCurrentUserInfo()
+  const { login } = useLogin()
+
+  const toShowUserPanel = useCallback(() => {
+    if (userInfo && userInfo.token) {
+      history.push('/profile/my_nfts')
+      return
+    } else login()
+  }, [userInfo, login, history])
+
   return (
     <Wrapper>
       <TYPE.monument style={{ width: '100%' }} textAlign="center">
@@ -301,9 +312,7 @@ export default function Box() {
                 </svg>
               }
               buttonText="Check My NFTs"
-              onClick={() => {
-                history.push('/profile/my_nfts')
-              }}
+              onClick={toShowUserPanel}
             />
           )}
         </AppBody>

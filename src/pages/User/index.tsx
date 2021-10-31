@@ -218,6 +218,7 @@ const CardImgWrapper = styled(AutoColumn)`
 const CardImg = styled.img`
   border-radius: 20px;
   width: 100%;
+  min-height: 40px;
   height: auto;
 `
 
@@ -283,6 +284,17 @@ const NameWrapper = styled(RowFixed)`
 //     '1 day ago'
 //   ]
 // ]
+
+function ShowNFTImage({ tokenURI }: { tokenURI: string }) {
+  const [imgSrc, setImgSrc] = useState('')
+  useEffect(() => {
+    fetch(tokenURI)
+      .then(res => res.json())
+      .then(res => setImgSrc(res.image as string))
+  }, [tokenURI])
+  return <CardImg src={imgSrc || ''} alt="" />
+}
+
 export default function User() {
   const history = useHistory()
   const { tab } = useParams<{ tab: string }>()
@@ -340,7 +352,7 @@ export default function User() {
     tab && tab === 'settings' && handleShowSetting()
   }, [handleShowSetting, location, tab])
 
-  const { myIds: myMlindBoxIds, loading: myMlindBoxLoading } = useMyBlindBox()
+  const { ret: myMlindBoxData, loading: myMlindBoxLoading } = useMyBlindBox()
 
   return (
     <>
@@ -533,21 +545,21 @@ export default function User() {
                 )}
               </>
             )}
-            {currentTab === UserInfoTabs.NFT && (
+            {currentTab === UserInfoTabs.NFT && !myMlindBoxLoading && (
               <>
-                {myMlindBoxIds.length === 0 ? (
+                {myMlindBoxData.length === 0 ? (
                   <span>You have no NFT at the moment</span>
                 ) : (
                   <ContentWrapper style={{ justifyContent: 'flex-start' }}>
-                    {myMlindBoxIds.map(id => (
+                    {myMlindBoxData.map(({ id, tokenURI }) => (
                       <CardImgWrapper key={id}>
-                        <CardImg src={`https://t7.baidu.com/it/u=3903742064,2449678599&fm=193&f=GIF`} alt={''} />
+                        <ShowNFTImage tokenURI={tokenURI} />
                         <RowBetween>
                           <RowFixed>
                             <span>#{id}&nbsp;</span>
                             <span>/66</span>
                           </RowFixed>
-                          <a href="/">Open in OpenSea</a>
+                          {/* <a href="/">Open in OpenSea</a> */}
                         </RowBetween>
                       </CardImgWrapper>
                     ))}
