@@ -559,7 +559,13 @@ export default function User() {
                             <span>#{id}&nbsp;</span>
                             <span>/66</span>
                           </RowFixed>
-                          {/* <a href="/">Open in OpenSea</a> */}
+                          <a
+                            href={`https://opensea.io/assets/0x05739eB0B2e3F4545a6EFacABAdc85dB2DE730FD/${id}`}
+                            target="__blank"
+                            rel="noreferrer"
+                          >
+                            Open in OpenSea
+                          </a>
                         </RowBetween>
                       </CardImgWrapper>
                     ))}

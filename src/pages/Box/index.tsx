@@ -33,12 +33,12 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  padding: 40px
-    ${({ theme }) => theme.mediaWidth.upToLarge`
+  padding: 40px;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
   margin-top: 0;
   background-position: -100px bottom;
   `}
-    ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
   padding: 24px
   `};
 `
