@@ -102,12 +102,15 @@ export default function GovernanceProposalCreation({
 
   const balance: TokenAmount | undefined = useTokenBalance(
     account ?? undefined,
-    chainId ? new Token(chainId, MATTER_ADDRESS, 18) : undefined
+    chainId ? new Token(chainId, MATTER_ADDRESS[1], 18) : undefined
   )
   const notEnoughBalance = !balance?.greaterThan(JSBI.BigInt(stakeAmount))
 
   const [approval, approveCallback] = useApproveCallback(
-    tryParseAmount(JSBI.BigInt(stakeAmount).toString(), chainId ? new Token(chainId, MATTER_ADDRESS, 18) : undefined),
+    tryParseAmount(
+      JSBI.BigInt(stakeAmount).toString(),
+      chainId ? new Token(chainId, MATTER_ADDRESS[1], 18) : undefined
+    ),
     chainId ? GOVERNANCE_ADDRESS : undefined
   )
 
@@ -154,7 +157,7 @@ export default function GovernanceProposalCreation({
       _span,
       tryParseAmount(
         JSBI.BigInt(stakeAmount).toString(),
-        chainId ? new Token(chainId, MATTER_ADDRESS, 18) : undefined
+        chainId ? new Token(chainId, MATTER_ADDRESS[1], 18) : undefined
       )?.raw.toString()
     ]
 

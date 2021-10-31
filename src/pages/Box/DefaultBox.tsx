@@ -6,22 +6,28 @@ import { OutlineCard } from 'components/Card'
 import { RowBetween } from 'components/Row'
 import { ApprovalState } from 'hooks/useApproveCallback'
 import { useWalletModalToggle } from 'state/application/hooks'
+import { Dots } from 'components/swap/styleds'
+import { JSBI, TokenAmount } from '@uniswap/sdk'
 // import { TimerCapsule } from 'components/NFTCard/Capsule'
 
 export default function DefaultBox({
   remainingNFT = true,
   participated,
   approval,
+  drawDepositAmount,
   onApprove,
   onDraw,
-  account
+  account,
+  matterBalance
 }: {
   remainingNFT: any
   participated: boolean
+  drawDepositAmount: string
   approval: ApprovalState
   onApprove: () => void
   onDraw: () => void
   account: string | null | undefined
+  matterBalance: TokenAmount | undefined
 }) {
   const toggleWalletModal = useWalletModalToggle()
   return (
@@ -41,7 +47,7 @@ export default function DefaultBox({
         <OutlineCard color="#dddddd">
           <RowBetween>
             <TYPE.black fontWeight={400}>Price per Box</TYPE.black>
-            <TYPE.black fontWeight={400}>2000 MATTER</TYPE.black>
+            <TYPE.black fontWeight={400}>{drawDepositAmount ?? '--'} MATTER</TYPE.black>
           </RowBetween>
         </OutlineCard>
         <TYPE.smallGray marginTop="8px">1 box for 1 contract address</TYPE.smallGray>
@@ -56,10 +62,22 @@ export default function DefaultBox({
         <Base disabled backgroundColor="#aaaaaa">
           You already have nft
         </Base>
+      ) : matterBalance?.lessThan(JSBI.BigInt(drawDepositAmount)) ? (
+        <ButtonBlack disabled>Insufficient MATTER Balance</ButtonBlack>
       ) : approval === ApprovalState.APPROVED ? (
         <ButtonBlack onClick={onDraw}>Buy</ButtonBlack>
+      ) : approval === ApprovalState.PENDING ? (
+        <ButtonBlack disabled>
+          Approve
+          <Dots />
+        </ButtonBlack>
+      ) : approval === ApprovalState.UNKNOWN ? (
+        <ButtonBlack disabled>
+          Loading
+          <Dots />
+        </ButtonBlack>
       ) : (
-        <ButtonBlack onClick={onApprove}>Buy 1</ButtonBlack>
+        <ButtonBlack onClick={onApprove}>Approve</ButtonBlack>
       )}
     </AutoColumn>
   )

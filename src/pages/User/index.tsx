@@ -26,6 +26,8 @@ import LoaderWhite from 'assets/svg/antimatter_background_logo.svg'
 import ClaimModal from 'components/claim/MatterClaimModal'
 import { useCreatorFee } from 'hooks/useMatterClaim'
 import { SwitchTabWrapper, Tab } from 'components/SwitchTab'
+import { isMobile } from 'react-device-detect'
+import { shortenAddress } from 'utils'
 
 export enum UserInfoTabs {
   POSITION = 'my_position',
@@ -324,7 +326,10 @@ export default function User() {
                     </NameWrapper>
                     <TYPE.darkGray fontWeight={400}>
                       <AddressWrapper>
-                        {userInfo?.account} <CopyHelper toCopy={userInfo?.account ?? ''} />
+                        {isMobile
+                          ? userInfo && userInfo.account && shortenAddress(userInfo.account)
+                          : userInfo?.account}{' '}
+                        <CopyHelper toCopy={userInfo?.account ?? ''} />
                       </AddressWrapper>
                     </TYPE.darkGray>
                   </AutoColumn>

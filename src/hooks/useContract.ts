@@ -179,5 +179,6 @@ export function useSocksController(): Contract | null {
 }
 
 export function useBlindBoxContract(): Contract | null {
-  return useContract(BLIND_BOX_ADDRESS, BLIND_BOX_ABI, true)
+  const { chainId } = useActiveWeb3React()
+  return useContract(BLIND_BOX_ADDRESS[chainId || 1], BLIND_BOX_ABI, true)
 }

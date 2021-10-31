@@ -13,31 +13,33 @@ import Loader from 'assets/svg/antimatter_background_logo.svg'
 import { useBlindBox } from 'hooks/useBlindBox'
 import { useActiveWeb3React } from 'hooks/index'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
-import { JSBI, Token } from '@uniswap/sdk'
-import { BLIND_BOX_ADDRESS } from 'constants/index'
+import { JSBI, Token, TokenAmount } from '@uniswap/sdk'
+import { BLIND_BOX_ADDRESS, MATTER_ADDRESS } from 'constants/index'
 import { tryParseAmount } from 'state/swap/hooks'
 import WaitingModal from './WaitingModal'
 import { Dots } from 'components/swap/styleds'
 import { useTransaction, useTransactionAdder } from 'state/transactions/hooks'
 import { useHistory } from 'react-router'
+import { useBlindBoxContract } from 'hooks/useContract'
+import { useTokenBalance } from 'state/wallet/hooks'
 
-const Wrapper = styled.div` 
+const Wrapper = styled.div`
   width: 100%;
   color: #000000;
   margin-top: 60px;
   min-height: ${({ theme }) => `calc(100vh - ${theme.headerHeight})`};
-  background #000000 url(${gradient}) -50px 50px no-repeat;
+  background: #000000 url(${gradient}) -50px 50px no-repeat;
   display: flex;
   align-items: center;
   flex-direction: column;
   padding: 40px
-  ${({ theme }) => theme.mediaWidth.upToLarge`
+    ${({ theme }) => theme.mediaWidth.upToLarge`
   margin-top: 0;
   background-position: -100px bottom;
   `}
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+    ${({ theme }) => theme.mediaWidth.upToSmall`
   padding: 24px
-  `}
+  `};
 `
 
 const AppBody = styled.div`
@@ -60,17 +62,17 @@ const AppBody = styled.div`
 `
 
 const FormWrapper = styled.div`
-  width: 100%
+  width: 100%;
   max-width: 1000px;
   display: flex;
   justify-content: space-between;
   margin-top: 80px;
-  align-items: center
+  align-items: center;
   ${({ theme }) => theme.mediaWidth.upToMedium`
-  justify-content: center;
-  margin-bottom: auto;
-  margin-top: 24px;
-  `}
+    justify-content: center;
+    margin-bottom: auto;
+    margin-top: 24px;
+  `};
 `
 
 const bounceAnimation = keyframes`
@@ -108,8 +110,8 @@ const AnimationWrapper = styled.div`
 `
 
 const CardWrapper = styled(AutoColumn)`
-width: 100%
-max-width: 1240px;
+  width: 100%;
+  max-width: 1240px;
 `
 
 const CardGrid = styled.div`
@@ -117,7 +119,7 @@ const CardGrid = styled.div`
   width: 100%;
   display: grid;
   grid-gap: 28px;
-  row-gap: 32px
+  row-gap: 32px;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   ${({ theme }) => theme.mediaWidth.upToMedium`
   grid-template-columns: 1fr 1fr 1fr;
@@ -170,11 +172,16 @@ const generateImages = (onLastLoad: () => void) => {
 }
 
 export default function Box() {
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const [attemptingTxn, setAttemptingTxn] = useState(false)
   const [hash, setHash] = useState('')
   const [imgLoaded, setImgLoaded] = useState(false)
-  const { remainingNFT, participated, drawCallback } = useBlindBox(account)
+  const { remainingNFT, participated, drawDeposit } = useBlindBox(account)
+  const drawDepositAmount = new TokenAmount(
+    new Token(chainId || 1, MATTER_ADDRESS[chainId || 1], 18),
+    JSBI.BigInt(drawDeposit || 0)
+  )
+  const matterBalance = useTokenBalance(account || undefined, new Token(chainId || 1, MATTER_ADDRESS[chainId || 1], 18))
   const history = useHistory()
   const addTxn = useTransactionAdder()
   const txn = useTransaction(hash)
@@ -190,36 +197,37 @@ export default function Box() {
   const images = useMemo(() => generateImages(handleLoad), [handleLoad])
 
   const [approval, approveCallback] = useApproveCallback(
-    tryParseAmount(
-      JSBI.BigInt('2000').toString(),
-      new Token(4, '0x3b557e654b64d57634bff210e9dc0e64053cddbf', 18, 'ABC')
-    ),
-    BLIND_BOX_ADDRESS
+    tryParseAmount(drawDepositAmount.toSignificant(), new Token(chainId || 1, MATTER_ADDRESS[chainId || 1], 18)),
+    BLIND_BOX_ADDRESS[chainId || 1]
   )
 
   const handleApprove = useCallback(() => {
     approveCallback()
   }, [approveCallback])
 
+  const contract = useBlindBoxContract()
   const handleDraw = useCallback(() => {
     setAttemptingTxn(true)
-    drawCallback &&
-      drawCallback({
-        from: account
-      })
+
+    contract &&
+      contract
+        .draw({
+          from: account
+        })
         .then((response: any) => {
           setHash(response.hash)
           addTxn(response, { summary: 'draw NFT' })
         })
         .catch((error: any) => {
+          setAttemptingTxn(false)
           if (error?.code === 4001) {
-            throw new Error('Transaction rejected.')
+            console.error('Transaction rejected.')
           } else {
-            throw new Error(`Draw failed: ${error.message}`)
+            console.error(`Draw failed: ${error.message}`)
           }
         })
     return
-  }, [account, addTxn, drawCallback])
+  }, [account, addTxn, contract])
 
   return (
     <Wrapper>
@@ -250,18 +258,32 @@ export default function Box() {
             <DefaultBox
               remainingNFT={remainingNFT}
               participated={participated}
+              drawDepositAmount={drawDepositAmount.toSignificant()}
               approval={approval}
+              matterBalance={matterBalance}
               onApprove={handleApprove}
               onDraw={handleDraw}
               account={account}
             />
           )}
-          {approval !== ApprovalState.PENDING && attemptingTxn && (
+          {approval !== ApprovalState.PENDING && attemptingTxn && !hash && (
             <WaitingModal
               title="Please interact with your wallet and wait for purchase"
               buttonText={
                 <RowFixed>
                   Waiting for confirmation
+                  <Dots />
+                </RowFixed>
+              }
+            />
+          )}
+
+          {attemptingTxn && hash && (
+            <WaitingModal
+              title="Transaction confirmation"
+              buttonText={
+                <RowFixed>
+                  Confirmation...
                   <Dots />
                 </RowFixed>
               }

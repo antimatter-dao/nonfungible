@@ -207,9 +207,22 @@ export const CHAIN_ETH_NAME: { [chainId in ChainId]: string } = {
   [ChainId.AVALANCHE]: 'AVAX'
 }
 
-export const BLIND_BOX_ADDRESS = '0x3ff9C28cce2805Dd69eec2113a6853d4F49976A8'
-export const MATTER_ADDRESS = '0x9b99cca871be05119b2012fd4474731dd653febe'
-
+export const BLIND_BOX_ADDRESS: { [chainId in ChainId]: string } = {
+  [ChainId.MAINNET]: '0x05739eB0B2e3F4545a6EFacABAdc85dB2DE730FD',
+  [ChainId.ROPSTEN]: '',
+  [ChainId.RINKEBY]: '0x3ff9c28cce2805dd69eec2113a6853d4f49976a8',
+  [ChainId.BSC]: '',
+  [ChainId.FANTOM]: '',
+  [ChainId.AVALANCHE]: ''
+}
+export const MATTER_ADDRESS: { [chainId in ChainId]: string } = {
+  [ChainId.MAINNET]: '0x9b99cca871be05119b2012fd4474731dd653febe',
+  [ChainId.ROPSTEN]: '',
+  [ChainId.RINKEBY]: '0x3b557e654b64d57634bff210e9dc0e64053cddbf',
+  [ChainId.BSC]: '',
+  [ChainId.FANTOM]: '',
+  [ChainId.AVALANCHE]: ''
+}
 export const INDEX_NFT_BUY_FEE = '5000000000000000'
 
 export const TOKEN_FLUIDITY_LIMIT = 5
@@ -218,7 +231,7 @@ export const TOKEN_FLUIDITY_LIMIT = 5
 // export const GOVERNANCE_ADDRESS = '0x78fC5460737EB07Ce9e7d954B294ecA7E6203D19'
 // export const MATTER_ADDRESS = '0x6669Ee1e6612E1B43eAC84d4CB9a94Af0A98E740'
 
-export const GOVERNANCE_TOKEN = new Token(ChainId.MAINNET, MATTER_ADDRESS, 18, 'MAT', 'Mat')
+export const GOVERNANCE_TOKEN = new Token(ChainId.MAINNET, MATTER_ADDRESS[1], 18, 'MAT', 'Mat')
 
 export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 

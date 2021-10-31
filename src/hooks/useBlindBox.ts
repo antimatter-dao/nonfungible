@@ -8,31 +8,31 @@ export function useBlindBox(
 ): {
   remainingNFT: any
   participated: boolean
+  drawDeposit: string | undefined
   drawCallback: null | ((...args: any) => Promise<any>)
 } {
   const contract = useBlindBoxContract()
   const remainingNFTRes = useSingleCallResult(contract, 'getGiftLength')
+  const drawDepositRes = useSingleCallResult(contract, 'drawDeposit')
   const participatedRes = useSingleCallResult(contract, 'participated', [address ?? undefined])
   const remainingNFT = remainingNFTRes?.result
   const participated = participatedRes?.result
+  const drawDeposit = drawDepositRes?.result?.toString()
 
-  const drawCallback = useCallback(
-    async function onSwap(): Promise<string | null> {
-      if (!contract) return null
-      return contract.draw
-    },
-    [contract]
-  )
+  const drawCallback = useCallback(async () => {
+    if (!contract) return null
+    return contract.draw
+  }, [contract])
 
   const result = useMemo(
     () => ({
       remainingNFT: remainingNFT ? parseInt(JSBI.BigInt(remainingNFT).toString()) : 0,
       participated: participated?.[0] ?? false,
+      drawDeposit,
       drawCallback: drawCallback
     }),
-    [remainingNFT, participated, drawCallback]
+    [remainingNFT, participated, drawDeposit, drawCallback]
   )
-  console.log(result)
 
   return result
 }
