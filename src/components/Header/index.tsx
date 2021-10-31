@@ -28,6 +28,7 @@ import { ReactComponent as BSCInvert } from '../../assets/svg/binance.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { useWeb3React } from '@web3-react/core'
 import { Modal } from '@material-ui/core'
+import { CHAIN_ETH_NAME } from '../../constants'
 
 const activeClassName = 'ACTIVE'
 
@@ -50,25 +51,49 @@ export const tabs: Tab[] = [
 ]
 
 const NetworkInfo: {
-  [key: number]: { title: string; color: string; icon: JSX.Element; link?: string; linkIcon?: JSX.Element }
+  [key: number]: {
+    title: string
+    color: string
+    icon: JSX.Element
+    link?: string
+    linkIcon?: JSX.Element
+    symbol: string
+  }
 } = {
   1: {
     color: '#FFFFFF',
     icon: <ETH />,
     link: 'https://app.antimatter.finance',
-    title: 'ETH'
+    title: 'ETH',
+    symbol: CHAIN_ETH_NAME[1]
   },
   56: {
     color: '#f8d76b',
     icon: <BSCInvert />,
     link: 'https://app.antimatter.finance',
-    title: 'BSC'
+    title: 'BSC',
+    symbol: CHAIN_ETH_NAME[56]
   },
   250: {
     color: '#29516e',
     icon: <img src="https://assets.spookyswap.finance/tokens/FTM.png" alt="" width="24px" style={{ marginRight: 5 }} />,
     link: 'https://app.antimatter.finance',
-    title: 'FTM'
+    title: 'FTM',
+    symbol: CHAIN_ETH_NAME[250]
+  },
+  43114: {
+    color: '#29516e',
+    icon: (
+      <img
+        src="https://raw.githubusercontent.com/sushiswap/icons/master/token/avax.jpg"
+        alt=""
+        width="24px"
+        style={{ marginRight: 5 }}
+      />
+    ),
+    link: 'https://app.antimatter.finance',
+    title: 'AVAX',
+    symbol: CHAIN_ETH_NAME[43114]
   }
 }
 
@@ -200,15 +225,15 @@ const StyledLogo = styled(Logo)`
 `
 
 const MobileHeader = styled.header`
-  width:100%;
-  display:flex;
-  justify-content:space-between;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   padding: 0 24px;
-  position:relative;
-  background-color: ${({ theme }) => theme.bg1}
-  height:${({ theme }) => theme.mobileHeaderHeight}
-  position:fixed;
+  position: relative;
+  background-color: ${({ theme }) => theme.bg1};
+  height: ${({ theme }) => theme.mobileHeaderHeight};
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 100;
@@ -400,7 +425,7 @@ const NetworkCard = styled.div<{ color?: string }>`
   justify-content: center;
   border-radius: 4px;
   align-items: center;
-  background-color: ${({ color }) => color ?? 'rgba(255, 255, 255, 0.12)'}
+  background-color: ${({ color }) => color ?? 'rgba(255, 255, 255, 0.12)'};
   font-size: 13px;
   font-weight: 500;
   position: relative;
@@ -409,9 +434,9 @@ const NetworkCard = styled.div<{ color?: string }>`
     width: 20px;
   }
   .dropdown_wrapper {
-    &>div{
+    & > div {
       a {
-        padding: 12px 12px 12px 44px ;
+        padding: 12px 12px 12px 44px;
       }
     }
   }
@@ -423,13 +448,13 @@ const NetworkCard = styled.div<{ color?: string }>`
       height: 10px;
       position: absolute;
       width: 172px;
-      &>div{
+      & > div {
         height: auto;
         margin-top: 10px;
         border: 1px solid ${({ theme }) => theme.text5};
-        a{
+        a {
           position: relative;
-          & >svg{
+          & > svg {
             height: 20px;
             width: 20px;
             margin-right: 15px;
@@ -520,9 +545,9 @@ export default function Header() {
   const toggleCreationModal = useToggleCreationModal()
   const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
   const ETHBalance = useETHBalances(account ? [account] : [])[account ?? '']
-  const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
+  const countUpValue = aggregateBalance?.toFixed(1) ?? '0'
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
-  const countETHUpValue = ETHBalance?.toFixed(0) ?? '0'
+  const countETHUpValue = ETHBalance?.toFixed(1) ?? '0'
   const countETHUpValuePrevious = usePrevious(countETHUpValue) ?? '0'
   const [netNotice, setNetNotice] = useState(false)
   const onCreateOrLogin = useCallback(() => {
@@ -632,6 +657,29 @@ export default function Header() {
                                     }
                                   ]
                                 })
+                              } else if (
+                                info.title === 'AVAX' &&
+                                chainId !== 43114 &&
+                                library &&
+                                library.provider &&
+                                library.provider.request
+                              ) {
+                                library.provider.request({
+                                  method: 'wallet_addEthereumChain',
+                                  params: [
+                                    {
+                                      chainId: `0x${Number(43114).toString(16)}`,
+                                      chainName: 'Avalanche',
+                                      nativeCurrency: {
+                                        name: 'AVAX',
+                                        symbol: 'AVAX',
+                                        decimals: 18
+                                      },
+                                      rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
+                                      blockExplorerUrls: ['https://cchain.explorer.avax.network']
+                                    }
+                                  ]
+                                })
                               } else if (chainId !== 1 && info.title === 'ETH') {
                                 setNetNotice(true)
                               }
@@ -704,7 +752,7 @@ export default function Header() {
                         />
                       </TYPE.gray>
                     )}
-                    {NetworkInfo[chainId ?? 1] ? NetworkInfo[chainId ?? 1].title : ''}
+                    {NetworkInfo[chainId ?? 1] ? NetworkInfo[chainId ?? 1].symbol : ''}
                   </UNIAmount>
                 </UNIWrapper>
               )}

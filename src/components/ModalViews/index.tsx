@@ -105,7 +105,7 @@ export function SubmittedView({
         {!hideLink && !isError && chainId && hash && (
           <ExternalLink href={getEtherscanLink(chainId, hash, 'transaction')}>
             <TYPE.main fontWeight={400} fontSize={14} color={theme.text4}>
-              View on Etherscan
+              View on explorer
             </TYPE.main>
           </ExternalLink>
         )}
