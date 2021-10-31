@@ -320,7 +320,7 @@ export default function Box() {
       <CardWrapper>
         <SwitchTabWrapper isWhite>
           <Tab key={'live'} selected={true} isWhite>
-            Live Box
+            All Boxes
           </Tab>
         </SwitchTabWrapper>
         {!imgLoaded && (
