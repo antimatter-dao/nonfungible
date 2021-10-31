@@ -28,20 +28,21 @@ import { useCreatorFee } from 'hooks/useMatterClaim'
 import { SwitchTabWrapper, Tab } from 'components/SwitchTab'
 import { isMobile } from 'react-device-detect'
 import { shortenAddress } from 'utils'
+import { useMyBlindBox } from 'hooks/useBlindBox'
 
 export enum UserInfoTabs {
   POSITION = 'my_position',
   INDEX = 'my_index',
-  LOCKER = 'my_locker'
-  // NFT = 'my_nfts'
+  LOCKER = 'my_locker',
+  NFT = 'my_nfts'
   // ACTIVITY = 'Activity'
 }
 
 export const UserInfoTabRoute = {
   [UserInfoTabs.POSITION]: 'My Position',
   [UserInfoTabs.INDEX]: 'My Index',
-  [UserInfoTabs.LOCKER]: 'My Locker'
-  // [UserInfoTabs.NFT]: 'My NFTs'
+  [UserInfoTabs.LOCKER]: 'My Locker',
+  [UserInfoTabs.NFT]: 'My NFTs'
 }
 
 // enum Actions {
@@ -186,6 +187,39 @@ const ClaimWrapper = styled(RowBetween)`
   justify-content: center;
 `}
 `
+const CardImgWrapper = styled(AutoColumn)`
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 30px;
+  padding: 20px 20px 15px;
+  background: linear-gradient(rgba(223, 249, 186, 0.5), rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 1));
+  grid-gap: 10px;
+  span:first-child {
+    color: #000;
+    font-size: 20px;
+  }
+  span:last-child {
+    color: ${({ theme }) => theme.text3};
+    font-size: 14px;
+  }
+  a {
+    font-size: 14px;
+    line-height: 133.5%;
+    text-align: center;
+    text-decoration-line: underline;
+    color: #000000;
+    opacity: 0.5;
+  }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  span:first-child {  font-size: 16px;}
+  span:last-child { font-size: 12px;}
+   `}
+`
+
+const CardImg = styled.img`
+  border-radius: 20px;
+  width: 100%;
+  height: auto;
+`
 
 const Divider = styled.div`
   width: 80px;
@@ -306,6 +340,8 @@ export default function User() {
     tab && tab === 'settings' && handleShowSetting()
   }, [handleShowSetting, location, tab])
 
+  const { myIds: myMlindBoxIds, loading: myMlindBoxLoading } = useMyBlindBox()
+
   return (
     <>
       <ProfileSetting isOpen={showSetting} onDismiss={handleHideSetting} userInfo={userInfo} />
@@ -382,7 +418,8 @@ export default function User() {
             <SwitchTab onTabClick={handleTabClick} currentTab={currentTab} />
             {((currentTab === UserInfoTabs.INDEX && indexIsLoading) ||
               (currentTab === UserInfoTabs.POSITION && positionIsLoading) ||
-              (currentTab === UserInfoTabs.LOCKER && myLockerIsLoading)) && (
+              (currentTab === UserInfoTabs.LOCKER && myLockerIsLoading) ||
+              (currentTab === UserInfoTabs.NFT && myMlindBoxLoading)) && (
               <>
                 <HideSmall>
                   <AnimatedWrapper style={{ marginTop: 40 }}>
@@ -458,7 +495,7 @@ export default function User() {
             )}
             {!myLockerIsLoading && currentTab === UserInfoTabs.LOCKER /*|| currentTab === Tabs.LOCKER*/ && (
               <>
-                {myLockerList.length === 0 ? (
+                {myLockerList.length === 0 && !myMlindBoxLoading ? (
                   <span>You have no NFT at the moment</span>
                 ) : (
                   <>
@@ -496,8 +533,28 @@ export default function User() {
                 )}
               </>
             )}
-            {/* {currentTab === UserInfoTabs.NFT && (
-              <> */}
+            {currentTab === UserInfoTabs.NFT && (
+              <>
+                {myMlindBoxIds.length === 0 ? (
+                  <span>You have no NFT at the moment</span>
+                ) : (
+                  <ContentWrapper style={{ justifyContent: 'flex-start' }}>
+                    {myMlindBoxIds.map(id => (
+                      <CardImgWrapper key={id}>
+                        <CardImg src={`https://t7.baidu.com/it/u=3903742064,2449678599&fm=193&f=GIF`} alt={''} />
+                        <RowBetween>
+                          <RowFixed>
+                            <span>#{id}&nbsp;</span>
+                            <span>/66</span>
+                          </RowFixed>
+                          <a href="/">Open in OpenSea</a>
+                        </RowBetween>
+                      </CardImgWrapper>
+                    ))}
+                  </ContentWrapper>
+                )}
+              </>
+            )}
             {/* {positionCardList.length === 0 ? (
                   <span>You have no NFT at the moment</span>
                 ) : (

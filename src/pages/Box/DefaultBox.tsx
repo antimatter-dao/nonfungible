@@ -46,11 +46,14 @@ export default function DefaultBox({
       <div>
         <OutlineCard color="#dddddd">
           <RowBetween>
-            <TYPE.black fontWeight={400}>Price per Box</TYPE.black>
+            <TYPE.black fontWeight={400}>Amount per Box</TYPE.black>
             <TYPE.black fontWeight={400}>{drawDepositAmount ?? '--'} MATTER</TYPE.black>
           </RowBetween>
         </OutlineCard>
         <TYPE.smallGray marginTop="8px">1 box for 1 contract address</TYPE.smallGray>
+        <TYPE.body color="#000" style={{ margin: '20px 0 -30px' }}>
+          Note: Your deposit will be staked in the NFT for 4 months and become claimable after.{' '}
+        </TYPE.body>
       </div>
       {!account ? (
         <ButtonBlack onClick={toggleWalletModal}>Connect</ButtonBlack>

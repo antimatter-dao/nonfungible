@@ -302,7 +302,7 @@ export default function Box() {
               }
               buttonText="Check My NFTs"
               onClick={() => {
-                history.push('/profile/my_locker')
+                history.push('/profile/my_nfts')
               }}
             />
           )}
