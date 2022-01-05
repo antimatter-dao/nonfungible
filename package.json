@@ -125,13 +125,16 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@date-io/date-fns": "1.x",
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
     "@material-ui/core": "^4.12.2",
     "@material-ui/lab": "^4.0.0-alpha.60",
     "@material-ui/pickers": "^3.3.10",
+    "@mui/material": "^5.2.7",
     "@types/web3": "^1.2.2",
     "@uniswap/default-token-list": "^2.0.0",
+    "@uniswap/sdk": "antimatter-finance/mutichains-sdk.git",
     "date-fns": "^2.22.1",
-    "lightweight-charts": "^3.3.0",
-    "@uniswap/sdk": "antimatter-finance/mutichains-sdk.git"
+    "lightweight-charts": "^3.3.0"
   }
 }

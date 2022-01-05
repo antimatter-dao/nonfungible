@@ -9,6 +9,8 @@ import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import ComingSoon from './ComingSoon'
+import NoService from './NoService'
+import { fetchLocation } from '../utils/option/location'
 
 import { RedirectPathToSwapOnly } from './SpotIndex/redirects'
 // import Governance from './NFTGovernance'
@@ -21,6 +23,7 @@ import UserLogin from '../pages/User/Login'
 import User from './User'
 import Box from './Box'
 import WarningModal from 'components/Modal/WarningModal'
+import Spinner from 'components/Spinner'
 // import { ButtonWhite } from 'components/Button'
 
 const AppWrapper = styled.div`
@@ -102,6 +105,8 @@ export const Marginer = styled.div`
 //   return <AddressClaimModal isOpen={open} onDismiss={toggle} />
 // }
 
+const resource = fetchLocation()
+
 export default function App() {
   useEffect(() => {
     const el = document.querySelector('.loader-container')
@@ -136,25 +141,38 @@ export default function App() {
             <WarningModal />
             {/* <TopLevelModals /> */}
             <Web3ReactManager>
-              <Switch>
-                <Route exact strict path="/" component={SpotIndex} />
-                <Route exact strict path="/spot_index" component={SpotIndex} />
-                <Route exact strict path="/spot_detail/:nftid" component={CardDetail} />
-                <Route exact strict path="/collectables" component={Box} />
-                <Route exact strict path="/locker" component={Locker} />
-                <Route exact strict path="/locker/:nftid" component={LockerDetail} />
-                {/* <Route exact strict path="/governance" component={Governance} /> */}
-                <Route exact strict path="/governance" component={ComingSoon} />
-                <Route exact strict path="/governance/:governanceIndex" component={GovernanceDetail} />
-                <Route strict path="/profile/:tab" component={User} />
-                <Route strict path="/profile" component={User} />
-                <Route component={RedirectPathToSwapOnly} />
-              </Switch>
+              <LocatoinVerification resource={resource}>
+                <Switch>
+                  <Route exact strict path="/" component={SpotIndex} />
+                  <Route exact strict path="/spot_index" component={SpotIndex} />
+                  <Route exact strict path="/spot_detail/:nftid" component={CardDetail} />
+                  <Route exact strict path="/collectables" component={Box} />
+                  <Route exact strict path="/locker" component={Locker} />
+                  <Route exact strict path="/locker/:nftid" component={LockerDetail} />
+                  {/* <Route exact strict path="/governance" component={Governance} /> */}
+                  <Route exact strict path="/governance" component={ComingSoon} />
+                  <Route exact strict path="/governance/:governanceIndex" component={GovernanceDetail} />
+                  <Route strict path="/profile/:tab" component={User} />
+                  <Route strict path="/profile" component={User} />
+                  <Route component={RedirectPathToSwapOnly} />
+                </Switch>
+              </LocatoinVerification>
             </Web3ReactManager>
             {/* <Marginer /> */}
           </BodyWrapper>
         </ContentWrapper>
       </AppWrapper>
+    </Suspense>
+  )
+}
+
+function LocatoinVerification({ resource, children }: { resource: { read(): any }; children: React.ReactNode }) {
+  const location = resource.read()
+
+  return (
+    <Suspense fallback={<Spinner size={100} />}>
+      {location === 'US' || location === 'CN' || !location ? <NoService /> : children}
+      {/*{location === 'US' || location === 'CN' || !location || location === 'Not found' ? children : children}*/}
     </Suspense>
   )
 }
